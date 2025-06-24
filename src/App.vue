@@ -5,14 +5,13 @@ export default {
 </script>
 
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <style>
-#app {
-  height: 100vh;
-  overflow-x: hidden;
+body, #app {
+  min-height: 100vh;
+  background: #f3f4f6 !important;
+  overflow-y: auto !important;
 }
 </style>

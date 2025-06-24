@@ -14,20 +14,8 @@ export const sidebarMenuItems = [
     id: 'crm',
     title: 'CRM',
     icon: 'people',
-    route: '/app/crm/clients',
-    badge: null,
-    children: [
-      {
-        id: 'clients',
-        title: 'Clientes',
-        route: '/app/crm/clients'
-      },
-      {
-        id: 'conversations',
-        title: 'Conversaciones',
-        route: '/app/crm/conversations'
-      }
-    ]
+    route: '/app/crm',
+    badge: null
   },
   {
     id: 'devices',

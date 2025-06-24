@@ -16,10 +16,7 @@ import DeviceMaintenancePage from '@/views/Devices/DeviceMaintenancePage.vue';
 import IncidentListPage from '@/views/Incidents/IncidentListPage.vue';
 import IncidentDetailPage from '@/views/Incidents/IncidentDetailPage.vue';
 // CRM
-import ClientListPage from '@/views/CRM/ClientListPage.vue';
-import ClientDetailPage from '@/views/CRM/ClientDetailPage.vue';
-import ConversationListPage from '@/views/CRM/ConversationListPage.vue';
-import ConversationDetailPage from '@/views/CRM/ConversationDetailPage.vue';
+import CrmWhatsappPage from '@/views/CRM/CrmWhatsappPage.vue';
 // Complaints
 import ComplaintListPage from '@/views/Complaints/ComplaintListPage.vue';
 import ComplaintDetailPage from '@/views/Complaints/ComplaintDetailPage.vue';
@@ -59,10 +56,7 @@ const routes = [
       { path: 'incidents', component: IncidentListPage },
       { path: 'incidents/:id', component: IncidentDetailPage },
       // CRM
-      { path: 'crm/clients', component: ClientListPage },
-      { path: 'crm/clients/:id', component: ClientDetailPage },
-      { path: 'crm/conversations', component: ConversationListPage },
-      { path: 'crm/conversations/:id', component: ConversationDetailPage },
+      { path: 'crm', component: CrmWhatsappPage },
       // Complaints
       { path: 'complaints', component: ComplaintListPage },
       { path: 'complaints/:id', component: ComplaintDetailPage },
