@@ -1,22 +1,31 @@
 <template>
   <aside 
-    class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0"
-    :class="{
-      'translate-x-0': isMobileOpen,
-      '-translate-x-full': !isMobileOpen
-    }"
+    class="fixed inset-y-0 left-0 z-50 bg-white shadow-xl border-r border-gray-200 transform transition-all duration-300 ease-in-out flex flex-col"
+    :class="[
+      isCollapsed ? 'w-20' : 'w-64',
+      isMobileOpen ? 'translate-x-0' : '-translate-x-full',
+      'lg:translate-x-0'
+    ]"
   >
     <!-- Sidebar Header -->
-    <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200 bg-gradient-to-r from-primary-600 to-water-600">
+    <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 bg-gradient-to-r from-primary-600 to-water-600">
       <router-link to="/app/dashboard" class="flex items-center space-x-3">
         <div class="flex items-center justify-center w-8 h-8 bg-white/20 rounded-lg">
           <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z"/>
           </svg>
         </div>
-        <span class="text-lg font-bold text-white">IoT Water</span>
+        <span v-if="!isCollapsed" class="text-lg font-bold text-white">IoT Water</span>
       </router-link>
-      
+      <!-- Botón para colapsar/expandir -->
+      <button 
+        @click="toggleCollapse"
+        class="hidden lg:flex p-1 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors ml-2"
+        :title="isCollapsed ? 'Expandir menú' : 'Colapsar menú'"
+      >
+        <svg v-if="!isCollapsed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5" /></svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14" /></svg>
+      </button>
       <!-- Close button for mobile -->
       <button 
         @click="$emit('toggle-sidebar')"
@@ -27,13 +36,13 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+    <nav class="flex-1 px-2 py-6 space-y-2 overflow-y-auto">
       <div v-for="item in sidebarMenuItems" :key="item.id" class="space-y-1">
         <!-- Menu Item without children -->
         <router-link 
           v-if="!item.children || item.children.length === 0" 
           :to="item.route" 
-          class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
+          class="group flex items-center px-2 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
           :class="isActiveItem(item) 
             ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-600' 
             : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'"
@@ -41,12 +50,12 @@
         >
           <component 
             :is="getMenuIcon(item.icon)" 
-            class="w-5 h-5 mr-3 flex-shrink-0"
-            :class="isActiveItem(item) ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500'"
+            class="w-5 h-5 flex-shrink-0 icon-center"
+            :class="[isActiveItem(item) ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500', isCollapsed ? 'mx-auto' : 'mr-3']"
           />
-          <span class="truncate">{{ item.title }}</span>
+          <span v-if="!isCollapsed" class="truncate">{{ item.title }}</span>
           <span 
-            v-if="item.badge" 
+            v-if="item.badge && !isCollapsed" 
             class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
             :class="isActiveItem(item) 
               ? 'bg-primary-100 text-primary-800' 
@@ -59,21 +68,22 @@
         <!-- Menu Item with children -->
         <div v-else>
           <button
-            @click="toggleSubmenu(item.id)"
-            class="group w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
+            @click="handleParentMenuClick(item)"
+            class="group w-full flex items-center justify-between px-2 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
             :class="isActiveItem(item) 
               ? 'bg-primary-50 text-primary-700' 
               : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'"
           >
-            <div class="flex items-center">
+            <div class="flex items-center w-full">
               <component 
                 :is="getMenuIcon(item.icon)" 
-                class="w-5 h-5 mr-3 flex-shrink-0"
-                :class="isActiveItem(item) ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500'"
+                class="w-5 h-5 flex-shrink-0 icon-center"
+                :class="[isActiveItem(item) ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500', isCollapsed ? 'mx-auto' : 'mr-3']"
               />
-              <span class="truncate">{{ item.title }}</span>
+              <span v-if="!isCollapsed" class="truncate">{{ item.title }}</span>
             </div>
             <ChevronDownIcon 
+              v-if="!isCollapsed"
               class="w-4 h-4 transition-transform duration-200"
               :class="{ 'rotate-180': isSubmenuExpanded(item.id) }"
             />
@@ -81,7 +91,7 @@
 
           <!-- Submenu -->
           <div 
-            v-if="item.children && item.children.length > 0"
+            v-if="item.children && item.children.length > 0 && !isCollapsed"
             class="mt-1 space-y-1 overflow-hidden transition-all duration-200"
             :class="{ 'max-h-0': !isSubmenuExpanded(item.id), 'max-h-96': isSubmenuExpanded(item.id) }"
           >
@@ -103,26 +113,6 @@
         </div>
       </div>
     </nav>
-
-    <!-- Sidebar Footer -->
-    <div class="p-4 border-t border-gray-200">
-      <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-        <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-water-600 rounded-full flex items-center justify-center">
-          <span class="text-sm font-medium text-white">A</span>
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-gray-900 truncate">Administrador</p>
-          <p class="text-xs text-gray-500 truncate">admin@iotwater.com</p>
-        </div>
-        <button 
-          @click="handleLogout"
-          class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-          title="Cerrar sesión"
-        >
-          <ArrowRightOnRectangleIcon class="w-4 h-4" />
-        </button>
-      </div>
-    </div>
   </aside>
 </template>
 
@@ -163,7 +153,7 @@ export default {
       default: false
     }
   },
-  emits: ['toggle-sidebar'],
+  emits: ['toggle-sidebar', 'collapsed-change'],
   setup(props, { emit }) {
     const route = useRoute()
     const router = useRouter()
@@ -185,10 +175,23 @@ export default {
     // Manejar clic en elementos del menú
     const handleMenuClick = (item) => {
       if (item.children && item.children.length > 0) {
-        toggleSubmenu(item.id)
+        // No hacer nada aquí, el manejo es en handleParentMenuClick
+        return
       } else {
         setActiveItem(item.id)
         emit('toggle-sidebar')
+      }
+    }
+
+    // Manejar clic en ítems con submenú
+    const handleParentMenuClick = (item) => {
+      if (isCollapsed.value) {
+        // Si está colapsado, redirigir a la ruta principal
+        if (item.route) {
+          router.push(item.route)
+        }
+      } else {
+        toggleSubmenu(item.id)
       }
     }
 
@@ -248,18 +251,22 @@ export default {
       autoExpandSubmenus()
     }, { immediate: true })
 
+    const toggleCollapse = () => {
+      isCollapsed.value = !isCollapsed.value
+      emit('collapsed-change', isCollapsed.value)
+    }
+
     return {
-      sidebarMenuItems,
       isCollapsed,
-      activeItem,
-      expandedSubmenus,
+      toggleCollapse,
+      sidebarMenuItems,
+      getMenuIcon,
       isActiveItem,
       handleMenuClick,
+      handleParentMenuClick,
       isSubmenuExpanded,
-      isCurrentRoute,
-      getMenuIcon,
       toggleSubmenu,
-      handleLogout
+      isCurrentRoute
     }
   }
 }
@@ -301,5 +308,15 @@ export default {
 
 .max-h-96 {
   transition: max-height 0.3s ease-in;
+}
+
+.sidebar-collapsed {
+  width: 5rem !important;
+}
+
+.icon-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

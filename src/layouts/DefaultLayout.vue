@@ -4,10 +4,11 @@
     <SidebarMenu 
       :is-mobile-open="isMobileOpen" 
       @toggle-sidebar="toggleMobileSidebar" 
+      @collapsed-change="onSidebarCollapsedChange"
     />
     
     <!-- Main Content -->
-    <div class="lg:pl-64">
+    <div :class="mainContentClass">
       <!-- Top Navigation -->
       <TopNavbar @toggle-sidebar="toggleMobileSidebar" />
       
@@ -86,12 +87,25 @@ export default {
   setup() {
     const route = useRoute()
     const isMobileOpen = ref(false)
-    
+    const isSidebarCollapsed = ref(false)
+
     // Toggle mobile sidebar
     const toggleMobileSidebar = () => {
       isMobileOpen.value = !isMobileOpen.value
     }
-    
+    // Sidebar colapsado/expandido
+    const onSidebarCollapsedChange = (collapsed) => {
+      isSidebarCollapsed.value = collapsed
+    }
+
+    // Clase dinámica para el contenido principal
+    const mainContentClass = computed(() => {
+      return [
+        'transition-all duration-300',
+        isSidebarCollapsed.value ? 'lg:pl-20' : 'lg:pl-64'
+      ]
+    })
+
     // Close mobile sidebar when route changes
     watch(() => route.path, () => {
       isMobileOpen.value = false
@@ -142,7 +156,7 @@ export default {
         '/app/map': 'Mapa de Dispositivos',
         '/app/complaints': 'Denuncias Ciudadanas',
         '/app/incidents': 'Gestión de Incidentes',
-        '/app/personnel': 'Gestión de Personal'
+        '/app/personnel': 'Administración de Personal'
       }
       return routeMap[route.path] || 'Página'
     })
@@ -165,7 +179,9 @@ export default {
       toggleMobileSidebar,
       breadcrumbs,
       pageTitle,
-      pageDescription
+      pageDescription,
+      onSidebarCollapsedChange,
+      mainContentClass
     }
   }
 }
