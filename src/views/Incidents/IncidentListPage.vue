@@ -1,398 +1,417 @@
 <template>
-  <div class="incident-list-page">
-    <div class="page-header">
-      <h1>Gestión de Problemas</h1>
-      <p>Gestión y seguimiento de problemas del sistema</p>
-    </div>
+  <div class="problem-management-container min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6">
+    <!-- Header -->
+    <IncidentHeader
+      @new-incident="showNewReportModal = true"
+      @export-data="handleExportData"
+    >
+      <template #new-incident-icon>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+      </template>
+      <template #export-icon>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+      </template>
+    </IncidentHeader>
 
-    <div class="page-content">
-      <div class="filters">
-        <input type="text" v-model="searchTerm" placeholder="Buscar problemas..." class="search-input" />
-        <select v-model="priorityFilter" class="filter-select">
-          <option value="">Todas las prioridades</option>
-          <option value="low">Baja</option>
-          <option value="medium">Media</option>
-          <option value="high">Alta</option>
-          <option value="critical">Crítica</option>
-        </select>
-        <select v-model="statusFilter" class="filter-select">
-          <option value="">Todos los estados</option>
-          <option value="open">Abierto</option>
-          <option value="in-progress">En proceso</option>
-          <option value="resolved">Resuelto</option>
-          <option value="closed">Cerrado</option>
-        </select>
-        <button class="btn-primary" @click="addIncident">
-          <span>➕</span> Nuevo Problema
-        </button>
+    <!-- Dashboard Prioridades -->
+    <IncidentStats :stats="statsData" />
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Sección principal -->
+      <div class="flex-1">
+        <IncidentList
+          :incidents="filteredIncidents"
+          :tabs="incidentTabs"
+          :active-tab="activeIncidentTab"
+          :search-query="searchQuery"
+          :users="usuarios"
+          @select-incident="selectIncident"
+          @set-active-tab="activeIncidentTab = $event"
+          @update:search-query="searchQuery = $event"
+          @assign-technician="asignarTecnico"
+        >
+          <template #header-icon>
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </template>
+          <template #search-icon>
+            <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </template>
+          <template #filter-icon>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+            </svg>
+          </template>
+          <template #empty-state-icon>
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </template>
+        </IncidentList>
       </div>
 
-      <div class="incidents-grid">
-        <div v-for="incident in filteredIncidents" :key="incident.id" class="incident-card"
-          :class="[incident.status, incident.priority]">
-          <div class="incident-header">
-            <h3>{{ incident.title }}</h3>
-            <div class="incident-badges">
-              <span class="priority-badge" :class="incident.priority">
-                {{ getPriorityText(incident.priority) }}
-              </span>
-              <span class="status-badge" :class="incident.status">
-                {{ getStatusText(incident.status) }}
-              </span>
-            </div>
-          </div>
-          <div class="incident-info">
-            <p><strong>ID:</strong> {{ incident.id }}</p>
-            <p><strong>Reportado por:</strong> {{ incident.reporter }}</p>
-            <p><strong>Dispositivo:</strong> {{ incident.device }}</p>
-            <p><strong>Fecha:</strong> {{ incident.date }}</p>
-            <p class="incident-description">{{ incident.description }}</p>
-          </div>
-          <div class="incident-actions">
-            <button class="btn-secondary" @click="viewIncident(incident.id)">
-              Ver Detalles
-            </button>
-            <button class="btn-secondary" @click="editIncident(incident.id)">
-              Editar
-            </button>
-          </div>
-        </div>
-      </div>
+      <!-- Panel derecho -->
+      <IncidentSidebar
+        :team="equipoTecnico"
+        :notification-settings="notificationSettings"
+        :logbook="bitacoraFiltrada"
+        :new-log-entry="nuevaBitacora"
+        @assign-personnel="abrirAsignacion"
+        @update:notification-settings="notificationSettings = $event"
+        @send-notifications="enviarNotificaciones"
+        @update:new-log-entry="nuevaBitacora = $event"
+        @add-log-entry="agregarBitacora"
+      >
+        <template #team-icon>
+          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+        </template>
+        <template #notifications-icon>
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.19 4.19A4 4 0 004 6v10a4 4 0 004 4h10a4 4 0 004-4V6a4 4 0 00-4-4H8a4 4 0 00-2.81 1.19z"></path>
+          </svg>
+        </template>
+        <template #logbook-icon>
+          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </template>
+      </IncidentSidebar>
     </div>
+
+    <!-- Modal Component -->
+    <NewIncidentModal 
+      :is-visible="showNewReportModal"
+      @close="showNewReportModal = false"
+      @submit="handleNewIncident"
+    />
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import NewIncidentModal from '@/components/NewIncidentModal.vue';
 
-export default {
-  name: 'IncidentListPage',
-  setup() {
-    const router = useRouter();
-    const searchTerm = ref('');
-    const priorityFilter = ref('');
-    const statusFilter = ref('');
+// Importar componentes modulares
+import IncidentHeader from '@/components/incidents/IncidentHeader.vue';
+import IncidentStats from '@/components/incidents/IncidentStats.vue';
+import IncidentList from '@/components/incidents/IncidentList.vue';
+import IncidentSidebar from '@/components/incidents/IncidentSidebar.vue';
 
-    // Datos de ejemplo
-    const incidents = ref([
-      {
-        id: 'INC001',
-        title: 'Falla en sensor de presión',
-        reporter: 'Sistema Automático',
-        device: 'Sensor Zona A',
-        status: 'open',
-        priority: 'high',
-        date: '2024-01-15 14:30',
-        description: 'El sensor de presión ha dejado de enviar datos correctos.'
-      },
-      {
-        id: 'INC002',
-        title: 'Válvula de control bloqueada',
-        reporter: 'Técnico Juan Pérez',
-        device: 'Válvula Principal',
-        status: 'in-progress',
-        priority: 'critical',
-        date: '2024-01-15 12:15',
-        description: 'La válvula principal no responde a los comandos de control.'
-      },
-      {
-        id: 'INC003',
-        title: 'Batería baja en medidor',
-        reporter: 'Sistema de Monitoreo',
-        device: 'Medidor Residencial',
-        status: 'resolved',
-        priority: 'medium',
-        date: '2024-01-15 10:45',
-        description: 'Batería del medidor por debajo del 10%.'
-      }
-    ]);
+// Mock de usuarios (para nombres)
+const usuarios = [
+  { IdUsuario: 1, nombre: 'Carlos Méndez' },
+  { IdUsuario: 2, nombre: 'Laura Sánchez' },
+  { IdUsuario: 3, nombre: 'Juan Pérez' },
+  { IdUsuario: 4, nombre: 'Roberto Jiménez' },
+  { IdUsuario: 5, nombre: 'Daniela Ríos' },
+  { IdUsuario: 6, nombre: 'Luis Mendoza' },
+  { IdUsuario: 7, nombre: 'Sofía Castro' },
+  { IdUsuario: 8, nombre: 'Soporte Sucursal A' },
+  { IdUsuario: 9, nombre: 'Equipo DBA' },
+];
 
-    const filteredIncidents = computed(() => {
-      return incidents.value.filter(incident => {
-        const matchesSearch = incident.title.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-          incident.id.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-          incident.device.toLowerCase().includes(searchTerm.value.toLowerCase());
-        const matchesPriority = !priorityFilter.value || incident.priority === priorityFilter.value;
-        const matchesStatus = !statusFilter.value || incident.status === statusFilter.value;
-        return matchesSearch && matchesPriority && matchesStatus;
-      });
+// Mock de incidentes
+const incidentes = ref([
+  {
+    IdIncidente: 1,
+    Titulo: 'Caída del servidor principal',
+    DescripcionDetallada: 'El servidor principal ha dejado de responder, afectando todos los servicios críticos de la organización. Error 500 en todos los endpoints.',
+    FechaReporte: '2023-06-15T10:15:00',
+    IdUsuarioReporta: 1,
+    Prioridad: 'Crítico',
+    EstadoIncidente: 'En Progreso',
+    Categoria: 'Servidores',
+    Tags: ['servidor', 'urgente'],
+    DepartamentoAfectado: 'TI',
+    IdDispositivoAfectado: null,
+    IdTecnicoAsignado: 4,
+    FechaAsignacion: '2023-06-15T10:30:00',
+    FechaResolucionEstimada: null,
+    FechaResolucionReal: null,
+    AdjuntosURLs: [],
+    NotificarUsuarioReporta: true,
+    NotificarEquipoTecnico: true,
+    NotificarSupervisores: true,
+    MensajeNotificacionPersonalizado: '',
+    Activo: true,
+  },
+  {
+    IdIncidente: 2,
+    Titulo: 'Error en módulo de facturación',
+    DescripcionDetallada: 'Los clientes no pueden generar facturas desde el portal. Error "Referencia no válida" al intentar procesar el pago.',
+    FechaReporte: '2023-06-14T15:45:00',
+    IdUsuarioReporta: 2,
+    Prioridad: 'Alto',
+    EstadoIncidente: 'Asignado',
+    Categoria: 'Facturación',
+    Tags: ['facturación', 'frontend'],
+    DepartamentoAfectado: 'Finanzas',
+    IdDispositivoAfectado: null,
+    IdTecnicoAsignado: 5,
+    FechaAsignacion: '2023-06-14T16:00:00',
+    FechaResolucionEstimada: null,
+    FechaResolucionReal: null,
+    AdjuntosURLs: [],
+    NotificarUsuarioReporta: true,
+    NotificarEquipoTecnico: true,
+    NotificarSupervisores: false,
+    MensajeNotificacionPersonalizado: '',
+    Activo: true,
+  },
+  {
+    IdIncidente: 3,
+    Titulo: 'Problema con impresora central',
+    DescripcionDetallada: 'La impresora del área administrativa no responde y muestra error "Tóner bajo" aunque se reemplazó recientemente.',
+    FechaReporte: '2023-06-14T09:30:00',
+    IdUsuarioReporta: 3,
+    Prioridad: 'Medio',
+    EstadoIncidente: 'Nuevo',
+    Categoria: 'Hardware',
+    Tags: ['hardware', 'oficina'],
+    DepartamentoAfectado: 'Administración',
+    IdDispositivoAfectado: null,
+    IdTecnicoAsignado: null,
+    FechaAsignacion: null,
+    FechaResolucionEstimada: null,
+    FechaResolucionReal: null,
+    AdjuntosURLs: [],
+    NotificarUsuarioReporta: true,
+    NotificarEquipoTecnico: false,
+    NotificarSupervisores: false,
+    MensajeNotificacionPersonalizado: '',
+    Activo: true,
+  },
+]);
+
+// Mock equipo técnico
+const equipoTecnico = [
+  { IdUsuario: 4, nombre: 'Roberto Jiménez', Especialidad: 'Servidores', CalificacionPromedio: 4.8, AñosExperiencia: 8, EstadoDisponibilidad: 'Ocupado', PuedeSerAsignado: true, avatar: 'https://randomuser.me/api/portraits/men/44.jpg' },
+  { IdUsuario: 5, nombre: 'Daniela Ríos', Especialidad: 'Backend', CalificacionPromedio: 4.6, AñosExperiencia: 5, EstadoDisponibilidad: 'Disponible', PuedeSerAsignado: true, avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
+  { IdUsuario: 6, nombre: 'Luis Mendoza', Especialidad: 'Soporte Hardware', CalificacionPromedio: 4.4, AñosExperiencia: 4, EstadoDisponibilidad: 'Disponible', PuedeSerAsignado: true, avatar: 'https://randomuser.me/api/portraits/men/66.jpg' },
+  { IdUsuario: 7, nombre: 'Sofía Castro', Especialidad: 'DBA', CalificacionPromedio: 4.7, AñosExperiencia: 7, EstadoDisponibilidad: 'Disponible', PuedeSerAsignado: true, avatar: 'https://randomuser.me/api/portraits/women/67.jpg' },
+];
+
+// Mock bitácora
+const bitacora = ref([
+  { IdBitacora: 1, IdIncidente: 1, Timestamp: '2023-06-15T10:15:00', IdUsuarioAccion: 1, TipoAccion: 'Reporte', Descripcion: 'Incidente reportado por Carlos Méndez.', AdjuntosURLs: [] },
+  { IdBitacora: 2, IdIncidente: 1, Timestamp: '2023-06-15T10:30:00', IdUsuarioAccion: 9, TipoAccion: 'CambioPrioridad', Descripcion: 'El incidente fue marcado como CRÍTICO por el supervisor.', AdjuntosURLs: [] },
+  { IdBitacora: 3, IdIncidente: 1, Timestamp: '2023-06-15T10:45:00', IdUsuarioAccion: 4, TipoAccion: 'Asignacion', Descripcion: 'Roberto Jiménez fue asignado para resolver el incidente.', AdjuntosURLs: [] },
+]);
+
+// Tabs
+const incidentTabs = [
+  { value: 'all', label: 'Todos' },
+  { value: 'new', label: 'Nuevos' },
+  { value: 'assigned', label: 'Asignados' },
+  { value: 'in-progress', label: 'En Progreso' },
+  { value: 'resolved', label: 'Resueltos' },
+];
+
+const activeIncidentTab = ref('all');
+const searchQuery = ref('');
+const showNewReportModal = ref(false);
+const selectedIncident = ref(null);
+
+// Notificaciones
+const notificationSettings = ref({
+  notificarUsuarioReporta: true,
+  notificarEquipoTecnico: true,
+  notificarSupervisores: false,
+  mensajeNotificacion: ''
+});
+
+// Nueva bitácora
+const nuevaBitacora = ref('');
+
+// Computed: Stats data
+const statsData = computed(() => [
+  {
+    priority: 'Crítico',
+    count: countByPriority('Crítico'),
+    label: 'Críticos',
+    cardClass: 'critical',
+    iconBg: 'bg-red-100',
+    iconColor: 'text-red-600',
+    countColor: 'text-red-600'
+  },
+  {
+    priority: 'Alto',
+    count: countByPriority('Alto'),
+    label: 'Altos',
+    cardClass: 'high',
+    iconBg: 'bg-orange-100',
+    iconColor: 'text-orange-600',
+    countColor: 'text-orange-600'
+  },
+  {
+    priority: 'Medio',
+    count: countByPriority('Medio'),
+    label: 'Medios',
+    cardClass: 'medium',
+    iconBg: 'bg-yellow-100',
+    iconColor: 'text-yellow-600',
+    countColor: 'text-yellow-600'
+  },
+  {
+    priority: 'Bajo',
+    count: countByPriority('Bajo'),
+    label: 'Bajos',
+    cardClass: 'low',
+    iconBg: 'bg-green-100',
+    iconColor: 'text-green-600',
+    countColor: 'text-green-600'
+  }
+]);
+
+// Computed: Incidentes filtrados
+const filteredIncidents = computed(() => {
+  let filtered = incidentes.value;
+  
+  // Filtrar por tab
+  if (activeIncidentTab.value !== 'all') {
+    filtered = filtered.filter(i => {
+      if (activeIncidentTab.value === 'new') return i.EstadoIncidente === 'Nuevo';
+      if (activeIncidentTab.value === 'assigned') return i.EstadoIncidente === 'Asignado';
+      if (activeIncidentTab.value === 'in-progress') return i.EstadoIncidente === 'En Progreso';
+      if (activeIncidentTab.value === 'resolved') return i.EstadoIncidente === 'Resuelto';
+      return true;
     });
-
-    const getPriorityText = (priority) => {
-      const priorityMap = {
-        low: 'Baja',
-        medium: 'Media',
-        high: 'Alta',
-        critical: 'Crítica'
-      };
-      return priorityMap[priority] || priority;
-    };
-
-    const getStatusText = (status) => {
-      const statusMap = {
-        open: 'Abierto',
-        'in-progress': 'En proceso',
-        resolved: 'Resuelto',
-        closed: 'Cerrado'
-      };
-      return statusMap[status] || status;
-    };
-
-    const addIncident = () => {
-      console.log('Agregar problema');
-    };
-
-    const viewIncident = (id) => {
-      router.push(`/app/incidents/${id}`);
-    };
-
-    const editIncident = (id) => {
-      console.log('Editar problema:', id);
-    };
-
-    return {
-      searchTerm,
-      priorityFilter,
-      statusFilter,
-      incidents,
-      filteredIncidents,
-      getPriorityText,
-      getStatusText,
-      addIncident,
-      viewIncident,
-      editIncident
-    };
   }
-};
-</script>
-
-<style lang="scss" scoped>
-.incident-list-page {
-  .page-header {
-    margin-bottom: 2rem;
-
-    h1 {
-      font-size: 2rem;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 0.5rem;
-    }
-
-    p {
-      color: #666;
-      font-size: 1.1rem;
-    }
+  
+  // Filtrar por búsqueda
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(i =>
+      i.Titulo.toLowerCase().includes(q) ||
+      i.DescripcionDetallada.toLowerCase().includes(q) ||
+      i.Categoria.toLowerCase().includes(q) ||
+      i.DepartamentoAfectado.toLowerCase().includes(q) ||
+      (i.Tags && i.Tags.some(tag => tag.toLowerCase().includes(q)))
+    );
   }
+  
+  return filtered;
+});
 
-  .filters {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+// Bitácora filtrada por incidente seleccionado
+const bitacoraFiltrada = computed(() => {
+  if (!selectedIncident.value) return [];
+  return bitacora.value.filter(b => b.IdIncidente === selectedIncident.value.IdIncidente);
+});
 
-    .search-input {
-      flex: 1;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      min-width: 200px;
-    }
+// Métodos auxiliares
+function countByPriority(priority) {
+  return incidentes.value.filter(i => i.Prioridad === priority).length;
+}
 
-    .filter-select {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      min-width: 150px;
-    }
+function selectIncident(incident) {
+  selectedIncident.value = incident;
+}
 
-    .btn-primary {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background-color 0.3s ease;
+function abrirAsignacion() {
+  alert('Funcionalidad de asignación de personal (simulada)');
+}
 
-      &:hover {
-        background: #0056b3;
-      }
-    }
-  }
-
-  .incidents-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .incident-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #ddd;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &.open {
-      border-left-color: #ffc107;
-    }
-
-    &.in-progress {
-      border-left-color: #007bff;
-    }
-
-    &.resolved {
-      border-left-color: #28a745;
-    }
-
-    &.closed {
-      border-left-color: #6c757d;
-    }
-
-    .incident-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-      gap: 1rem;
-
-      h3 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-        margin: 0;
-        flex: 1;
-      }
-
-      .incident-badges {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-    }
-
-    .incident-info {
-      margin-bottom: 1rem;
-
-      p {
-        margin: 0.5rem 0;
-        color: #666;
-        font-size: 0.9rem;
-
-        &.incident-description {
-          margin-top: 1rem;
-          padding-top: 1rem;
-          border-top: 1px solid #f0f0f0;
-          font-style: italic;
-        }
-      }
-    }
-
-    .incident-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-  }
-
-  .priority-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-
-    &.low {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    &.medium {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    &.high {
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    &.critical {
-      background: #721c24;
-      color: white;
-    }
-  }
-
-  .status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-
-    &.open {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    &.in-progress {
-      background: #d1ecf1;
-      color: #0c5460;
-    }
-
-    &.resolved {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    &.closed {
-      background: #e2e3e5;
-      color: #383d41;
-    }
-  }
-
-  .btn-secondary {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background: #545b62;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .filters {
-      flex-direction: column;
-    }
-
-    .incidents-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .incident-header {
-      flex-direction: column;
-      align-items: flex-start;
-
-      .incident-badges {
-        flex-direction: row;
-      }
-    }
+function asignarTecnico(incident) {
+  // Simulación: asignar el primer técnico disponible
+  const tecnico = equipoTecnico.find(t => t.EstadoDisponibilidad === 'Disponible');
+  if (tecnico) {
+    incident.IdTecnicoAsignado = tecnico.IdUsuario;
+    incident.EstadoIncidente = 'Asignado';
+    incident.FechaAsignacion = new Date().toISOString();
+    
+    // Agregar entrada a la bitácora
+    bitacora.value.push({
+      IdBitacora: bitacora.value.length + 1,
+      IdIncidente: incident.IdIncidente,
+      Timestamp: new Date().toISOString(),
+      IdUsuarioAccion: tecnico.IdUsuario,
+      TipoAccion: 'Asignacion',
+      Descripcion: `${tecnico.nombre} fue asignado al incidente.`,
+      AdjuntosURLs: [],
+    });
+    
+    alert('Técnico asignado exitosamente.');
+  } else {
+    alert('No hay técnicos disponibles.');
   }
 }
-</style>
+
+function agregarBitacora() {
+  if (!selectedIncident.value || !nuevaBitacora.value.trim()) return;
+  
+  bitacora.value.push({
+    IdBitacora: bitacora.value.length + 1,
+    IdIncidente: selectedIncident.value.IdIncidente,
+    Timestamp: new Date().toISOString(),
+    IdUsuarioAccion: 1, // Simulación: usuario actual
+    TipoAccion: 'Comentario',
+    Descripcion: nuevaBitacora.value,
+    AdjuntosURLs: [],
+  });
+  
+  nuevaBitacora.value = '';
+}
+
+function enviarNotificaciones() {
+  alert('Notificaciones enviadas (simulado)');
+}
+
+function handleExportData() {
+  alert('Exportando datos de incidentes...');
+}
+
+function handleNewIncident(incidentData) {
+  const newIncident = {
+    IdIncidente: incidentes.value.length + 1,
+    Titulo: incidentData.Titulo,
+    DescripcionDetallada: incidentData.DescripcionDetallada,
+    FechaReporte: new Date().toISOString(),
+    IdUsuarioReporta: 1, // Simulación: usuario actual
+    Prioridad: incidentData.Prioridad,
+    EstadoIncidente: 'Nuevo',
+    Categoria: incidentData.Categoria,
+    Tags: incidentData.Tags,
+    DepartamentoAfectado: incidentData.DepartamentoAfectado,
+    IdDispositivoAfectado: null,
+    IdTecnicoAsignado: null,
+    FechaAsignacion: null,
+    FechaResolucionEstimada: null,
+    FechaResolucionReal: null,
+    AdjuntosURLs: [],
+    NotificarUsuarioReporta: incidentData.notificationSettings.notificarUsuarioReporta,
+    NotificarEquipoTecnico: incidentData.notificationSettings.notificarEquipoTecnico,
+    NotificarSupervisores: incidentData.notificationSettings.notificarSupervisores,
+    MensajeNotificacionPersonalizado: incidentData.notificationSettings.mensajeNotificacion,
+    Activo: true,
+  };
+  
+  incidentes.value.push(newIncident);
+  
+  // Agregar entrada a la bitácora
+  bitacora.value.push({
+    IdBitacora: bitacora.value.length + 1,
+    IdIncidente: newIncident.IdIncidente,
+    Timestamp: new Date().toISOString(),
+    IdUsuarioAccion: 1,
+    TipoAccion: 'Reporte',
+    Descripcion: `Nuevo incidente reportado: ${newIncident.Titulo}`,
+    AdjuntosURLs: [],
+  });
+}
+</script>
+
+<style scoped>
+.problem-management-container {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+</style> 
