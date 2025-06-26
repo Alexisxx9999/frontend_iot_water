@@ -1,27 +1,31 @@
 <template>
-  <div class="min-h-screen w-full bg-white flex flex-col gap-4 py-4 px-2">
+  <div class="devices-page space-y-8">
     <!-- Header -->
-    <div class="flex items-center justify-between bg-gradient-to-r from-blue-800 to-cyan-600 rounded-xl shadow p-6 mb-4">
-      <div>
-        <h1 class="text-3xl font-bold text-white flex items-center gap-2">
-          Gestión de Dispositivos
-          <span class="bg-cyan-700 text-white px-3 py-1 rounded-lg text-lg font-semibold ml-2">LoRaWAN</span>
-        </h1>
-        <p class="text-blue-100 mt-1">Administre todos los elementos de su red IoT</p>
-      </div>
-      <div class="flex gap-2">
-        <button @click="actualizarLista" class="px-4 py-2 bg-white text-blue-800 font-semibold rounded border border-blue-200 shadow hover:bg-blue-50 flex items-center gap-2 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582a1.5 1.5 0 001.415-1.415V4h5V2H4a2 2 0 00-2 2v7h2V4z" /></svg>
-          Actualizar
-        </button>
-        <button @click="abrirModalAgregar" class="px-4 py-2 bg-cyan-700 text-white font-semibold rounded shadow hover:bg-cyan-800 flex items-center gap-2 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-          Agregar Dispositivo
-        </button>
+    <div class="header-section">
+      <div class="flex items-center justify-between bg-gradient-to-r from-blue-800 to-cyan-600 rounded-xl shadow p-6 mb-4">
+        <div>
+          <h1 class="text-3xl font-bold text-white flex items-center gap-2">
+            Gestión de Dispositivos
+            <span class="bg-cyan-700 text-white px-3 py-1 rounded-lg text-lg font-semibold ml-2">LoRaWAN</span>
+          </h1>
+          <p class="text-blue-100 mt-1">Administre todos los elementos de su red IoT</p>
+        </div>
+        <div class="flex gap-2">
+          <button @click="actualizarLista" class="px-4 py-2 bg-white text-blue-800 font-semibold rounded border border-blue-200 shadow hover:bg-blue-50 flex items-center gap-2 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582a1.5 1.5 0 001.415-1.415V4h5V2H4a2 2 0 00-2 2v7h2V4z" /></svg>
+            Actualizar
+          </button>
+          <button @click="abrirModalAgregar" class="px-4 py-2 bg-cyan-700 text-white font-semibold rounded shadow hover:bg-cyan-800 flex items-center gap-2 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            Agregar Dispositivo
+          </button>
+        </div>
       </div>
     </div>
+    
     <!-- Feedback visual -->
     <div v-if="mensaje" class="fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-pop">{{ mensaje }}</div>
+    
     <!-- Modal Agregar -->
     <div v-if="modalAgregar" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-40">
       <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
@@ -66,6 +70,7 @@
         </form>
       </div>
     </div>
+    
     <!-- Modal Editar -->
     <div v-if="modalEditar" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-40">
       <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
@@ -110,9 +115,11 @@
         </form>
       </div>
     </div>
-    <div class="flex flex-1 gap-6">
+    
+    <!-- Main Content Grid -->
+    <div class="main-content-grid">
       <!-- Sidebar: Lista de dispositivos -->
-      <div class="w-full md:w-1/3 lg:w-1/4 flex flex-col gap-2">
+      <div class="device-list-section">
         <div class="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-2 border border-blue-100">
           <div class="flex items-center justify-between mb-2">
             <span class="font-semibold text-blue-900">Dispositivos Conectados</span>
@@ -154,8 +161,9 @@
           </div>
         </div>
       </div>
+      
       <!-- Panel de detalle -->
-      <div class="w-full md:w-2/3 lg:w-3/4 flex flex-col gap-2">
+      <div class="device-details-section">
         <div class="bg-white rounded-2xl shadow-md p-8 flex flex-col gap-4 border border-blue-100">
           <div class="flex items-center gap-2 mb-2">
             <span class="font-bold text-xl text-blue-900">{{ seleccionado.nombre }}</span>
@@ -429,6 +437,38 @@ function actualizarLista() {
 </script>
 
 <style scoped>
+.devices-page {
+  position: relative;
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 1rem;
+  color: #232b3b;
+}
+
+.header-section {
+  margin-bottom: 1.5rem;
+}
+
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .main-content-grid {
+    grid-template-columns: 1fr 3fr;
+    gap: 2rem;
+  }
+}
+
+.device-list-section, .device-details-section {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1.2rem 1rem;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
   background: transparent;
@@ -436,5 +476,139 @@ function actualizarLista() {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #b2ebf2;
   border-radius: 4px;
+}
+
+:deep(.bg-white) {
+  background: #fff !important;
+  color: #232b3b !important;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+:deep(.shadow-lg) {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+:deep(.rounded-2xl) {
+  border-radius: 1rem;
+}
+
+:deep(.text-gray-900) {
+  color: #232b3b !important;
+}
+
+:deep(.text-gray-600) {
+  color: #64748b !important;
+}
+
+:deep(.text-gray-400) {
+  color: #94a3b8 !important;
+}
+
+:deep(.text-success-500) {
+  color: #22c55e !important;
+}
+
+:deep(.text-danger-500) {
+  color: #ef4444 !important;
+}
+
+:deep(.text-success-600) {
+  color: #16a34a !important;
+}
+
+:deep(.text-danger-600) {
+  color: #b91c1c !important;
+}
+
+:deep(.bg-success-500) {
+  background: #22c55e !important;
+}
+
+:deep(.bg-danger-500) {
+  background: #ef4444 !important;
+}
+
+:deep(.bg-primary-600) {
+  background: #6366f1 !important;
+}
+
+:deep(.bg-primary-700) {
+  background: #4f46e5 !important;
+}
+
+:deep(.bg-blue-100) {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+
+:deep(.bg-red-100) {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+:deep(.bg-green-100) {
+  background: #d1fae5 !important;
+  color: #059669 !important;
+}
+
+:deep(.bg-yellow-100) {
+  background: #fef9c3 !important;
+  color: #ca8a04 !important;
+}
+
+:deep(.bg-purple-100) {
+  background: #ede9fe !important;
+  color: #7c3aed !important;
+}
+
+:deep(.bg-gray-100) {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+:deep(.text-yellow-400) {
+  color: #facc15 !important;
+}
+
+:deep(.text-blue-800) {
+  color: #1e40af !important;
+}
+
+:deep(.text-red-800) {
+  color: #b91c1c !important;
+}
+
+:deep(.text-green-800) {
+  color: #166534 !important;
+}
+
+:deep(.text-purple-800) {
+  color: #6d28d9 !important;
+}
+
+:deep(.text-gray-800) {
+  color: #334155 !important;
+}
+
+@media (max-width: 768px) {
+  .devices-page {
+    padding: 0.75rem;
+  }
+  .main-content-grid {
+    gap: 1rem;
+  }
+  .device-list-section, .device-details-section {
+    padding: 0.7rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .devices-page {
+    padding: 0.5rem;
+  }
+  .main-content-grid {
+    gap: 0.75rem;
+  }
 }
 </style>
