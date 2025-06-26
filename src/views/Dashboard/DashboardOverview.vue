@@ -1,396 +1,358 @@
 <template>
-  <div class="space-y-8">
-    <!-- Welcome Section -->
-    <div class="bg-gradient-to-r from-primary-600 to-water-600 rounded-2xl p-8 text-white">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-bold mb-2">¡Bienvenido de vuelta, {{ userName }}!</h1>
-          <p class="text-primary-100 text-lg">Aquí tienes un resumen del estado de tu sistema IoT Water</p>
+  <div class="dashboard-container">
+    <h1 class="dashboard-title">Dashboard de Monitoreo Hídrico</h1>
+    <p class="dashboard-subtitle">Métricas en tiempo real del sistema</p>
+
+    <!-- Tarjetas de resumen -->
+    <div class="dashboard-grid">
+      <div class="dashboard-card">
+        <div class="card-label">Gateways Activos</div>
+        <div class="card-value">12 <span class="card-total">/15</span></div>
+        <div class="card-status card-status-green">+3 nuevas</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="card-label">Nodos (Medidores)</div>
+        <div class="card-value">1,248</div>
+        <div class="card-status card-status-yellow">+12 nuevos hoy</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="card-label">Medidores con Fallas</div>
+        <div class="card-value">28</div>
+        <div class="card-status card-status-red">-5 desde ayer</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="card-label">Usuarios Registrados</div>
+        <div class="card-value">4,372</div>
+        <div class="card-status card-status-green">+24 este mes</div>
+      </div>
+    </div>
+
+    <!-- Gráficas principales -->
+    <div class="dashboard-main-graphs">
+      <div class="dashboard-graph dashboard-graph-lg">
+        <div class="graph-header">
+          <span>Consumo de Agua (m³)</span>
+          
         </div>
-        <div class="hidden lg:block">
-          <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
-            <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z"/>
-            </svg>
-          </div>
+        <WaterConsumptionLineChart />
+      </div>
+      <div class="dashboard-graph dashboard-graph-sm">
+        <div class="graph-header">
+          <span>Sectores de Alto Consumo</span>
+        </div>
+        <HighConsumptionBarChart />
+      </div>
+    </div>
+
+    <!-- Válvulas y Recaudación -->
+    <div class="dashboard-row">
+      <div class="dashboard-card dashboard-card-row">
+        <div class="row-label">Válvulas</div>
+        <div class="row-values">
+          <span class="row-active">156 Activas</span>
+          <span class="row-fail">9 Con Fallas</span>
+        </div>
+        <div class="row-bar">
+          <div class="bar-green" :style="{ width: '94%' }"></div>
+          <div class="bar-red" :style="{ width: '6%' }"></div>
+        </div>
+      </div>
+      <div class="dashboard-card dashboard-card-row">
+        <div class="row-label">Recaudación</div>
+        <div class="row-values">
+          <span class="row-collected">$128,450 Recaudado</span>
+          <span class="row-pending">$42,780 Pendiente</span>
+        </div>
+        <div class="row-bar">
+          <div class="bar-green" :style="{ width: '75%' }"></div>
+          <div class="bar-yellow" :style="{ width: '25%' }"></div>
         </div>
       </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div 
-        v-for="stat in stats" 
-        :key="stat.id"
-        class="bg-white rounded-xl shadow-soft border border-gray-100 p-6 hover:shadow-medium transition-all duration-200"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600">{{ stat.label }}</p>
-            <p class="text-3xl font-bold text-gray-900 mt-2">{{ stat.value }}</p>
-            <div class="flex items-center mt-2">
-              <component 
-                :is="stat.trend === 'up' ? ArrowUpIcon : ArrowDownIcon"
-                class="w-4 h-4 mr-1"
-                :class="stat.trend === 'up' ? 'text-success-500' : 'text-danger-500'"
-              />
-              <span 
-                class="text-sm font-medium"
-                :class="stat.trend === 'up' ? 'text-success-600' : 'text-danger-600'"
-              >
-                {{ stat.change }}
-              </span>
-              <span class="text-sm text-gray-500 ml-1">vs mes anterior</span>
-            </div>
-          </div>
-          <div 
-            class="w-12 h-12 rounded-lg flex items-center justify-center"
-            :class="stat.bgColor"
-          >
-            <component :is="stat.icon" class="w-6 h-6 text-white" />
-          </div>
-        </div>
+    <!-- Eficiencia Hídrica -->
+    <div class="dashboard-card dashboard-card-full">
+      <div class="efficiency-title">Eficiencia Hídrica</div>
+      <div class="efficiency-value">87%</div>
+      <div class="efficiency-desc">Porcentaje de pérdidas por fugas: 13%</div>
+      <div class="efficiency-graph">
+        <WaterEfficiencyDoughnut />
       </div>
-    </div>
-
-    <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Water Consumption Chart -->
-      <div class="bg-white rounded-xl shadow-soft border border-gray-100 p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-lg font-semibold text-gray-900">Consumo de Agua</h3>
-          <select class="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500">
-            <option>Últimos 7 días</option>
-            <option>Últimos 30 días</option>
-            <option>Últimos 3 meses</option>
-          </select>
-        </div>
-        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-          <div class="text-center">
-            <ChartBarIcon class="w-12 h-12 text-gray-400 mx-auto mb-2" />
-            <p class="text-gray-500">Gráfico de consumo</p>
-            <p class="text-sm text-gray-400">Integración con Chart.js</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- System Status -->
-      <div class="bg-white rounded-xl shadow-soft border border-gray-100 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-6">Estado del Sistema</h3>
-        <div class="space-y-4">
-          <div 
-            v-for="status in systemStatus" 
-            :key="status.id"
-            class="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-          >
-            <div class="flex items-center space-x-3">
-              <div 
-                class="w-3 h-3 rounded-full"
-                :class="status.status === 'online' ? 'bg-success-500' : 'bg-danger-500'"
-              ></div>
-              <div>
-                <p class="font-medium text-gray-900">{{ status.name }}</p>
-                <p class="text-sm text-gray-500">{{ status.description }}</p>
-              </div>
-            </div>
-            <span 
-              class="text-sm font-medium px-2 py-1 rounded-full"
-              :class="status.status === 'online' ? 'bg-success-100 text-success-800' : 'bg-danger-100 text-danger-800'"
-            >
-              {{ status.status === 'online' ? 'En línea' : 'Offline' }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="bg-white rounded-xl shadow-soft border border-gray-100 p-6">
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-gray-900">Actividad Reciente</h3>
-        <button class="text-sm text-primary-600 hover:text-primary-700 font-medium">
-          Ver todas
-        </button>
-      </div>
-      <div class="space-y-4">
-        <div 
-          v-for="activity in recentActivity" 
-          :key="activity.id"
-          class="flex items-start space-x-4 p-4 hover:bg-gray-50 rounded-lg transition-colors"
-        >
-          <div 
-            class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-            :class="activity.bgColor"
-          >
-            <component :is="activity.icon" class="w-5 h-5 text-white" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900">{{ activity.title }}</p>
-            <p class="text-sm text-gray-500 mt-1">{{ activity.description }}</p>
-            <p class="text-xs text-gray-400 mt-1">{{ activity.time }}</p>
-          </div>
-          <div class="flex-shrink-0">
-            <span 
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-              :class="activity.badgeClass"
-            >
-              {{ activity.badge }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="bg-white rounded-xl shadow-soft border border-gray-100 p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-6">Acciones Rápidas</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <button 
-          v-for="action in quickActions" 
-          :key="action.id"
-          @click="action.handler"
-          class="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all duration-200 group"
-        >
-          <div 
-            class="w-12 h-12 rounded-lg flex items-center justify-center mb-3"
-            :class="action.bgColor"
-          >
-            <component :is="action.icon" class="w-6 h-6 text-white" />
-          </div>
-          <span class="text-sm font-medium text-gray-900 group-hover:text-primary-700">
-            {{ action.label }}
-          </span>
-        </button>
+      <div class="efficiency-legend">
+        <span class="legend-green">Eficiente</span>
+        <span class="legend-red">Pérdidas</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import {
-  DevicePhoneMobileIcon,
-  ExclamationTriangleIcon,
-  UsersIcon,
-  DocumentTextIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-  ChartBarIcon,
-  PlusIcon,
-  MapIcon,
-  BellIcon
-} from '@heroicons/vue/24/outline'
-import { useLogout } from '@/utils/navigation.js'
+import WaterConsumptionLineChart from '@/components/charts/WaterConsumptionLineChart.vue'
+import HighConsumptionBarChart from '@/components/charts/HighConsumptionBarChart.vue'
+import WaterEfficiencyDoughnut from '@/components/charts/WaterEfficiencyDoughnut.vue'
 
 export default {
   name: 'DashboardOverview',
   components: {
-    DevicePhoneMobileIcon,
-    ExclamationTriangleIcon,
-    UsersIcon,
-    DocumentTextIcon,
-    ArrowUpIcon,
-    ArrowDownIcon,
-    ChartBarIcon,
-    PlusIcon,
-    MapIcon,
-    BellIcon
-  },
-  setup() {
-    const router = useRouter()
-    const { logout } = useLogout()
-
-    // User data
-    const userData = ref({
-      name: 'Juan Pérez'
-    })
-
-    const userName = computed(() => userData.value.name)
-
-    // Stats data
-    const stats = ref([
-      {
-        id: 1,
-        label: 'Dispositivos Activos',
-        value: '24',
-        change: '+12%',
-        trend: 'up',
-        icon: DevicePhoneMobileIcon,
-        bgColor: 'bg-primary-500'
-      },
-      {
-        id: 2,
-        label: 'Incidentes Activos',
-        value: '3',
-        change: '-25%',
-        trend: 'down',
-        icon: ExclamationTriangleIcon,
-        bgColor: 'bg-warning-500'
-      },
-      {
-        id: 3,
-        label: 'Clientes Registrados',
-        value: '156',
-        change: '+8%',
-        trend: 'up',
-        icon: UsersIcon,
-        bgColor: 'bg-success-500'
-      },
-      {
-        id: 4,
-        label: 'Denuncias Pendientes',
-        value: '8',
-        change: '+15%',
-        trend: 'up',
-        icon: DocumentTextIcon,
-        bgColor: 'bg-danger-500'
-      }
-    ])
-
-    // System status
-    const systemStatus = ref([
-      {
-        id: 1,
-        name: 'Servidor Principal',
-        description: 'Sistema de monitoreo central',
-        status: 'online'
-      },
-      {
-        id: 2,
-        name: 'Base de Datos',
-        description: 'Almacenamiento de datos',
-        status: 'online'
-      },
-      {
-        id: 3,
-        name: 'API Gateway',
-        description: 'Comunicación con dispositivos',
-        status: 'online'
-      },
-      {
-        id: 4,
-        name: 'Sistema de Alertas',
-        description: 'Notificaciones automáticas',
-        status: 'offline'
-      }
-    ])
-
-    // Recent activity
-    const recentActivity = ref([
-      {
-        id: 1,
-        title: 'Nuevo dispositivo conectado',
-        description: 'Sensor de presión en la zona norte',
-        time: 'Hace 5 minutos',
-        icon: DevicePhoneMobileIcon,
-        bgColor: 'bg-success-500',
-        badge: 'Nuevo',
-        badgeClass: 'bg-success-100 text-success-800'
-      },
-      {
-        id: 2,
-        title: 'Incidente reportado',
-        description: 'Fuga detectada en línea principal',
-        time: 'Hace 15 minutos',
-        icon: ExclamationTriangleIcon,
-        bgColor: 'bg-warning-500',
-        badge: 'Urgente',
-        badgeClass: 'bg-warning-100 text-warning-800'
-      },
-      {
-        id: 3,
-        title: 'Nuevo cliente registrado',
-        description: 'María González - Sector Este',
-        time: 'Hace 1 hora',
-        icon: UsersIcon,
-        bgColor: 'bg-primary-500',
-        badge: 'Nuevo',
-        badgeClass: 'bg-primary-100 text-primary-800'
-      },
-      {
-        id: 4,
-        title: 'Denuncia procesada',
-        description: 'Problema de presión resuelto',
-        time: 'Hace 2 horas',
-        icon: DocumentTextIcon,
-        bgColor: 'bg-success-500',
-        badge: 'Resuelto',
-        badgeClass: 'bg-success-100 text-success-800'
-      }
-    ])
-
-    // Quick actions
-    const quickActions = ref([
-      {
-        id: 1,
-        label: 'Agregar Dispositivo',
-        icon: PlusIcon,
-        bgColor: 'bg-primary-500',
-        handler: () => router.push('/app/devices')
-      },
-      {
-        id: 2,
-        label: 'Ver Mapa',
-        icon: MapIcon,
-        bgColor: 'bg-success-500',
-        handler: () => router.push('/app/map')
-      },
-      {
-        id: 3,
-        label: 'Nuevo Incidente',
-        icon: ExclamationTriangleIcon,
-        bgColor: 'bg-warning-500',
-        handler: () => router.push('/app/incidents')
-      },
-      {
-        id: 4,
-        label: 'Configurar Alertas',
-        icon: BellIcon,
-        bgColor: 'bg-danger-500',
-        handler: () => console.log('Configurar alertas')
-      }
-    ])
-
-    return {
-      userName,
-      stats,
-      systemStatus,
-      recentActivity,
-      quickActions
-    }
+    WaterConsumptionLineChart,
+    HighConsumptionBarChart,
+    WaterEfficiencyDoughnut
   }
 }
 </script>
 
-<style lang="scss" scoped>
-// Animaciones personalizadas
-.hover\:shadow-medium:hover {
-  transform: translateY(-2px);
+<style scoped>
+.dashboard-container {
+  padding: 2.5rem 1.5rem 2rem 1.5rem;
+  background: #f7fafd;
+  min-height: 100vh;
 }
-
-// Transiciones suaves
-.transition-all {
-  transition: all 0.2s ease-in-out;
+.dashboard-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #288aef;
+  margin-bottom: 0.2rem;
 }
-
-// Efectos de hover para las tarjetas
-.bg-white:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.dashboard-subtitle {
+  color: #7a8ca3;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
 }
-
-// Animación para los badges
-.badge {
-  animation: pulse 2s infinite;
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
+.dashboard-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(40, 138, 239, 0.06);
+  padding: 1.5rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.card-label {
+  color: #7a8ca3;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+.card-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #288aef;
+}
+.card-total {
+  font-size: 1.1rem;
+  color: #b0b8c1;
+  font-weight: 400;
+}
+.card-status {
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+.card-status-green {
+  color: #1bc98e;
+}
+.card-status-yellow {
+  color: #f6c343;
+}
+.card-status-red {
+  color: #e64759;
+}
+.dashboard-main-graphs {
+  display: grid;
+  grid-template-columns: 2.5fr 1.2fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.dashboard-graph {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(40, 138, 239, 0.06);
+  padding: 1.5rem 1.2rem;
+  min-width: 0;
+}
+.dashboard-graph-lg {
+  min-height: 320px;
+}
+.dashboard-graph-sm {
+  min-height: 320px;
+}
+.graph-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #288aef;
+  margin-bottom: 1.2rem;
+}
+.graph-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+.graph-tabs button {
+  background: none;
+  border: none;
+  color: #7a8ca3;
+  font-weight: 500;
+  font-size: 0.98rem;
+  padding: 0.2rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.graph-tabs button.active, .graph-tabs button:hover {
+  background: #eaf6ff;
+  color: #288aef;
+}
+.graph-placeholder {
+  background: #f4f8fb;
+  border-radius: 12px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0b8c1;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.dashboard-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.dashboard-card-row {
+  padding: 1.2rem 1.2rem 1.5rem 1.2rem;
+}
+.row-label {
+  color: #7a8ca3;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.row-values {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+.row-active {
+  color: #1bc98e;
+}
+.row-fail {
+  color: #e64759;
+}
+.row-collected {
+  color: #1bc98e;
+}
+.row-pending {
+  color: #f6c343;
+}
+.row-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #eaf6ff;
+}
+.bar-green {
+  background: #1bc98e;
+  height: 100%;
+}
+.bar-red {
+  background: #e64759;
+  height: 100%;
+}
+.bar-yellow {
+  background: #f6c343;
+  height: 100%;
+}
+.dashboard-card-full {
+  margin-bottom: 2rem;
+  padding: 2rem 1.2rem 2.5rem 1.2rem;
+  text-align: center;
+}
+.efficiency-title {
+  color: #7a8ca3;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.efficiency-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #288aef;
+  margin-bottom: 0.2rem;
+}
+.efficiency-desc {
+  color: #7a8ca3;
+  font-size: 1.05rem;
+  margin-bottom: 1.2rem;
+}
+.efficiency-graph {
+  background: #f4f8fb;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.2rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0b8c1;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.efficiency-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+.legend-green {
+  color: #1bc98e;
+  font-weight: 600;
+}
+.legend-red {
+  color: #e64759;
+  font-weight: 600;
+}
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
   }
-  50% {
-    opacity: 0.8;
+  .dashboard-main-graphs {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-row {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-card {
+    padding: 1.1rem 0.7rem;
+  }
+  .dashboard-main-graphs {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-row {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-card-row {
+    padding: 1.1rem 0.7rem 1.2rem 0.7rem;
+  }
+  .dashboard-card-full {
+    padding: 1.2rem 0.7rem 1.5rem 0.7rem;
   }
 }
 </style>

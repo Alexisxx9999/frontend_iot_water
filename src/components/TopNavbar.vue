@@ -1,12 +1,12 @@
 <template>
-  <header class="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+  <header class="sticky top-0 z-40 bg-white border-b border-blue-100 shadow-sm">
     <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
       <!-- Left side -->
       <div class="flex items-center space-x-4">
         <!-- Mobile menu button -->
         <button
           @click="$emit('toggle-sidebar')"
-          class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors"
+          class="lg:hidden p-2 rounded-md text-[#23272f] hover:text-[#23272f] hover:bg-gray-100 transition-colors"
         >
           <Bars3Icon class="w-6 h-6" />
         </button>
@@ -14,12 +14,12 @@
         <!-- Search -->
         <div class="hidden sm:block relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon class="h-5 w-5 text-[#23272f]" />
           </div>
           <input
             type="text"
-            placeholder="Buscar..."
-            class="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+            placeholder="Search..."
+            class="block w-64 pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-[#f6f7fb] placeholder-[#8b95a5] text-[#23272f] focus:outline-none focus:placeholder-[#64748b] focus:ring-2 focus:ring-gray-200 focus:border-gray-300 transition-colors shadow-sm"
           />
         </div>
       </div>
@@ -27,10 +27,10 @@
       <!-- Right side -->
       <div class="flex items-center space-x-4">
         <!-- Date and Time -->
-        <div class="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+        <div class="hidden md:flex items-center space-x-2 text-sm text-[#23272f]">
           <CalendarIcon class="w-4 h-4" />
           <span>{{ currentDate }}</span>
-          <span class="text-gray-300">|</span>
+          <span class="text-gray-200">|</span>
           <ClockIcon class="w-4 h-4" />
           <span>{{ currentTime }}</span>
         </div>
@@ -39,12 +39,12 @@
         <div class="relative">
           <button
             @click="toggleNotifications"
-            class="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-lg transition-colors relative"
+            class="p-2 text-[#23272f] hover:text-[#23272f] hover:bg-gray-100 rounded-lg transition-colors relative"
           >
             <BellIcon class="w-6 h-6" />
             <span
               v-if="notificationCount > 0"
-              class="absolute -top-1 -right-1 h-5 w-5 bg-danger-500 text-white text-xs rounded-full flex items-center justify-center font-medium"
+              class="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium shadow"
             >
               {{ notificationCount > 99 ? '99+' : notificationCount }}
             </span>
@@ -56,7 +56,7 @@
             class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
           >
             <div class="px-4 py-2 border-b border-gray-100">
-              <h3 class="text-sm font-medium text-gray-900">Notificaciones</h3>
+              <h3 class="text-sm font-medium text-[#23272f]">Notificaciones</h3>
             </div>
             <div class="max-h-64 overflow-y-auto">
               <div
@@ -68,22 +68,22 @@
                   <div
                     class="flex-shrink-0 w-2 h-2 rounded-full mt-2"
                     :class="{
-                      'bg-success-500': notification.type === 'success',
-                      'bg-warning-500': notification.type === 'warning',
-                      'bg-danger-500': notification.type === 'error',
-                      'bg-primary-500': notification.type === 'info'
+                      'bg-green-400': notification.type === 'success',
+                      'bg-yellow-400': notification.type === 'warning',
+                      'bg-red-500': notification.type === 'error',
+                      'bg-cyan-400': notification.type === 'info'
                     }"
                   ></div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900">{{ notification.title }}</p>
-                    <p class="text-sm text-gray-500 mt-1">{{ notification.message }}</p>
-                    <p class="text-xs text-gray-400 mt-1">{{ notification.time }}</p>
+                    <p class="text-sm font-medium text-[#23272f]">{{ notification.title }}</p>
+                    <p class="text-sm text-[#23272f] mt-1">{{ notification.message }}</p>
+                    <p class="text-xs text-[#23272f] mt-1">{{ notification.time }}</p>
                   </div>
                 </div>
               </div>
             </div>
             <div class="px-4 py-2 border-t border-gray-100">
-              <button class="text-sm text-primary-600 hover:text-primary-700 font-medium">
+              <button class="text-sm text-[#23272f] hover:text-[#23272f] font-medium">
                 Ver todas las notificaciones
               </button>
             </div>
@@ -96,14 +96,14 @@
             @click="toggleUserMenu"
             class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-water-600 rounded-full flex items-center justify-center">
-              <span class="text-sm font-medium text-white">{{ userInitials }}</span>
+            <div class="w-8 h-8 bg-[#f6f7fb] border border-gray-200 rounded-full flex items-center justify-center">
+              <span class="text-sm font-medium text-[#23272f]">{{ userInitials }}</span>
             </div>
             <div class="hidden sm:block text-left">
-              <p class="text-sm font-medium text-gray-900">{{ userName }}</p>
-              <p class="text-xs text-gray-500">{{ userRole }}</p>
+              <p class="text-sm font-medium text-[#23272f]">{{ userName }}</p>
+              <p class="text-xs text-[#23272f]">{{ userRole }}</p>
             </div>
-            <ChevronDownIcon class="hidden sm:block w-4 h-4 text-gray-400" />
+            <ChevronDownIcon class="hidden sm:block w-4 h-4 text-[#23272f]" />
           </button>
 
           <!-- User dropdown -->
@@ -112,20 +112,20 @@
             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
           >
             <div class="px-4 py-2 border-b border-gray-100">
-              <p class="text-sm font-medium text-gray-900">{{ userName }}</p>
-              <p class="text-xs text-gray-500">{{ userEmail }}</p>
+              <p class="text-sm font-medium text-[#23272f]">{{ userName }}</p>
+              <p class="text-xs text-[#23272f]">{{ userEmail }}</p>
             </div>
             <div class="py-1">
               <router-link
                 to="/app/profile"
-                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                class="flex items-center px-4 py-2 text-sm text-[#23272f] hover:bg-gray-50 transition-colors"
               >
                 <UserIcon class="w-4 h-4 mr-3" />
                 Mi Perfil
               </router-link>
               <router-link
                 to="/app/settings"
-                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                class="flex items-center px-4 py-2 text-sm text-[#23272f] hover:bg-gray-50 transition-colors"
               >
                 <Cog6ToothIcon class="w-4 h-4 mr-3" />
                 Configuración
@@ -134,7 +134,7 @@
             <div class="border-t border-gray-100 py-1">
               <button
                 @click="handleLogout"
-                class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                class="flex items-center w-full px-4 py-2 text-sm text-[#23272f] hover:bg-gray-50 transition-colors"
               >
                 <ArrowRightOnRectangleIcon class="w-4 h-4 mr-3" />
                 Cerrar Sesión
@@ -334,7 +334,7 @@ export default {
 // Scrollbar para notificaciones
 .overflow-y-auto {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
+  scrollbar-color: #ebeef1 #f1f5f9;
 }
 
 .overflow-y-auto::-webkit-scrollbar {

@@ -1,37 +1,28 @@
 <template>
   <aside 
-    class="fixed inset-y-0 left-0 z-50 bg-white shadow-xl border-r border-gray-200 transform transition-all duration-300 ease-in-out flex flex-col"
+    class="fixed inset-y-0 left-0 z-50 shadow-xl border-r border-gray-200 transform transition-all duration-300 ease-in-out flex flex-col bg-white"
     :class="[
       isCollapsed ? 'w-20' : 'w-64',
       isMobileOpen ? 'translate-x-0' : '-translate-x-full',
       'lg:translate-x-0'
     ]"
   >
-    <!-- Sidebar Header -->
-    <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 bg-gradient-to-r from-primary-600 to-water-600">
-      <router-link to="/app/dashboard" class="flex items-center space-x-3">
-        <div class="flex items-center justify-center w-8 h-8 bg-white/20 rounded-lg">
-          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z"/>
-          </svg>
-        </div>
-        <span v-if="!isCollapsed" class="text-lg font-bold text-white">IoT Water</span>
-      </router-link>
-      <!-- Botón para colapsar/expandir -->
-      <button 
+    <!-- Sidebar Header (Logo + Nombre + Botón colapsar) -->
+    <div class="sidebar-logo flex items-center justify-between h-24 px-4 border-b border-gray-100" style="background:#0ea5e9;">
+      <div class="flex items-center justify-center flex-1">
+        <img src="@/assets/images/logo.png" alt="IoT Water Logo" class="h-12 w-auto object-contain drop-shadow" />
+        <transition name="fade">
+          <span v-if="!isCollapsed" class="ml-3 text-2xl font-bold text-white select-none">IoT Water</span>
+        </transition>
+      </div>
+      <!-- Único botón de colapsar/expandir -->
+      <button
+        v-if="!isMobile"
         @click="toggleCollapse"
-        class="hidden lg:flex p-1 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors ml-2"
+        class="ml-2 p-2 rounded-md text-white hover:bg-white/10 transition-colors"
         :title="isCollapsed ? 'Expandir menú' : 'Colapsar menú'"
       >
-        <svg v-if="!isCollapsed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5" /></svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14" /></svg>
-      </button>
-      <!-- Close button for mobile -->
-      <button 
-        @click="$emit('toggle-sidebar')"
-        class="lg:hidden p-1 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-      >
-        <XMarkIcon class="w-5 h-5" />
+        <font-awesome-icon :icon="['fas', 'bars']" class="w-6 h-6" style="color: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));" />
       </button>
     </div>
 
@@ -42,24 +33,24 @@
         <router-link 
           v-if="!item.children || item.children.length === 0" 
           :to="item.route" 
-          class="group flex items-center px-2 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
+          class="group flex items-center px-3 py-2.5 text-[15px] font-medium rounded-lg transition-all duration-200"
           :class="isActiveItem(item) 
-            ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-600' 
-            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'"
+            ? 'bg-gray-100 text-[#23272f] border-r-4 border-gray-300' 
+            : 'text-[#23272f] hover:bg-gray-50 hover:text-[#23272f]'"
           @click="handleMenuClick(item)"
         >
           <component 
             :is="getMenuIcon(item.icon)" 
             class="w-5 h-5 flex-shrink-0 icon-center"
-            :class="[isActiveItem(item) ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500', isCollapsed ? 'mx-auto' : 'mr-3']"
+            :class="[isActiveItem(item) ? 'text-[#23272f]' : 'text-[#8b95a5] group-hover:text-[#23272f]', isCollapsed ? 'mx-auto' : 'mr-3']"
           />
           <span v-if="!isCollapsed" class="truncate">{{ item.title }}</span>
           <span 
             v-if="item.badge && !isCollapsed" 
             class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
             :class="isActiveItem(item) 
-              ? 'bg-primary-100 text-primary-800' 
-              : 'bg-gray-100 text-gray-600'"
+              ? 'bg-gray-200 text-[#23272f]' 
+              : 'bg-gray-100 text-[#23272f]'"
           >
             {{ item.badge }}
           </span>
@@ -69,22 +60,22 @@
         <div v-else>
           <button
             @click="handleParentMenuClick(item)"
-            class="group w-full flex items-center justify-between px-2 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
+            class="group w-full flex items-center justify-between px-3 py-2.5 text-[15px] font-medium rounded-lg transition-all duration-200"
             :class="isActiveItem(item) 
-              ? 'bg-primary-50 text-primary-700' 
-              : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'"
+              ? 'bg-gray-100 text-[#23272f]' 
+              : 'text-[#23272f] hover:bg-gray-50 hover:text-[#23272f]'"
           >
             <div class="flex items-center w-full">
               <component 
                 :is="getMenuIcon(item.icon)" 
                 class="w-5 h-5 flex-shrink-0 icon-center"
-                :class="[isActiveItem(item) ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-500', isCollapsed ? 'mx-auto' : 'mr-3']"
+                :class="[isActiveItem(item) ? 'text-[#23272f]' : 'text-[#8b95a5] group-hover:text-[#23272f]', isCollapsed ? 'mx-auto' : 'mr-3']"
               />
               <span v-if="!isCollapsed" class="truncate">{{ item.title }}</span>
             </div>
             <ChevronDownIcon 
               v-if="!isCollapsed"
-              class="w-4 h-4 transition-transform duration-200"
+              class="w-4 h-4 transition-transform duration-200 text-[#23272f]"
               :class="{ 'rotate-180': isSubmenuExpanded(item.id) }"
             />
           </button>
@@ -99,13 +90,13 @@
               v-for="child in item.children"
               :key="child.id"
               :to="child.route"
-              class="group flex items-center px-3 py-2 text-sm rounded-lg transition-all duration-200 ml-8"
+              class="group flex items-center px-5 py-2 text-[15px] rounded-lg transition-all duration-200 ml-2"
               :class="isCurrentRoute(child.route) 
-                ? 'bg-primary-50 text-primary-700' 
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+                ? 'bg-gray-50 text-[#23272f]' 
+                : 'text-[#23272f] hover:bg-gray-50 hover:text-[#23272f]'"
             >
               <div class="w-1.5 h-1.5 rounded-full mr-3"
-                :class="isCurrentRoute(child.route) ? 'bg-primary-600' : 'bg-gray-300 group-hover:bg-gray-400'"
+                :class="isCurrentRoute(child.route) ? 'bg-[#23272f]' : 'bg-gray-300 group-hover:bg-[#23272f]'"
               ></div>
               <span class="truncate">{{ child.title }}</span>
             </router-link>
@@ -132,6 +123,7 @@ import {
   ArrowRightOnRectangleIcon
 } from '@heroicons/vue/24/outline'
 import { sidebarMenuItems, useSidebarState, useNavigation, useLogout } from '@/utils/navigation.js'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export default {
   name: 'SidebarMenu',
@@ -145,7 +137,8 @@ export default {
     UserGroupIcon,
     XMarkIcon,
     ChevronDownIcon,
-    ArrowRightOnRectangleIcon
+    ArrowRightOnRectangleIcon,
+    FontAwesomeIcon
   },
   props: {
     isMobileOpen: {

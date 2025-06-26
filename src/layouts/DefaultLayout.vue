@@ -38,7 +38,7 @@
           </nav>
           
           <!-- Page Header -->
-          <div v-if="pageTitle && $route.path !== '/app/devices' && $route.path !== '/app/map' && $route.path !== '/app/complaints'" class="mb-8">
+          <div v-if="pageTitle && $route.path !== '/app/dashboard' && $route.path !== '/app/incidents' && $route.path !== '/app/devices' && $route.path !== '/app/map' && $route.path !== '/app/complaints'" class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ pageTitle }}</h1>
             <p v-if="pageDescription" class="text-gray-600">{{ pageDescription }}</p>
           </div>
@@ -218,13 +218,6 @@ export default {
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
-}
-
-// Responsive adjustments
-@media (max-width: 1024px) {
-  .lg\:pl-64 {
-    padding-left: 0;
-  }
 }
 
 // Scrollbar styling
