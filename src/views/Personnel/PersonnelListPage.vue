@@ -1,12 +1,14 @@
 <template>
-  <div class="space-y-8">
-    <!-- Stats Grid -->
-    <PersonnelStats :stats="stats" />
+  <div class="personnel-page space-y-8">
+    <!-- Stats Grid con animaciones -->
+    <div class="stats-section">
+      <PersonnelStats :stats="stats" />
+    </div>
 
     <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <div class="main-content-grid">
       <!-- Employee List -->
-      <div class="lg:col-span-1">
+      <div class="employee-list-section">
         <PersonnelList
           :employees="employees"
           :filtered-employees="filteredEmployees"
@@ -22,7 +24,7 @@
           <template #new-employee-btn>
             <button 
               @click="showNewPersonnelModal = true"
-              class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
+              class="new-employee-btn"
             >
               <PlusIcon class="w-4 h-4 mr-1" />
               Nuevo
@@ -37,7 +39,7 @@
           <!-- Slot para el badge de rol -->
           <template #role-badge="{ employee }">
             <span 
-              class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+              class="role-badge"
               :class="getRoleBadgeClass(employee.role)"
             >
               {{ getRoleName(employee.role) }}
@@ -52,7 +54,7 @@
       </div>
 
       <!-- Employee Details -->
-      <div class="lg:col-span-3" v-if="selectedEmployee">
+      <div class="employee-details-section" v-if="selectedEmployee">
         <PersonnelDetails 
           :selected-employee="selectedEmployee"
           @edit="handleEditEmployee"
@@ -61,7 +63,7 @@
           <!-- Slot para el badge de rol -->
           <template #role-badge="{ employee }">
             <span 
-              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+              class="role-badge-large"
               :class="getRoleBadgeClass(employee.role)"
             >
               {{ getRoleName(employee.role) }}
@@ -506,83 +508,52 @@ export default {
     });
 
     // Métodos
-    const getRoleName = (role) => {
-      const roles = {
-        technical: "Técnico",
-        admin: "Administrativo",
-        service: "Atención al Cliente"
-      };
-      return roles[role] || role;
-    };
-
-    const getRoleBadgeClass = (role) => {
-      const classes = {
-        technical: 'bg-blue-100 text-blue-800',
-        admin: 'bg-purple-100 text-purple-800',
-        service: 'bg-pink-100 text-pink-800'
-      };
-      return classes[role] || 'bg-gray-100 text-gray-800';
-    };
-
     const selectEmployee = (employee) => {
       selectedEmployee.value = employee;
+      activeProfileTab.value = 'info';
     };
 
     const setActiveTab = (tab) => {
       activeTab.value = tab;
     };
 
-    const handleEditEmployee = (employee) => {
-      alert(`Editando empleado: ${employee.name}`);
+    const handleEditEmployee = () => {
+      console.log('Editar empleado:', selectedEmployee.value);
     };
 
-    const handlePrintEmployee = (employee) => {
-      alert(`Imprimiendo información de: ${employee.name}`);
+    const handlePrintEmployee = () => {
+      console.log('Imprimir empleado:', selectedEmployee.value);
     };
 
-    const handleNewPersonnelCreated = async (newEmployeeData) => {
-      const newId = Math.max(...employees.value.map(e => e.id)) + 1;
-      
-      const employee = {
-        id: newId,
-        name: newEmployeeData.name,
-        firstName: newEmployeeData.name.split(' ')[0],
-        lastName: newEmployeeData.name.split(' ').slice(1).join(' '),
-        photo: "https://randomuser.me/api/portraits/lego/1.jpg",
-        role: "technical",
-        position: newEmployeeData.position,
-        rating: 4.5,
-        experience: newEmployeeData.experience + " años",
-        employeeId: newEmployeeData.employeeId,
-        department: newEmployeeData.department,
-        startDate: new Date(newEmployeeData.startDate).toLocaleDateString('es-ES', { 
-          year: 'numeric', 
-          month: 'short', 
-          day: 'numeric' 
-        }),
-        email: newEmployeeData.email,
-        phone: newEmployeeData.phone,
-        location: newEmployeeData.location,
-        skills: [],
-        customerSatisfaction: 85,
-        responseTime: 75,
-        resolvedCases: 80,
-        totalInteractions: 0,
-        averageRating: 0,
-        averageResolutionTime: 0,
-        salary: newEmployeeData.salary
+    const handleNewPersonnelCreated = (newEmployee) => {
+      employees.value.push(newEmployee);
+      showNewPersonnelModal.value = false;
+    };
+
+    const getRoleBadgeClass = (role) => {
+      const classes = {
+        'admin': 'bg-red-100 text-red-800',
+        'manager': 'bg-blue-100 text-blue-800',
+        'technician': 'bg-green-100 text-green-800',
+        'operator': 'bg-yellow-100 text-yellow-800',
+        'supervisor': 'bg-purple-100 text-purple-800'
       };
-      
-      employees.value.push(employee);
-      selectEmployee(employee);
-      
-      // Mostrar mensaje de éxito
-      alert(`Empleado ${employee.name} creado exitosamente`);
+      return classes[role] || 'bg-gray-100 text-gray-800';
     };
 
-    // Watchers y lifecycle hooks
-    watch(selectedEmployee, () => {
-      activeProfileTab.value = 'info';
+    const getRoleName = (role) => {
+      const names = {
+        'admin': 'Administrador',
+        'manager': 'Gerente',
+        'technician': 'Técnico',
+        'operator': 'Operador',
+        'supervisor': 'Supervisor'
+      };
+      return names[role] || role;
+    };
+
+    onMounted(() => {
+      // Sin partículas para mejor rendimiento
     });
 
     return {
@@ -592,61 +563,206 @@ export default {
       activeProfileTab,
       searchQuery,
       showNewPersonnelModal,
-      roleTabs,
       stats,
+      roleTabs,
+      employeeHistory,
+      aiContributions,
+      defaultPermissions,
       filteredEmployees,
-      employeeActivities,
-      employeeDocuments,
-      performanceMetrics,
-      employeeSkills,
-      employeeEvaluations,
-      getRoleName,
-      getRoleBadgeClass,
+      roleTabs,
       selectEmployee,
       setActiveTab,
       handleEditEmployee,
       handlePrintEmployee,
       handleNewPersonnelCreated,
-      defaultPermissions,
-      employeeHistory,
-      aiContributions
+      getRoleBadgeClass,
+      getRoleName
     };
   }
 };
 </script>
 
 <style scoped>
-/* Scrollbar styling */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
+.personnel-page {
+  position: relative;
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 1rem;
+  color: #232b3b;
 }
 
-.overflow-y-auto::-webkit-scrollbar-track {
+.stats-section {
+  margin-bottom: 1.5rem;
+}
+
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 1024px) {
+  .main-content-grid {
+    grid-template-columns: 1fr 3fr;
+    gap: 2rem;
+  }
+}
+
+.employee-list-section, .employee-details-section {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1.2rem 1rem;
+}
+
+.new-employee-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.7rem 1.1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+.new-employee-btn:hover {
+  background: linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%);
+  box-shadow: 0 4px 16px rgba(139,92,246,0.12);
+  transform: translateY(-1px);
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background: #f1f5f9;
-  border-radius: 3px;
+  border: 1px solid #e5e7eb;
+  color: #6366f1;
+  margin-right: 0.3rem;
+}
+.role-badge-large {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.1rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  color: #6366f1;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+:deep(.bg-white) {
+  background: #fff !important;
+  color: #232b3b !important;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+:deep(.shadow-lg) {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+:deep(.rounded-2xl) {
+  border-radius: 1rem;
+}
+:deep(.text-gray-900) {
+  color: #232b3b !important;
+}
+:deep(.text-gray-600) {
+  color: #64748b !important;
+}
+:deep(.text-gray-400) {
+  color: #94a3b8 !important;
+}
+:deep(.text-success-500) {
+  color: #22c55e !important;
+}
+:deep(.text-danger-500) {
+  color: #ef4444 !important;
+}
+:deep(.text-success-600) {
+  color: #16a34a !important;
+}
+:deep(.text-danger-600) {
+  color: #b91c1c !important;
+}
+:deep(.bg-success-500) {
+  background: #22c55e !important;
+}
+:deep(.bg-danger-500) {
+  background: #ef4444 !important;
+}
+:deep(.bg-primary-600) {
+  background: #6366f1 !important;
+}
+:deep(.bg-primary-700) {
+  background: #4f46e5 !important;
+}
+:deep(.bg-blue-100) {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+:deep(.bg-red-100) {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+:deep(.bg-green-100) {
+  background: #d1fae5 !important;
+  color: #059669 !important;
+}
+:deep(.bg-yellow-100) {
+  background: #fef9c3 !important;
+  color: #ca8a04 !important;
+}
+:deep(.bg-purple-100) {
+  background: #ede9fe !important;
+  color: #7c3aed !important;
+}
+:deep(.bg-gray-100) {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+:deep(.text-yellow-400) {
+  color: #facc15 !important;
+}
+:deep(.text-blue-800) {
+  color: #1e40af !important;
+}
+:deep(.text-red-800) {
+  color: #b91c1c !important;
+}
+:deep(.text-green-800) {
+  color: #166534 !important;
+}
+:deep(.text-purple-800) {
+  color: #6d28d9 !important;
+}
+:deep(.text-gray-800) {
+  color: #334155 !important;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+@media (max-width: 768px) {
+  .personnel-page {
+    padding: 0.75rem;
+  }
+  .main-content-grid {
+    gap: 1rem;
+  }
+  .employee-list-section, .employee-details-section {
+    padding: 0.7rem 0.5rem;
+  }
 }
-
-/* Animaciones personalizadas */
-.hover\:shadow-medium:hover {
-  transform: translateY(-2px);
-}
-
-.transition-all {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Efectos de hover para las tarjetas */
-.bg-white:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+@media (max-width: 480px) {
+  .personnel-page {
+    padding: 0.5rem;
+  }
+  .main-content-grid {
+    gap: 0.75rem;
+  }
 }
 </style>

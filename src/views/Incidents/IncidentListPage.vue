@@ -1,28 +1,32 @@
 <template>
-  <div class="problem-management-container min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6">
-    <!-- Header -->
-    <IncidentHeader
-      @new-incident="showNewReportModal = true"
-      @export-data="handleExportData"
-    >
-      <template #new-incident-icon>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-        </svg>
-      </template>
-      <template #export-icon>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-        </svg>
-      </template>
-    </IncidentHeader>
+  <div class="incident-page">
+    <!-- Header con animaciones -->
+    <div class="header-section">
+      <IncidentHeader
+        @new-incident="showNewReportModal = true"
+        @export-data="handleExportData"
+      >
+        <template #new-incident-icon>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </template>
+        <template #export-icon>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </template>
+      </IncidentHeader>
+    </div>
 
-    <!-- Dashboard Prioridades -->
-    <IncidentStats :stats="statsData" />
+    <!-- Dashboard Prioridades con animaciones -->
+    <div class="stats-section">
+      <IncidentStats :stats="statsData" />
+    </div>
 
-    <div class="flex flex-col lg:flex-row gap-8">
+    <div class="main-content-flex">
       <!-- Sección principal -->
-      <div class="flex-1">
+      <div class="incident-list-section">
         <IncidentList
           :incidents="filteredIncidents"
           :tabs="incidentTabs"
@@ -58,33 +62,35 @@
       </div>
 
       <!-- Panel derecho -->
-      <IncidentSidebar
-        :team="equipoTecnico"
-        :notification-settings="notificationSettings"
-        :logbook="bitacoraFiltrada"
-        :new-log-entry="nuevaBitacora"
-        @assign-personnel="abrirAsignacion"
-        @update:notification-settings="notificationSettings = $event"
-        @send-notifications="enviarNotificaciones"
-        @update:new-log-entry="nuevaBitacora = $event"
-        @add-log-entry="agregarBitacora"
-      >
-        <template #team-icon>
-          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-          </svg>
-        </template>
-        <template #notifications-icon>
-          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.19 4.19A4 4 0 004 6v10a4 4 0 004 4h10a4 4 0 004-4V6a4 4 0 00-4-4H8a4 4 0 00-2.81 1.19z"></path>
-          </svg>
-        </template>
-        <template #logbook-icon>
-          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-        </template>
-      </IncidentSidebar>
+      <div class="sidebar-section">
+        <IncidentSidebar
+          :team="equipoTecnico"
+          :notification-settings="notificationSettings"
+          :logbook="bitacoraFiltrada"
+          :new-log-entry="nuevaBitacora"
+          @assign-personnel="abrirAsignacion"
+          @update:notification-settings="notificationSettings = $event"
+          @send-notifications="enviarNotificaciones"
+          @update:new-log-entry="nuevaBitacora = $event"
+          @add-log-entry="agregarBitacora"
+        >
+          <template #team-icon>
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </template>
+          <template #notifications-icon>
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.19 4.19A4 4 0 004 6v10a4 4 0 004 4h10a4 4 0 004-4V6a4 4 0 00-4-4H8a4 4 0 00-2.81 1.19z"></path>
+            </svg>
+          </template>
+          <template #logbook-icon>
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </template>
+        </IncidentSidebar>
+      </div>
     </div>
 
     <!-- Modal Component -->
@@ -97,7 +103,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import NewIncidentModal from '@/components/NewIncidentModal.vue';
 
 // Importar componentes modulares
@@ -408,10 +414,156 @@ function handleNewIncident(incidentData) {
     AdjuntosURLs: [],
   });
 }
+
+// Crear partículas animadas - optimizado
+const createParticles = () => {
+  // Sin partículas para mejor rendimiento
+};
+
+onMounted(() => {
+  // Sin partículas para mejor rendimiento
+});
 </script>
 
 <style scoped>
-.problem-management-container {
+.incident-page {
+  position: relative;
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 1rem;
+  color: #232b3b;
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-section, .stats-section {
+  margin-bottom: 1.5rem;
+}
+
+.main-content-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+@media (min-width: 1024px) {
+  .main-content-flex {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}
+.incident-list-section, .sidebar-section {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1.2rem 1rem;
+}
+
+:deep(.bg-white) {
+  background: #fff !important;
+  color: #232b3b !important;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+:deep(.shadow-lg) {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+:deep(.rounded-2xl) {
+  border-radius: 1rem;
+}
+:deep(.text-gray-900) {
+  color: #232b3b !important;
+}
+:deep(.text-gray-600) {
+  color: #64748b !important;
+}
+:deep(.text-gray-400) {
+  color: #94a3b8 !important;
+}
+:deep(.text-success-500) {
+  color: #22c55e !important;
+}
+:deep(.text-danger-500) {
+  color: #ef4444 !important;
+}
+:deep(.text-success-600) {
+  color: #16a34a !important;
+}
+:deep(.text-danger-600) {
+  color: #b91c1c !important;
+}
+:deep(.bg-success-500) {
+  background: #22c55e !important;
+}
+:deep(.bg-danger-500) {
+  background: #ef4444 !important;
+}
+:deep(.bg-primary-600) {
+  background: #6366f1 !important;
+}
+:deep(.bg-primary-700) {
+  background: #4f46e5 !important;
+}
+:deep(.bg-blue-100) {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+:deep(.bg-red-100) {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+}
+:deep(.bg-green-100) {
+  background: #d1fae5 !important;
+  color: #059669 !important;
+}
+:deep(.bg-yellow-100) {
+  background: #fef9c3 !important;
+  color: #ca8a04 !important;
+}
+:deep(.bg-purple-100) {
+  background: #ede9fe !important;
+  color: #7c3aed !important;
+}
+:deep(.bg-gray-100) {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+:deep(.text-yellow-400) {
+  color: #facc15 !important;
+}
+:deep(.text-blue-800) {
+  color: #1e40af !important;
+}
+:deep(.text-red-800) {
+  color: #b91c1c !important;
+}
+:deep(.text-green-800) {
+  color: #166534 !important;
+}
+:deep(.text-purple-800) {
+  color: #6d28d9 !important;
+}
+:deep(.text-gray-800) {
+  color: #334155 !important;
+}
+
+@media (max-width: 768px) {
+  .incident-page {
+    padding: 0.75rem;
+  }
+  .main-content-flex {
+    gap: 1rem;
+  }
+  .incident-list-section, .sidebar-section {
+    padding: 0.7rem 0.5rem;
+  }
+}
+@media (max-width: 480px) {
+  .incident-page {
+    padding: 0.5rem;
+  }
+  .main-content-flex {
+    gap: 0.75rem;
+  }
 }
 </style> 
