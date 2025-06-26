@@ -19,11 +19,16 @@ $bg-primary: #ffffff;
 $bg-secondary: #f8f9fa;
 $bg-dark: #1a1a1a;
 
+// Glassmorphism
+$bg-glass: rgba(255,255,255,0.75);
+$glass-border: 1.5px solid rgba(180, 200, 255, 0.25);
+
 // Bordes
 $border-color: #e9ecef;
 $border-radius: 8px;
 $border-radius-sm: 4px;
 $border-radius-lg: 12px;
+$border-radius-xl: 24px;
 
 // Espaciado
 $spacing-xs: 0.25rem;
@@ -74,3 +79,5 @@ $z-index-modal-backdrop: 1040;
 $z-index-modal: 1050;
 $z-index-popover: 1060;
 $z-index-tooltip: 1070;
+
+$gradient-water-primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);

@@ -1,9 +1,11 @@
+@use './_complaints.scss';
 @use 'tailwindcss/base' as *;
 @use 'tailwindcss/components' as *;
 @use 'tailwindcss/utilities' as *;
 @use './_variables.scss' as *;
 @use './_navbar.scss' as *;
 @use './_sidebar.scss' as *;
+@use './_map.scss' as *;
 
 // Importar fuentes de Google
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');

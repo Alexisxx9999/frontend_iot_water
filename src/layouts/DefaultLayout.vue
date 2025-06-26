@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen" style="background:#f4f7fe;">
     <!-- Sidebar -->
     <SidebarMenu 
       :is-mobile-open="isMobileOpen" 
@@ -13,10 +13,10 @@
       <TopNavbar @toggle-sidebar="toggleMobileSidebar" />
       
       <!-- Page Content -->
-      <main class="flex flex-col min-h-screen py-6 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto flex-1 flex flex-col">
+      <main class="flex flex-col min-h-screen py-0 px-0">
+        <div class="flex-1 flex flex-col">
           <!-- Breadcrumbs -->
-          <nav v-if="breadcrumbs.length > 0" class="mb-6">
+          <nav v-if="breadcrumbs.length > 0 && $route.path !== '/app/map' && $route.path !== '/app/complaints'" class="mb-6">
             <ol class="flex items-center space-x-2 text-sm text-gray-500">
               <li>
                 <router-link to="/app/dashboard" class="hover:text-primary-600 transition-colors">
@@ -38,7 +38,7 @@
           </nav>
           
           <!-- Page Header -->
-          <div v-if="pageTitle && $route.path !== '/app/devices'" class="mb-8">
+          <div v-if="pageTitle && $route.path !== '/app/devices' && $route.path !== '/app/map' && $route.path !== '/app/complaints'" class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ pageTitle }}</h1>
             <p v-if="pageDescription" class="text-gray-600">{{ pageDescription }}</p>
           </div>
