@@ -1,64 +1,66 @@
 <template>
-  <div class="min-h-screen w-full bg-blue-50 flex flex-col md:flex-row gap-4 py-4 px-2">
-    <!-- Conversaciones -->
-    <div class="w-full md:w-1/4 flex flex-col">
-      <ConversationFilters class="mb-2" />
-      <div class="flex-1 overflow-y-auto rounded-xl shadow-lg bg-blue-100 border border-blue-300">
-        <CrmSidebar
-          :conversations="conversations"
-          :selectedConversationId="selectedId"
-          @selectConversation="selectConversation"
-        />
-      </div>
-    </div>
-
-    <!-- Chat -->
-    <div class="w-full md:w-2/4 flex flex-col">
-      <div class="border-b border-cyan-300 p-5 flex items-center gap-4 bg-cyan-100 rounded-xl shadow mb-2">
-        <div :style="{ background: getAvatarColor(selectedConversation.id) }" class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-white text-2xl shadow-lg">
-          {{ selectedConversation.nombre.charAt(0) }}
-        </div>
-        <div>
-          <div class="font-bold text-cyan-900 text-lg">{{ selectedConversation.nombre }}</div>
-          <div class="text-xs text-cyan-700 font-semibold">{{ selectedConversation.estado }}</div>
+  <div class="crm-whatsapp-page space-y-8 ml-8">
+    <div class="min-h-screen w-full bg-blue-50 flex flex-col md:flex-row gap-4 py-4 px-2">
+      <!-- Conversaciones -->
+      <div class="w-full md:w-1/4 flex flex-col">
+        <ConversationFilters class="mb-2" />
+        <div class="flex-1 overflow-y-auto rounded-xl shadow-lg bg-blue-100 border border-blue-300">
+          <CrmSidebar
+            :conversations="conversations"
+            :selectedConversationId="selectedId"
+            @selectConversation="selectConversation"
+          />
         </div>
       </div>
-      <div class="bg-cyan-50 rounded-xl shadow flex-1 max-h-[400px] overflow-y-auto border border-cyan-200">
-        <CrmChat
-          :conversation="selectedConversation"
-          :messages="messages"
-          @sendMessage="sendMsg"
-        />
-      </div>
-      <!-- Barra de acciones tipo chat -->
-      <div class="flex items-center gap-2 justify-end mt-2 p-2 bg-cyan-100 rounded-xl shadow border-t border-cyan-200">
-        <button @click="adjuntarArchivo" class="p-2 hover:bg-cyan-200 rounded" title="Adjuntar archivo">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l7.07-7.07a4 4 0 00-5.656-5.657l-7.07 7.07a6 6 0 108.485 8.485L19 13" /></svg>
-        </button>
-        <button @click="abrirEtiquetas" class="p-2 hover:bg-cyan-200 rounded" title="Etiquetas">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 11h.01M7 15h.01M11 7h.01M11 11h.01M11 15h.01M15 7h.01M15 11h.01M15 15h.01" /></svg>
-        </button>
-        <button @click="sugerenciaIA" class="p-2 hover:bg-cyan-200 rounded flex items-center gap-1" title="IA">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m0 14v1m8-8h-1M5 12H4m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707" /></svg>
-          <span class="text-xs font-semibold">IA</span>
-        </button>
-        <button @click="escalarConversacion" class="ml-4 px-3 py-1 bg-white border border-red-400 text-red-500 rounded hover:bg-red-50 font-semibold text-sm" title="Escalar">↑ Escalar</button>
-        <button @click="resolverConversacion" class="ml-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 font-semibold text-sm" title="Resolver">✔ Resolver</button>
-      </div>
-    </div>
 
-    <!-- Info Cliente, KPIs y Estadísticas -->
-    <div class="w-full md:w-1/4 flex flex-col gap-4">
-      <div class="bg-blue-100 rounded-xl shadow p-6 pb-3 border-b border-blue-300">
-        <h3 class="text-md font-bold text-blue-800 mb-2">Información del Cliente</h3>
-        <div class="text-sm text-blue-700 mb-1"><b>Nombre:</b> {{ selectedConversation.nombre }}</div>
-        <div class="text-sm text-blue-700 mb-1"><b>ID:</b> {{ selectedConversation.id }}</div>
-        <div class="text-sm text-blue-700 mb-1"><b>Plan:</b> {{ selectedConversation.plan }}</div>
-        <div class="text-sm text-blue-700 mb-1"><b>Sector:</b> {{ selectedConversation.sector }}</div>
+      <!-- Chat -->
+      <div class="w-full md:w-2/4 flex flex-col">
+        <div class="border-b border-cyan-300 p-5 flex items-center gap-4 bg-cyan-100 rounded-xl shadow mb-2">
+          <div :style="{ background: getAvatarColor(selectedConversation.id) }" class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-white text-2xl shadow-lg">
+            {{ selectedConversation.nombre.charAt(0) }}
+          </div>
+          <div>
+            <div class="font-bold text-cyan-900 text-lg">{{ selectedConversation.nombre }}</div>
+            <div class="text-xs text-cyan-700 font-semibold">{{ selectedConversation.estado }}</div>
+          </div>
+        </div>
+        <div class="bg-cyan-50 rounded-xl shadow flex-1 max-h-[400px] overflow-y-auto border border-cyan-200">
+          <CrmChat
+            :conversation="selectedConversation"
+            :messages="messages"
+            @sendMessage="sendMsg"
+          />
+        </div>
+        <!-- Barra de acciones tipo chat -->
+        <div class="flex items-center gap-2 justify-end mt-2 p-2 bg-cyan-100 rounded-xl shadow border-t border-cyan-200">
+          <button @click="adjuntarArchivo" class="p-2 hover:bg-cyan-200 rounded" title="Adjuntar archivo">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l7.07-7.07a4 4 0 00-5.656-5.657l-7.07 7.07a6 6 0 108.485 8.485L19 13" /></svg>
+          </button>
+          <button @click="abrirEtiquetas" class="p-2 hover:bg-cyan-200 rounded" title="Etiquetas">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 11h.01M7 15h.01M11 7h.01M11 11h.01M11 15h.01M15 7h.01M15 11h.01M15 15h.01" /></svg>
+          </button>
+          <button @click="sugerenciaIA" class="p-2 hover:bg-cyan-200 rounded flex items-center gap-1" title="IA">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m0 14v1m8-8h-1M5 12H4m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707" /></svg>
+            <span class="text-xs font-semibold">IA</span>
+          </button>
+          <button @click="escalarConversacion" class="ml-4 px-3 py-1 bg-white border border-red-400 text-red-500 rounded hover:bg-red-50 font-semibold text-sm" title="Escalar">↑ Escalar</button>
+          <button @click="resolverConversacion" class="ml-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 font-semibold text-sm" title="Resolver">✔ Resolver</button>
+        </div>
       </div>
-      <CrmKpiPanel :kpis="kpis" />
-      <CaseDetails class="!bg-blue-50" />
-      <ChatbotStats />
+
+      <!-- Info Cliente, KPIs y Estadísticas -->
+      <div class="w-full md:w-1/4 flex flex-col gap-4">
+        <div class="bg-blue-100 rounded-xl shadow p-6 pb-3 border-b border-blue-300">
+          <h3 class="text-md font-bold text-blue-800 mb-2">Información del Cliente</h3>
+          <div class="text-sm text-blue-700 mb-1"><b>Nombre:</b> {{ selectedConversation.nombre }}</div>
+          <div class="text-sm text-blue-700 mb-1"><b>ID:</b> {{ selectedConversation.id }}</div>
+          <div class="text-sm text-blue-700 mb-1"><b>Plan:</b> {{ selectedConversation.plan }}</div>
+          <div class="text-sm text-blue-700 mb-1"><b>Sector:</b> {{ selectedConversation.sector }}</div>
+        </div>
+        <CrmKpiPanel :kpis="kpis" />
+        <CaseDetails class="!bg-blue-50" />
+        <ChatbotStats />
+      </div>
     </div>
   </div>
 </template>

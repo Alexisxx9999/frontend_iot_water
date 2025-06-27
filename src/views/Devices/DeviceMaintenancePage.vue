@@ -1,5 +1,5 @@
 <template>
-  <div class="device-maintenance-page">
+  <div class="device-maintenance-page space-y-8 ml-8">
     <h1>Mantenimiento de Dispositivos</h1>
     <p>Gestión de mantenimiento preventivo y correctivo</p>
   </div>
