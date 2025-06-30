@@ -1,137 +1,6 @@
 <template>
-  <div class="complaint-detail-page">
-    <!-- Header con acciones flotantes -->
-    <header class="gradient-header complaint-detail-header">
-      <div class="header-content">
-        <div class="header-title-block">
-          <h1>
-            Detalle de Denuncia
-            <span class="badge-id-large">#{{ complaint.id }}</span>
-          </h1>
-          <div class="subtitle">{{ complaint.title }}</div>
-        </div>
-        <div class="header-actions">
-          <button class="action-btn cyan" @click="editComplaint">Editar</button>
-          <button class="action-btn cyan" @click="assignComplaint">Asignar</button>
-          <button class="action-btn cyan" @click="updateStatus">Cambiar Estado</button>
-          <button class="action-btn cyan" @click="goBack">Volver</button>
-        </div>
-      </div>
-    </header>
-    <main class="detail-main">
-      <section class="main-info-panel">
-        <div class="info-block">
-          <h2>Información General</h2>
-          <ul class="info-list">
-            <li><span class="info-label">ID:</span> <span class="info-value">{{ complaint.id }}</span></li>
-            <li><span class="info-label">Título:</span> <span class="info-value">{{ complaint.title }}</span></li>
-            <li><span class="info-label">Descripción:</span> <span class="info-value">{{ complaint.description }}</span></li>
-            <li><span class="info-label">Denunciante:</span> <span class="info-value">{{ complaint.reporter }}</span></li>
-            <li><span class="info-label">Ubicación:</span> <span class="info-value">{{ complaint.location }}</span></li>
-            <li><span class="info-label">Fecha:</span> <span class="info-value">{{ formatDate(complaint.createdAt) }}</span></li>
-            <li><span class="info-label">Categoría:</span> <span class="info-value"><span class="category-badge">{{ getCategoryText(complaint.category) }}</span></span></li>
-            <li><span class="info-label">Prioridad:</span> <span class="info-value"><span class="priority-badge" :class="complaint.priority">{{ getPriorityText(complaint.priority) }}</span></span></li>
-            <li><span class="info-label">Estado:</span> <span class="info-value"><span class="status-badge" :class="complaint.status">{{ getStatusText(complaint.status) }}</span></span></li>
-          </ul>
-        </div>
-        <div class="info-block">
-          <h2>Ubicación en el Mapa</h2>
-          <div id="complaintDetailMap" class="complaint-detail-map"></div>
-        </div>
-        <div class="info-block">
-          <h2>Historial de Cambios</h2>
-          <ul class="timeline-list">
-            <li v-for="(change, index) in complaint.history" :key="index">
-              <span class="timeline-title">{{ change.title }}</span>
-              <span class="timeline-date">{{ formatDateTime(change.date) }}</span>
-              <span class="timeline-user">Por: {{ change.user }}</span>
-              <p class="timeline-description">{{ change.description }}</p>
-            </li>
-            <li v-if="!complaint.history.length" class="no-history">Sin historial.</li>
-          </ul>
-        </div>
-        <div class="info-block">
-          <h2>Comentarios</h2>
-          <div class="comments-section">
-            <div v-for="(comment, idx) in complaint.comments" :key="idx" class="comment-bubble" :class="{mine: comment.mine}">
-              <div class="comment-user">{{ comment.user }}</div>
-              <div class="comment-text">{{ comment.text }}</div>
-              <div class="comment-date">{{ formatDateTime(comment.date) }}</div>
-            </div>
-            <form class="comment-form" @submit.prevent="addComment">
-              <input v-model="newComment" type="text" placeholder="Escribe un comentario..." required />
-              <button type="submit">Enviar</button>
-            </form>
-          </div>
-        </div>
-      </section>
-      <aside class="sidebar-panel">
-        <div class="sidebar-block">
-          <h3>Archivos Adjuntos</h3>
-          <ul class="files-list">
-            <li v-for="file in complaint.attachments" :key="file.id">
-              <span class="file-name">{{ file.name }}</span>
-              <span class="file-size">{{ formatFileSize(file.size) }}</span>
-              <button class="file-action" @click="downloadFile(file.id)">Descargar</button>
-              <button class="file-action danger" @click="deleteFile(file.id)">Eliminar</button>
-            </li>
-            <li v-if="!complaint.attachments.length" class="no-files">Sin archivos adjuntos.</li>
-          </ul>
-        </div>
-        <div class="sidebar-block">
-          <h3>Contacto</h3>
-          <ul class="contact-list">
-            <li><span class="contact-label">Teléfono:</span> <span class="contact-value">{{ complaint.contact.phone || 'No disponible' }}</span></li>
-            <li><span class="contact-label">Email:</span> <span class="contact-value">{{ complaint.contact.email || 'No disponible' }}</span></li>
-            <li><span class="contact-label">Horario:</span> <span class="contact-value">{{ complaint.contact.schedule || 'No especificado' }}</span></li>
-          </ul>
-        </div>
-        <div class="sidebar-block">
-          <h3>Estado y Acciones</h3>
-          <ul class="status-list">
-            <li><span class="status-label">Estado:</span> <span class="status-value" :class="complaint.status">{{ getStatusText(complaint.status) }}</span></li>
-            <li><span class="status-label">Asignado a:</span> <span class="status-value">{{ complaint.assignedTo || 'Sin asignar' }}</span></li>
-            <li><span class="status-label">Última actualización:</span> <span class="status-value">{{ formatDateTime(complaint.lastUpdate) }}</span></li>
-          </ul>
-        </div>
-      </aside>
-    </main>
-    <div v-if="showEditModal" class="modal-overlay" @click="showEditModal = false">
-      <div class="modal-content" @click.stop>
-        <h3>Editar Denuncia</h3>
-        <input v-model="editTitle" placeholder="Título" />
-        <textarea v-model="editDescription" placeholder="Descripción"></textarea>
-        <div class="modal-actions">
-          <button @click="saveEdit">Guardar</button>
-          <button @click="showEditModal = false">Cancelar</button>
-        </div>
-      </div>
-    </div>
-    <div v-if="showAssignModal" class="modal-overlay" @click="showAssignModal = false">
-      <div class="modal-content" @click.stop>
-        <h3>Asignar Denuncia</h3>
-        <input v-model="assignTo" placeholder="Asignar a..." />
-        <div class="modal-actions">
-          <button @click="saveAssign">Asignar</button>
-          <button @click="showAssignModal = false">Cancelar</button>
-        </div>
-      </div>
-    </div>
-    <div v-if="showStatusModal" class="modal-overlay" @click="showStatusModal = false">
-      <div class="modal-content" @click.stop>
-        <h3>Cambiar Estado</h3>
-        <select v-model="newStatus">
-          <option value="pending">Pendiente</option>
-          <option value="in-progress">En proceso</option>
-          <option value="resolved">Resuelta</option>
-          <option value="urgent">Urgente</option>
-        </select>
-        <div class="modal-actions">
-          <button @click="saveStatus">Cambiar</button>
-          <button @click="showStatusModal = false">Cancelar</button>
-        </div>
-      </div>
-    </div>
+  <div class="section-title">
+    <h1>Detalle de Denuncia</h1>
   </div>
 </template>
 
@@ -273,14 +142,22 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.section-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+h1 {
+  font-size: 2.5rem;
+  color: #2196f3;
+}
 .complaint-detail-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0f2fe 100%);
   position: relative;
 }
-.gradient-header {
-  /* Usa los estilos de _complaints.scss */
-}
+
 .header-content {
   display: flex;
   justify-content: space-between;

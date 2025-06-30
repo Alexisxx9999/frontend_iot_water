@@ -1,6 +1,8 @@
 // Servicio profesional de denuncias para gestión de agua
 // Puedes conectar a una API real reemplazando los métodos mock
 
+import api from './api'
+
 const mockComplaints = [
   {
     id: 'DEN001',
@@ -76,6 +78,28 @@ export default {
     return new Promise(resolve => {
       setTimeout(() => resolve(complaint), 200)
     })
+  },
+
+  // Métodos reales para API REST:
+  async getAll() {
+    const response = await api.get('/complaints');
+    return response.data;
+  },
+  async getById(id) {
+    const response = await api.get(`/complaints/${id}`);
+    return response.data;
+  },
+  async create(complaint) {
+    const response = await api.post('/complaints', complaint);
+    return response.data;
+  },
+  async update(id, data) {
+    const response = await api.put(`/complaints/${id}`, data);
+    return response.data;
+  },
+  async delete(id) {
+    const response = await api.delete(`/complaints/${id}`);
+    return response.data;
   },
 
   // Aquí puedes agregar métodos reales para API REST:

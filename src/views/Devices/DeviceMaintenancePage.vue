@@ -1,7 +1,6 @@
 <template>
-  <div class="device-maintenance-page">
-    <h1>Mantenimiento de Dispositivos</h1>
-    <p>Gestión de mantenimiento preventivo y correctivo</p>
+  <div class="section-title">
+    <h1>Mantenimiento de Dispositivo</h1>
   </div>
 </template>
 
@@ -12,17 +11,14 @@ export default {
 </script>
 
 <style scoped>
-.device-maintenance-page {
-  h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    color: #666;
-    font-size: 1.1rem;
-  }
+.section-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+h1 {
+  font-size: 2.5rem;
+  color: #2196f3;
 }
 </style>

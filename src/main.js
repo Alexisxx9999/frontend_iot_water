@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { installClickOutside } from './utils/clickOutside'
+import axios from 'axios'
+import { createPinia } from 'pinia'
 
 // Estilos
 import './assets/styles/main.scss'
@@ -22,6 +24,17 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 // Instalar plugins
 app.use(router)
 installClickOutside(app)
+
+const pinia = createPinia()
+app.use(pinia)
+
+axios.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
 
 // Función para manejar la carga inicial
 const initializeApp = async () => {

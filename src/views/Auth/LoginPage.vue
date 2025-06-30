@@ -8,7 +8,7 @@
             <span class="input-icon">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#66adf4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12A4 4 0 1 1 8 12a4 4 0 0 1 8 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7m0 0H9m3 0h3" /></svg>
             </span>
-            <input type="text" v-model="userOrEmail" required placeholder="Usuario o Email" />
+            <input type="text" v-model="userOrEmail" required placeholder="Usuario o Email"  />
           </div>
           <div class="input-group">
             <span class="input-icon">
