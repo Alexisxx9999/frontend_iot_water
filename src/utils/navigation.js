@@ -22,19 +22,7 @@ export const sidebarMenuItems = [
     title: 'Dispositivos',
     icon: 'devices',
     route: '/app/devices',
-    badge: null,
-    children: [
-      {
-        id: 'device-list',
-        title: 'Lista de Dispositivos',
-        route: '/app/devices'
-      },
-      {
-        id: 'device-maintenance',
-        title: 'Mantenimiento',
-        route: '/app/devices/maintenance'
-      }
-    ]
+    badge: null
   },
   {
     id: 'map',

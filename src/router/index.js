@@ -8,10 +8,6 @@ import RegisterPage from '@/views/Auth/RegisterPage.vue';
 import ForgotPasswordPage from '@/views/Auth/ForgotPasswordPage.vue';
 // Dashboard
 import DashboardOverview from '@/views/Dashboard/DashboardOverview.vue';
-// Devices
-import DeviceListPage from '@/views/Devices/DeviceListPage.vue';
-import DeviceDetailPage from '@/views/Devices/DeviceDetailPage.vue';
-import DeviceMaintenancePage from '@/views/Devices/DeviceMaintenancePage.vue';
 // Incidents
 import IncidentListPage from '@/views/Incidents/IncidentListPage.vue';
 import IncidentDetailPage from '@/views/Incidents/IncidentDetailPage.vue';
@@ -25,6 +21,9 @@ import MapPage from '@/views/Map/MapPage.vue';
 // Personnel
 import PersonnelListPage from '@/views/Personnel/PersonnelListPage.vue';
 import PersonnelDetailPage from '@/views/Personnel/PersonnelDetailPage.vue';
+// Devices
+import DeviceListPage from '@/views/Devices/DeviceListPage.vue';
+import DeviceDetailPage from '@/views/Devices/DeviceDetailPage.vue';
 // Not Found
 import NotFoundPage from '@/views/NotFoundPage.vue';
 
@@ -48,10 +47,6 @@ const routes = [
     children: [
       { path: '', redirect: '/app/dashboard' },
       { path: 'dashboard', component: DashboardOverview },
-      // Devices
-      { path: 'devices', component: DeviceListPage },
-      { path: 'devices/:id', component: DeviceDetailPage },
-      { path: 'devices/:id/maintenance', component: DeviceMaintenancePage },
       // Incidents
       { path: 'incidents', component: IncidentListPage },
       { path: 'incidents/:id', component: IncidentDetailPage },
@@ -65,6 +60,9 @@ const routes = [
       // Personnel
       { path: 'personnel', component: PersonnelListPage },
       { path: 'personnel/:id', component: PersonnelDetailPage },
+      // Devices
+      { path: 'devices', component: DeviceListPage },
+      { path: 'devices/:id', component: DeviceDetailPage },
     ],
   },
   // Not Found
