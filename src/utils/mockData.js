@@ -2,14 +2,14 @@
 
 // Sectores
 export const mockSectors = [
-  { id: 1, name: 'Sector Norte', description: 'Zona norte de la ciudad' },
-  { id: 2, name: 'Sector Sur', description: 'Zona sur de la ciudad' },
-  { id: 3, name: 'Sector Este', description: 'Zona este de la ciudad' },
-  { id: 4, name: 'Sector Oeste', description: 'Zona oeste de la ciudad' },
-  { id: 5, name: 'Centro Histórico', description: 'Centro histórico de la ciudad' },
-  { id: 6, name: 'Zona Industrial', description: 'Zona industrial y comercial' },
-  { id: 7, name: 'Residencial Norte', description: 'Zona residencial norte' },
-  { id: 8, name: 'Residencial Sur', description: 'Zona residencial sur' }
+  { id: 1, name: 'Sector Norte', description: 'Zona norte de Quito', latitude: -0.1277, longitude: -78.5034 }, // Quito Norte
+  { id: 2, name: 'Sector Sur', description: 'Zona sur de Quito', latitude: -0.3277, longitude: -78.5534 }, // Quito Sur
+  { id: 3, name: 'Sector Este', description: 'Zona este de Quito', latitude: -0.2295, longitude: -78.4857 }, // Quito Este
+  { id: 4, name: 'Sector Oeste', description: 'Zona oeste de Quito', latitude: -0.2295, longitude: -78.5834 }, // Quito Oeste
+  { id: 5, name: 'Centro Histórico', description: 'Centro histórico de Quito', latitude: -0.2201, longitude: -78.5127 }, // Centro Histórico Quito
+  { id: 6, name: 'Zona Industrial', description: 'Zona industrial de Guayaquil', latitude: -2.1709, longitude: -79.9224 }, // Guayaquil
+  { id: 7, name: 'Residencial Norte', description: 'Zona residencial norte de Cuenca', latitude: -2.8810, longitude: -78.9827 }, // Cuenca Norte
+  { id: 8, name: 'Residencial Sur', description: 'Zona residencial sur de Cuenca', latitude: -2.9110, longitude: -78.9827 } // Cuenca Sur
 ]
 
 // Clientes
@@ -50,9 +50,9 @@ export const mockDevices = [
     alertThreshold: 85,
     firmwareVersion: '2.1.0',
     customConfig: { frequency: 868, power: 14 },
-    latitude: 19.4326,
-    longitude: -99.1332,
-    address: 'Av. Reforma 123, Sector Norte',
+    latitude: -0.1277,
+    longitude: -78.5034,
+    address: 'Av. Amazonas 123, Sector Norte',
     batteryLevel: 92,
     loraSignal: -45,
     lastCommunication: new Date(Date.now() - 5 * 60 * 1000).toISOString()
@@ -75,9 +75,9 @@ export const mockDevices = [
     alertThreshold: 90,
     firmwareVersion: '1.8.2',
     customConfig: { pressure: 2.5, flow: 100 },
-    latitude: 19.4285,
-    longitude: -99.1276,
-    address: 'Calle Juárez 456, Sector Sur',
+    latitude: -0.3277,
+    longitude: -78.5534,
+    address: 'Av. Maldonado 456, Sector Sur',
     batteryLevel: 78,
     loraSignal: -52,
     lastCommunication: new Date(Date.now() - 15 * 60 * 1000).toISOString()
@@ -100,9 +100,9 @@ export const mockDevices = [
     alertThreshold: 95,
     firmwareVersion: '3.0.1',
     customConfig: { channels: [868.1, 868.3, 868.5] },
-    latitude: 19.4326,
-    longitude: -99.1332,
-    address: 'Plaza Mayor 789, Centro Histórico',
+    latitude: -0.2201,
+    longitude: -78.5127,
+    address: 'Calle García Moreno 789, Centro Histórico',
     batteryLevel: 100,
     loraSignal: -30,
     lastCommunication: new Date(Date.now() - 1 * 60 * 1000).toISOString()
@@ -125,9 +125,9 @@ export const mockDevices = [
     alertThreshold: 80,
     firmwareVersion: '2.0.5',
     customConfig: { frequency: 868, power: 14 },
-    latitude: 19.4365,
-    longitude: -99.1389,
-    address: 'Av. Insurgentes 321, Sector Este',
+    latitude: -0.2295,
+    longitude: -78.4857,
+    address: 'Av. Simón Bolívar 321, Sector Este',
     batteryLevel: 45,
     loraSignal: -65,
     lastCommunication: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
@@ -150,9 +150,9 @@ export const mockDevices = [
     alertThreshold: 85,
     firmwareVersion: '1.7.9',
     customConfig: { pressure: 2.0, flow: 80 },
-    latitude: 19.4285,
-    longitude: -99.1276,
-    address: 'Calle Hidalgo 654, Sector Oeste',
+    latitude: -0.2295,
+    longitude: -78.5834,
+    address: 'Av. Occidental 654, Sector Oeste',
     batteryLevel: 15,
     loraSignal: -75,
     lastCommunication: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString()
@@ -175,9 +175,9 @@ export const mockDevices = [
     alertThreshold: 90,
     firmwareVersion: '2.1.0',
     customConfig: { frequency: 868, power: 14 },
-    latitude: 19.4405,
-    longitude: -99.1422,
-    address: 'Av. Industrial 987, Zona Industrial',
+    latitude: -2.1709,
+    longitude: -79.9224,
+    address: 'Av. Juan Tanca Marengo 987, Zona Industrial',
     batteryLevel: 0,
     loraSignal: null,
     lastCommunication: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
@@ -200,9 +200,9 @@ export const mockDevices = [
     alertThreshold: 85,
     firmwareVersion: '2.1.0',
     customConfig: { frequency: 868, power: 14 },
-    latitude: 19.4346,
-    longitude: -99.1352,
-    address: 'Calle Residencial 111, Residencial Norte',
+    latitude: -2.8810,
+    longitude: -78.9827,
+    address: 'Av. de las Américas 111, Residencial Norte',
     batteryLevel: 88,
     loraSignal: -48,
     lastCommunication: new Date(Date.now() - 3 * 60 * 1000).toISOString()
@@ -225,9 +225,9 @@ export const mockDevices = [
     alertThreshold: 90,
     firmwareVersion: '1.8.2',
     customConfig: { pressure: 2.5, flow: 100 },
-    latitude: 19.4305,
-    longitude: -99.1296,
-    address: 'Av. Residencial 222, Residencial Sur',
+    latitude: -2.9110,
+    longitude: -78.9827,
+    address: 'Av. Loja 222, Residencial Sur',
     batteryLevel: 95,
     loraSignal: -42,
     lastCommunication: new Date(Date.now() - 8 * 60 * 1000).toISOString()

@@ -402,14 +402,25 @@
               <h3 class="text-lg font-medium text-gray-900">Ubicación en Mapa</h3>
               
               <div v-if="device.latitude && device.longitude" class="bg-gray-100 rounded-lg p-4 h-64 flex items-center justify-center">
-                <div class="text-center">
-                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                  <p class="mt-2 text-sm text-gray-500">Mapa interactivo</p>
-                  <p class="text-xs text-gray-400">Coordenadas: {{ device.latitude }}, {{ device.longitude }}</p>
-                </div>
+                <DeviceLocationMap
+                  :coordinates="[device.latitude, device.longitude]"
+                  :serialNumber="device.serialNumber"
+                  :status="device.status"
+                  :parishName="device.sector?.name"
+                  :model="device.model"
+                  :manufacturer="device.manufacturer"
+                />
+              </div>
+
+              <div v-else-if="device.sector && device.sector.latitude && device.sector.longitude" class="bg-gray-100 rounded-lg p-4 h-64 flex items-center justify-center">
+                <DeviceLocationMap
+                  :coordinates="[device.sector.latitude, device.sector.longitude]"
+                  :serialNumber="device.serialNumber"
+                  :status="device.status"
+                  :parishName="device.sector?.name"
+                  :model="device.model"
+                  :manufacturer="device.manufacturer"
+                />
               </div>
 
               <div v-else class="bg-gray-100 rounded-lg p-4 h-64 flex items-center justify-center">
@@ -419,7 +430,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   </svg>
                   <h3 class="mt-2 text-sm font-medium text-gray-900">Sin ubicación</h3>
-                  <p class="mt-1 text-sm text-gray-500">No se han configurado coordenadas para este dispositivo.</p>
+                  <p class="mt-1 text-sm text-gray-500">No se han configurado coordenadas para este dispositivo ni para su sector.</p>
                 </div>
               </div>
 
@@ -471,12 +482,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { useDevicesStore } from '@/stores/devices'
 import DeviceModal from '@/components/devices/DeviceModal.vue'
 import MaintenanceModal from '@/components/devices/MaintenanceModal.vue'
+import DeviceLocationMap from '@/components/devices/DeviceLocationMap.vue'
 
 export default {
   name: 'DeviceDetailPage',
   components: {
     DeviceModal,
-    MaintenanceModal
+    MaintenanceModal,
+    DeviceLocationMap
   },
   setup() {
     const route = useRoute()
