@@ -199,7 +199,7 @@ export const useDevicesStore = defineStore('devices', () => {
       return newMaintenance
     } catch (err) {
       error.value = err.message || 'Error al crear mantenimiento'
-      console.error('Error creating maintenance:', err)
+      // console.error('Error creating maintenance:', err)
       throw err
     } finally {
       loading.value = false
@@ -216,7 +216,7 @@ export const useDevicesStore = defineStore('devices', () => {
       return logs
     } catch (err) {
       error.value = err.message || 'Error al cargar logs'
-      console.error('Error fetching logs:', err)
+      // console.error('Error fetching logs:', err)
       throw err
     } finally {
       loading.value = false
@@ -232,7 +232,7 @@ export const useDevicesStore = defineStore('devices', () => {
       return result
     } catch (err) {
       error.value = err.message || 'Error al actualizar firmware'
-      console.error('Error updating firmware:', err)
+      // console.error('Error updating firmware:', err)
       throw err
     } finally {
       loading.value = false
@@ -245,7 +245,7 @@ export const useDevicesStore = defineStore('devices', () => {
       sectors.value = sectorsData
       return sectorsData
     } catch (err) {
-      console.error('Error fetching sectors:', err)
+      // console.error('Error fetching sectors:', err)
       throw err
     }
   }
@@ -256,7 +256,7 @@ export const useDevicesStore = defineStore('devices', () => {
       clients.value = clientsData
       return clientsData
     } catch (err) {
-      console.error('Error fetching clients:', err)
+      // console.error('Error fetching clients:', err)
       throw err
     }
   }
@@ -267,7 +267,7 @@ export const useDevicesStore = defineStore('devices', () => {
       gateways.value = gatewaysData
       return gatewaysData
     } catch (err) {
-      console.error('Error fetching gateways:', err)
+      // console.error('Error fetching gateways:', err)
       throw err
     }
   }
@@ -281,7 +281,7 @@ export const useDevicesStore = defineStore('devices', () => {
       return results
     } catch (err) {
       error.value = err.message || 'Error en la búsqueda'
-      console.error('Error searching devices:', err)
+      // console.error('Error searching devices:', err)
       throw err
     } finally {
       loading.value = false

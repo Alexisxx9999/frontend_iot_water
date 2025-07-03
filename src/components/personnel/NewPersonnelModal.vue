@@ -262,7 +262,7 @@ const handleSubmit = async () => {
     const missingFields = requiredFields.filter(field => !form[field]);
     
     if (missingFields.length > 0) {
-      alert('Por favor complete todos los campos requeridos');
+              // alert('Por favor complete todos los campos requeridos');
       return;
     }
 

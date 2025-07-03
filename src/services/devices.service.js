@@ -164,7 +164,7 @@ class DevicesService {
       
       return logs
     } catch (error) {
-      console.error('Error fetching device logs:', error)
+      // console.error('Error fetching device logs:', error)
       throw error
     }
   }

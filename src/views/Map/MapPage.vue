@@ -506,7 +506,7 @@ export default {
 
     const selectMeter = (meter) => {
       // Aquí se podría implementar la selección en el mapa
-      console.log('Meter selected:', meter)
+      // console.log('Meter selected:', meter)
     }
 
     const editMeter = (meter) => {

@@ -48,7 +48,7 @@ class MapService {
       const response = await api.get('/map/geographic-data', { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error fetching geographic data:', error)
+      // console.error('Error fetching geographic data:', error)
       throw error
     }
   }
@@ -59,7 +59,7 @@ class MapService {
       const response = await api.get('/map/consumption-history', { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error fetching consumption history:', error)
+      // console.error('Error fetching consumption history:', error)
       throw error
     }
   }
@@ -69,7 +69,7 @@ class MapService {
       const response = await api.get('/map/consumption-summary', { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error fetching consumption summary:', error)
+      // console.error('Error fetching consumption summary:', error)
       throw error
     }
   }
@@ -79,7 +79,7 @@ class MapService {
       const response = await api.get(`/map/consumption/zone/${zoneId}`, { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error fetching zone consumption:', error)
+      // console.error('Error fetching zone consumption:', error)
       throw error
     }
   }
@@ -111,7 +111,7 @@ class MapService {
       const response = await api.get('/map/stats/consumption-by-zonal', { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error fetching consumption by zonal admin:', error)
+      // console.error('Error fetching consumption by zonal admin:', error)
       throw error
     }
   }
@@ -121,7 +121,7 @@ class MapService {
       const response = await api.get('/map/stats/temporal-variation', { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error fetching temporal variation:', error)
+      // console.error('Error fetching temporal variation:', error)
       throw error
     }
   }
@@ -131,7 +131,7 @@ class MapService {
       const response = await api.get('/map/stats/distribution-by-parish', { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error fetching distribution by parish:', error)
+      // console.error('Error fetching distribution by parish:', error)
       throw error
     }
   }

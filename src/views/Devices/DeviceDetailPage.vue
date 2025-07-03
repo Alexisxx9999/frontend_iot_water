@@ -553,7 +553,7 @@ export default {
       try {
         await devicesStore.fetchDeviceMaintenance(device.value.id)
       } catch (err) {
-        console.error('Error loading maintenance:', err)
+        // console.error('Error loading maintenance:', err)
       } finally {
         maintenanceLoading.value = false
       }
@@ -566,7 +566,7 @@ export default {
       try {
         await devicesStore.fetchDeviceLogs(device.value.id, { type: logFilter.value })
       } catch (err) {
-        console.error('Error loading logs:', err)
+        // console.error('Error loading logs:', err)
       } finally {
         logsLoading.value = false
       }
@@ -584,7 +584,7 @@ export default {
           avgConsumption: Math.floor(Math.random() * 1000) + 100
         }
       } catch (err) {
-        console.error('Error loading zone stats:', err)
+        // console.error('Error loading zone stats:', err)
       }
     }
 

@@ -273,7 +273,7 @@ export default {
         closeDropdowns()
         await logout()
       } catch (error) {
-        console.error('Error durante el logout:', error)
+        // console.error('Error durante el logout:', error)
       }
     }
     
