@@ -1,280 +1,594 @@
 <template>
-  <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-      <!-- Background overlay -->
-      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal"></div>
-
-      <!-- Modal panel -->
-      <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-        <!-- Header -->
-        <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <slot name="header-icon" />
-              </div>
-              <div class="ml-3">
-                <h3 class="text-lg font-semibold text-white">Agregar Nuevo Empleado</h3>
-                <p class="text-primary-100 text-sm">Complete la información del empleado</p>
+  <div class="modal-overlay" @click.self="closeModal">
+    <div class="modal-content">
+      <h2 class="text-2xl font-bold mb-4">{{ isEditing ? 'Editar' : 'Nuevo' }} Empleado</h2>
+      
+      <form @submit.prevent="handleSubmit" class="space-y-6">
+        <!-- Información Personal -->
+        <div class="field-group">
+          <h3>Información Personal</h3>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="employeeId">ID Empleado</label>
+              <div class="relative">
+                <input
+                  type="text"
+                  id="employeeId"
+                  v-model="formData.employeeId"
+                  :class="['form-input', { 'error': errors.employeeId }]"
+                  required
+                  @blur="validateEmployeeId"
+                />
+                <div v-if="errors.employeeId" class="error-message">
+                  {{ errors.employeeId }}
+                </div>
               </div>
             </div>
-            <button 
-              @click="closeModal"
-              class="text-white hover:text-primary-100 transition-colors duration-200"
-            >
-              <slot name="close-icon" />
-            </button>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <div class="relative">
+                <input
+                  type="email"
+                  id="email"
+                  v-model="formData.email"
+                  :class="['form-input', { 'error': errors.email }]"
+                  required
+                  @blur="validateEmail"
+                />
+                <div v-if="errors.email" class="error-message">
+                  {{ errors.email }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mantenemos el resto de los campos pero aplicamos los nuevos estilos -->
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <div class="form-group">
+              <label for="firstName">Nombre</label>
+              <input
+                type="text"
+                id="firstName"
+                v-model="formData.firstName"
+                class="form-input"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Apellidos</label>
+              <input
+                type="text"
+                id="lastName"
+                v-model="formData.lastName"
+                class="form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Resto de los campos personales con los mismos estilos mejorados -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="phone">Teléfono</label>
+              <input
+                type="tel"
+                id="phone"
+                v-model="formData.phone"
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="dni">DNI/Documento*</label>
+              <input
+                type="text"
+                id="dni"
+                v-model="formData.dni"
+                class="form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="birthDate">Fecha de Nacimiento</label>
+              <input
+                type="date"
+                id="birthDate"
+                v-model="formData.birthDate"
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="address">Dirección</label>
+              <input
+                type="text"
+                id="address"
+                v-model="formData.address"
+                class="form-input"
+              />
+            </div>
           </div>
         </div>
 
-        <!-- Content -->
-        <div class="px-6 py-6 max-h-96 overflow-y-auto">
-          <form @submit.prevent="handleSubmit" class="space-y-6">
-            <!-- Personal Information -->
-            <div>
-              <h4 class="text-md font-medium text-gray-900 mb-4">Información Personal</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
-                  <input 
-                    v-model="form.name"
-                    type="text" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="Ingrese el nombre completo"
+        <!-- Información Laboral -->
+        <div class="field-group">
+          <h3>Información Laboral</h3>
+          
+          <!-- Mantenemos la estructura pero aplicamos los nuevos estilos -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="department">Departamento*</label>
+              <div class="relative">
+                <input
+                  type="text"
+                  id="department"
+                  v-model="formData.department"
+                  class="form-input"
+                  required
+                  @input="filterDepartments"
+                  @focus="showDepartmentSuggestions = true"
+                />
+                <!-- Lista de sugerencias -->
+                <div 
+                  v-if="showDepartmentSuggestions && filteredDepartments.length > 0"
+                  class="department-suggestions"
+                >
+                  <div
+                    v-for="dept in filteredDepartments"
+                    :key="dept"
+                    class="department-suggestion-item"
+                    @click="selectDepartment(dept)"
                   >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <input 
-                    v-model="form.email"
-                    type="email" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="correo@empresa.com"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                  <input 
-                    v-model="form.phone"
-                    type="tel" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="+1 (555) 123-4567"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Nacimiento</label>
-                  <input 
-                    v-model="form.birthDate"
-                    type="date" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                  >
+                    {{ dept }}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Work Information -->
-            <div>
-              <h4 class="text-md font-medium text-gray-900 mb-4">Información Laboral</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">ID Empleado</label>
-                  <input 
-                    v-model="form.employeeId"
-                    type="text" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="EMP-001"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
-                  <select 
-                    v-model="form.department"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                  >
-                    <option value="">Seleccione departamento</option>
-                    <option value="Mantenimiento">Mantenimiento</option>
-                    <option value="Operaciones">Operaciones</option>
-                    <option value="Calidad">Calidad</option>
-                    <option value="Seguridad">Seguridad</option>
-                    <option value="Administración">Administración</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Posición</label>
-                  <input 
-                    v-model="form.position"
-                    type="text" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="Técnico de Mantenimiento"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Ingreso</label>
-                  <input 
-                    v-model="form.startDate"
-                    type="date" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Ubicación</label>
-                  <input 
-                    v-model="form.location"
-                    type="text" 
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="Zona Norte"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Experiencia (años)</label>
-                  <input 
-                    v-model="form.experience"
-                    type="number" 
-                    min="0"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="5"
-                  >
-                </div>
-              </div>
+            <div class="form-group">
+              <label for="position">Posición*</label>
+              <input
+                type="text"
+                id="position"
+                v-model="formData.position"
+                class="form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="startDate">Fecha de Inicio*</label>
+              <input
+                type="date"
+                id="startDate"
+                v-model="formData.startDate"
+                class="form-input"
+                required
+              />
             </div>
 
-            <!-- Additional Information -->
-            <div>
-              <h4 class="text-md font-medium text-gray-900 mb-4">Información Adicional</h4>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Salario Base</label>
-                  <input 
-                    v-model="form.salary"
-                    type="number" 
-                    min="0"
-                    step="0.01"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                    placeholder="2500.00"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-                  <select 
-                    v-model="form.status"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                  >
-                    <option value="active">Activo</option>
-                    <option value="inactive">Inactivo</option>
-                    <option value="on_leave">En Licencia</option>
-                  </select>
-                </div>
-              </div>
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Notas</label>
-                <textarea 
-                  v-model="form.notes"
-                  rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                  placeholder="Información adicional sobre el empleado..."
-                ></textarea>
-              </div>
+            <div class="form-group">
+              <label for="contractType">Tipo de Contrato*</label>
+              <select
+                id="contractType"
+                v-model="formData.contractType"
+                class="form-input"
+                required
+              >
+                <option value="">Seleccionar...</option>
+                <option value="FULL_TIME">Tiempo Completo</option>
+                <option value="PART_TIME">Tiempo Parcial</option>
+                <option value="TEMPORARY">Temporal</option>
+                <option value="CONTRACTOR">Contratista</option>
+              </select>
             </div>
-          </form>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="salary">Salario</label>
+              <input
+                type="number"
+                id="salary"
+                v-model="formData.salary"
+                class="form-input"
+                step="0.01"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="schedule">Jornada Laboral</label>
+              <select
+                id="schedule"
+                v-model="formData.schedule"
+                class="form-input"
+              >
+                <option value="">Seleccionar...</option>
+                <option value="MORNING">Mañana</option>
+                <option value="AFTERNOON">Tarde</option>
+                <option value="NIGHT">Noche</option>
+                <option value="ROTATING">Rotativo</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <!-- Footer -->
-        <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
-          <button 
+        <!-- Roles y Permisos -->
+        <div class="field-group">
+          <h3>Roles y Permisos</h3>
+          
+          <div class="form-group">
+            <label>Roles</label>
+            <div class="grid grid-cols-2 gap-4">
+              <div 
+                v-for="role in availableRoles" 
+                :key="role.id" 
+                class="flex items-center p-3 rounded-lg hover:bg-gray-50"
+              >
+                <input
+                  type="checkbox"
+                  :id="'role-' + role.id"
+                  v-model="formData.roles"
+                  :value="role.id"
+                  class="form-checkbox"
+                />
+                <label :for="'role-' + role.id" class="ml-2 text-sm text-gray-700">
+                  {{ role.name }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Permisos Individuales</label>
+            <div class="grid grid-cols-2 gap-4">
+              <div v-for="perm in additionalPermissions" :key="perm.id" class="flex items-center p-3 rounded-lg hover:bg-gray-50">
+                <input
+                  type="checkbox"
+                  :id="'perm-' + perm.id"
+                  v-model="formData.additionalPermissions"
+                  :value="perm.id"
+                  class="form-checkbox"
+                />
+                <label :for="'perm-' + perm.id" class="ml-2 text-sm text-gray-700">
+                  {{ perm.name }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="field-group">
+          <h3>Información Adicional</h3>
+          
+          <div class="form-group">
+            <label for="experience">Experiencia Previa</label>
+            <textarea
+              id="experience"
+              v-model="formData.experience"
+              class="form-textarea"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="skills">Habilidades</label>
+            <textarea
+              id="skills"
+              v-model="formData.skills"
+              class="form-textarea"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="certifications">Certificaciones</label>
+            <textarea
+              id="certifications"
+              v-model="formData.certifications"
+              class="form-textarea"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="observations">Observaciones</label>
+            <textarea
+              id="observations"
+              v-model="formData.observations"
+              class="form-textarea"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <button
+            type="button"
             @click="closeModal"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
+            class="btn btn-secondary"
           >
             Cancelar
           </button>
-          <button 
-            @click="handleSubmit"
-            :disabled="loading"
-            class="px-4 py-2 bg-primary-600 border border-transparent rounded-lg text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          <button
+            type="submit"
+            class="btn btn-primary"
+            :disabled="isSubmitting"
           >
-            <span v-if="loading">Guardando...</span>
-            <span v-else>Guardar Empleado</span>
+            {{ isSubmitting ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Guardar') }}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue';
+<script>
+import { ref, reactive, onMounted, computed } from 'vue';
+import { usePersonnelStore } from '@/stores/personnel';
+import { personnelService } from '@/services/personnel.service';
 
-const props = defineProps({
-  show: {
-    type: Boolean,
-    default: false
-  }
-});
-
-const emit = defineEmits(['close', 'save']);
-
-const loading = ref(false);
-
-const form = reactive({
-  name: '',
-  email: '',
-  phone: '',
-  birthDate: '',
-  employeeId: '',
-  department: '',
-  position: '',
-  startDate: '',
-  location: '',
-  experience: '',
-  salary: '',
-  status: 'active',
-  notes: ''
-});
-
-const closeModal = () => {
-  emit('close');
-  resetForm();
-};
-
-const resetForm = () => {
-  Object.keys(form).forEach(key => {
-    form[key] = '';
-  });
-  form.status = 'active';
-};
-
-const handleSubmit = async () => {
-  loading.value = true;
-  try {
-    // Validar campos requeridos
-    const requiredFields = ['name', 'email', 'phone', 'employeeId', 'department', 'position', 'startDate'];
-    const missingFields = requiredFields.filter(field => !form[field]);
-    
-    if (missingFields.length > 0) {
-              // alert('Por favor complete todos los campos requeridos');
-      return;
+export default {
+  name: 'NewPersonnelModal',
+  props: {
+    isEditing: {
+      type: Boolean,
+      default: false
+    },
+    userData: {
+      type: Object,
+      default: () => ({})
     }
+  },
+  emits: ['close', 'refresh'],
+  
+  setup(props, { emit }) {
+    const store = usePersonnelStore();
+    const isSubmitting = ref(false);
+    const errors = reactive({});
+    const showDepartmentSuggestions = ref(false);
+    const departmentsList = ref([
+      'Recursos Humanos',
+      'Tecnología',
+      'Ventas',
+      'Marketing',
+      'Finanzas',
+      'Operaciones',
+      'Atención al Cliente',
+      'Desarrollo',
+      'Calidad',
+      'Administración'
+    ]);
+    const filteredDepartments = ref([...departmentsList.value]);
 
-    // Emitir evento con los datos del formulario
-    await emit('save', { ...form });
-    
-    // Cerrar modal y resetear formulario
-    closeModal();
-  } catch (error) {
-    console.error('Error al guardar empleado:', error);
-  } finally {
-    loading.value = false;
+    const additionalPermissions = computed(() => store.additionalPermissions);
+
+    const formData = reactive({
+      employeeId: props.userData?.employeeId || '',
+      email: props.userData?.email || '',
+      firstName: props.userData?.firstName || '',
+      lastName: props.userData?.lastName || '',
+      phone: props.userData?.phone || '',
+      dni: props.userData?.dni || '',
+      birthDate: props.userData?.birthDate || '',
+      address: props.userData?.address || '',
+      department: props.userData?.department || '',
+      position: props.userData?.position || '',
+      startDate: props.userData?.startDate || '',
+      contractType: props.userData?.contractType || '',
+      salary: props.userData?.salary || '',
+      schedule: props.userData?.schedule || '',
+      roles: props.userData?.roles?.map(r => r.id) || [],
+      experience: props.userData?.experience || '',
+      skills: props.userData?.skills || '',
+      certifications: props.userData?.certifications || '',
+      observations: props.userData?.observations || '',
+      additionalPermissions: props.userData?.additionalPermissions || []
+    });
+
+    const availableRoles = ref([]);
+
+    onMounted(async () => {
+      try {
+        const response = await personnelService.getRoles();
+        availableRoles.value = response.data;
+      } catch (error) {
+        console.error('Error al cargar roles:', error);
+      }
+    });
+
+    const filterDepartments = () => {
+      const searchTerm = formData.department.toLowerCase();
+      filteredDepartments.value = departmentsList.value.filter(dept =>
+        dept.toLowerCase().includes(searchTerm)
+      );
+    };
+
+    const selectDepartment = (department) => {
+      formData.department = department;
+      showDepartmentSuggestions.value = false;
+    };
+
+    const validateEmployeeId = async () => {
+      if (!formData.employeeId) return;
+      try {
+        await personnelService.validateEmployeeId(formData.employeeId);
+        errors.employeeId = '';
+      } catch (error) {
+        errors.employeeId = 'Este ID de empleado ya está en uso';
+      }
+    };
+
+    const validateEmail = async () => {
+      if (!formData.email) return;
+      try {
+        await personnelService.validateEmail(formData.email);
+        errors.email = '';
+      } catch (error) {
+        errors.email = 'Este email ya está registrado';
+      }
+    };
+
+    const handleSubmit = async () => {
+      try {
+        isSubmitting.value = true;
+        
+        if (props.isEditing) {
+          await store.updateUser(props.userData.id, formData);
+        } else {
+          await store.createUser(formData);
+        }
+        
+        await store.fetchPersonnel();
+        emit('refresh');
+        emit('close');
+      } catch (error) {
+        console.error('Error al guardar:', error);
+      } finally {
+        isSubmitting.value = false;
+      }
+    };
+
+    const closeModal = () => {
+      emit('close');
+    };
+
+    return {
+      formData,
+      availableRoles,
+      isSubmitting,
+      errors,
+      handleSubmit,
+      closeModal,
+      validateEmployeeId,
+      validateEmail,
+      showDepartmentSuggestions,
+      filteredDepartments,
+      filterDepartments,
+      selectDepartment,
+      additionalPermissions
+    };
   }
 };
-</script> 
+</script>
+
+<style scoped>
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 relative;
+}
+
+.form-group {
+  @apply relative;
+}
+
+.form-group label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.form-group label:after {
+  content: "*";
+  @apply text-red-500 ml-1;
+}
+
+.form-group label:not([required]):after {
+  content: none;
+}
+
+.form-input {
+  @apply block w-full rounded-md border-gray-300 shadow-sm 
+         focus:ring-blue-500 focus:border-blue-500 
+         transition duration-150 ease-in-out
+         sm:text-sm;
+}
+
+.form-input.error {
+  @apply border-red-300 text-red-900 placeholder-red-300 
+         focus:ring-red-500 focus:border-red-500;
+}
+
+.form-checkbox {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 
+         border-gray-300 rounded transition duration-150 ease-in-out;
+}
+
+h2 {
+  @apply flex items-center text-2xl font-bold text-gray-900 mb-6;
+}
+
+h2:before {
+  content: '';
+  @apply w-8 h-8 mr-3 bg-blue-100 rounded-full flex items-center justify-center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234B5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'/%3E%3C/svg%3E");
+}
+
+h3 {
+  @apply flex items-center text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200;
+}
+
+.btn {
+  @apply px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+}
+
+.btn-secondary {
+  @apply bg-white text-gray-700 border border-gray-300 
+         hover:bg-gray-50 focus:ring-blue-500;
+}
+
+.error-message {
+  @apply mt-2 text-sm text-red-600;
+}
+
+/* Mejoras para las sugerencias de departamento */
+.department-suggestions {
+  @apply absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg max-h-60 overflow-y-auto 
+         ring-1 ring-black ring-opacity-5;
+}
+
+.department-suggestion-item {
+  @apply px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer;
+}
+
+/* Animaciones */
+.modal-enter-active,
+.modal-leave-active {
+  @apply transition-opacity duration-300;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  @apply opacity-0;
+}
+
+.modal-enter-to,
+.modal-leave-from {
+  @apply opacity-100;
+}
+
+/* Mejoras para los grupos de campos */
+.field-group {
+  @apply bg-gray-50 rounded-lg p-6 mb-6;
+}
+
+/* Mejoras para los botones de acción */
+.action-buttons {
+  @apply flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-200;
+}
+</style> 
