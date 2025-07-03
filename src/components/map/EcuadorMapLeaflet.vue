@@ -1,14 +1,11 @@
 <template>
   <div ref="mapContainer" class="ecuador-leaflet-map"></div>
 </template>
-
 <script>
 import { onMounted, ref, computed } from 'vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useMapStore } from '@/stores/map';
-
-// Definir iconos personalizados por estado
 const markerIcons = {
   active: new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
@@ -51,63 +48,31 @@ const markerIcons = {
     shadowSize: [41, 41]
   })
 };
-
 export default {
   name: 'EcuadorMapLeaflet',
   setup() {
     const mapContainer = ref(null);
     const mapStore = useMapStore();
     const meters = computed(() => mapStore.getMeters);
-    const parishes = computed(() => mapStore.getParishes);
-
-    const getParishName = (parishId) => {
-      const parish = parishes.value.find(p => p.id === parishId);
-      return parish ? parish.name : 'N/A';
-    };
-    const getStatusLabel = (status) => {
-      const statusLabels = {
-        active: 'Activo',
-        inactive: 'Inactivo',
-        maintenance: 'En Mantenimiento',
-        fault: 'En Falla',
-        disconnected: 'Desconectado'
-      };
-      return statusLabels[status] || 'Desconocido';
-    };
-
     onMounted(() => {
-      // Centro de Ecuador
       const map = L.map(mapContainer.value).setView([-1.8312, -78.1834], 7);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
-
-      // Agregar marcadores de medidores con icono por estado
       meters.value.forEach(meter => {
         if (!meter.coordinates || meter.coordinates.length !== 2) return;
         const icon = markerIcons[meter.status] || markerIcons.active;
         const marker = L.marker(meter.coordinates, { icon }).addTo(map);
         marker.bindPopup(`
           <strong>Medidor:</strong> ${meter.serialNumber}<br/>
-          <strong>Estado:</strong> ${getStatusLabel(meter.status)}<br/>
-          <strong>Parroquia:</strong> ${getParishName(meter.parishId)}
+          <strong>Estado:</strong> ${meter.status}<br/>
         `);
       });
     });
-
-    return {
-      mapContainer
-    };
+    return { mapContainer };
   }
 };
 </script>
-
 <style scoped>
-.ecuador-leaflet-map {
-  width: 100%;
-  height: 400px;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
+.ecuador-leaflet-map { width: 100%; height: 400px; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 </style> 
