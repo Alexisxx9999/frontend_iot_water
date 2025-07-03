@@ -9,6 +9,9 @@
             <p class="mt-1 text-sm text-gray-500">
               Administra y gestiona todos los usuarios y equipos del sistema
             </p>
+            <p class="mt-1 text-sm text-blue-600 font-medium">
+              {{ store.totalItems }} empleado{{ store.totalItems !== 1 ? 's' : '' }} registrado{{ store.totalItems !== 1 ? 's' : '' }}
+            </p>
           </div>
           <button
             @click="openNewPersonnelModal"
@@ -160,6 +163,36 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-if="store.loading" class="hover:bg-gray-50">
+                <td colspan="8" class="px-6 py-12 text-center">
+                  <div class="flex flex-col items-center">
+                    <svg class="w-8 h-8 text-blue-600 animate-spin mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <p class="text-gray-500">Cargando empleados...</p>
+                  </div>
+                </td>
+              </tr>
+              <tr v-else-if="personnel.length === 0" class="hover:bg-gray-50">
+                <td colspan="8" class="px-6 py-12 text-center">
+                  <div class="flex flex-col items-center">
+                    <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay empleados registrados</h3>
+                    <p class="text-gray-500 mb-4">Comienza agregando el primer empleado a tu sistema</p>
+                    <button
+                      @click="openNewPersonnelModal"
+                      class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                    >
+                      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      Agregar Primer Empleado
+                    </button>
+                  </div>
+                </td>
+              </tr>
               <tr v-for="person in personnel" :key="person.id" class="hover:bg-gray-50">
                 <td class="px-6 py-4 whitespace-nowrap">
                   {{ person.employeeId }}
@@ -187,14 +220,21 @@
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                   <button
                     @click="viewDetails(person)"
-                    class="text-blue-600 hover:text-blue-900"
+                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
                   >
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
                     Ver
                   </button>
                   <button
                     @click="editPerson(person)"
-                    class="text-green-600 hover:text-green-900"
+                    class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
                   >
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
                     Editar
                   </button>
                 </td>
@@ -405,7 +445,13 @@ export default {
     };
 
     const viewDetails = (person) => {
-      router.push(`/personnel/${person.id}`);
+      try {
+        // Mostrar feedback de navegación
+        showFeedbackMessage(`Navegando al perfil de ${person.firstName} ${person.lastName}...`, 'success');
+        router.push(`/app/personnel/${person.id}`);
+      } catch (error) {
+        showFeedbackMessage('Error al navegar al detalle del empleado', 'error');
+      }
     };
 
     const editPerson = (person) => {

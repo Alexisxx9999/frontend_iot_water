@@ -188,6 +188,14 @@ export const usePersonnelStore = defineStore('personnel', {
       this.personnel = this.personnel.filter(p => p.id !== id);
       this.totalItems = this.personnel.length;
     },
+    async updateUserStatus(id, status) {
+      const user = this.personnel.find(p => p.id === id);
+      if (user) {
+        user.status = status;
+        // Aquí se podría hacer una llamada a la API real
+        // await personnelService.updateStatus(id, status);
+      }
+    },
     // Métodos mock para detalle, historial, etc. pueden ser agregados si los necesitas
     clearError() {
       this.error = null;

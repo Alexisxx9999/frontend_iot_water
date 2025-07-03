@@ -28,6 +28,24 @@
           >
             Editar Usuario
           </button>
+          <button
+            @click="toggleUserStatus"
+            :class="[
+              'px-4 py-2 rounded-md font-medium transition-colors duration-200',
+              user.status === 'active' 
+                ? 'bg-red-600 text-white hover:bg-red-700' 
+                : 'bg-green-600 text-white hover:bg-green-700'
+            ]"
+            :disabled="updatingStatus"
+          >
+            <svg v-if="updatingStatus" class="w-4 h-4 mr-2 animate-spin inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <svg v-else class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+            </svg>
+            {{ user.status === 'active' ? 'Desactivar' : 'Activar' }} Usuario
+          </button>
         </div>
       </div>
 
@@ -40,7 +58,19 @@
             <div><label class="block text-sm font-medium text-gray-500">Email</label><p class="mt-1">{{ user.email }}</p></div>
             <div><label class="block text-sm font-medium text-gray-500">Departamento</label><p class="mt-1">{{ user.department }}</p></div>
             <div><label class="block text-sm font-medium text-gray-500">Posición</label><p class="mt-1">{{ user.position }}</p></div>
-            <div><label class="block text-sm font-medium text-gray-500">Estado</label><p class="mt-1"><span :class="getStatusClass(user.status)">{{ getStatusText(user.status) }}</span></p></div>
+            <div>
+              <label class="block text-sm font-medium text-gray-500">Estado</label>
+              <div class="mt-1 flex items-center">
+                <span :class="getStatusClass(user.status)">{{ getStatusText(user.status) }}</span>
+                <button
+                  @click="toggleUserStatus"
+                  class="ml-2 text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-50 transition-colors"
+                  :title="user.status === 'active' ? 'Hacer clic para desactivar' : 'Hacer clic para activar'"
+                >
+                  Cambiar
+                </button>
+              </div>
+            </div>
             <div><label class="block text-sm font-medium text-gray-500">Antigüedad</label><p class="mt-1">{{ getSeniority(user.startDate) }}</p></div>
             <div><label class="block text-sm font-medium text-gray-500">Teléfono</label><p class="mt-1">{{ user.phone }}</p></div>
             <div><label class="block text-sm font-medium text-gray-500">DNI</label><p class="mt-1">{{ user.dni }}</p></div>
@@ -146,6 +176,57 @@
       </div>
     </div>
 
+    <!-- Modal de confirmación de cambio de estado -->
+    <div v-if="showStatusModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 max-w-md w-full">
+        <div class="flex items-center mb-4">
+          <div class="flex-shrink-0">
+            <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-lg font-medium text-gray-900">
+              Confirmar cambio de estado
+            </h3>
+          </div>
+        </div>
+        <div class="mb-6">
+          <p class="text-sm text-gray-500">
+            ¿Estás seguro de que quieres 
+            <span class="font-medium text-gray-900">
+              {{ user.status === 'active' ? 'desactivar' : 'activar' }}
+            </span> 
+            al usuario 
+            <span class="font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</span>?
+          </p>
+          <p v-if="user.status === 'active'" class="text-sm text-red-600 mt-2">
+            El usuario no podrá acceder al sistema hasta que sea reactivado.
+          </p>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button 
+            @click="showStatusModal = false" 
+            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            Cancelar
+          </button>
+          <button 
+            @click="confirmStatusChange" 
+            :class="[
+              'px-4 py-2 rounded-md font-medium',
+              user.status === 'active' 
+                ? 'bg-red-600 text-white hover:bg-red-700' 
+                : 'bg-green-600 text-white hover:bg-green-700'
+            ]"
+            :disabled="updatingStatus"
+          >
+            {{ updatingStatus ? 'Procesando...' : 'Confirmar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal de edición -->
     <NewPersonnelModal
       v-if="showEditModal"
@@ -169,8 +250,10 @@ const personnelStore = usePersonnelStore();
 
 const showRolesModal = ref(false);
 const showEditModal = ref(false);
+const showStatusModal = ref(false);
 const selectedRoles = ref([]);
 const savingRoles = ref(false);
+const updatingStatus = ref(false);
 
 const user = computed(() => {
   const id = Number(route.params.id);
@@ -264,6 +347,80 @@ function saveRoles() {
   if (!user.value) return;
   user.value.roles = availableRoles.value.filter(r => selectedRoles.value.includes(r.id));
   showRolesModal.value = false;
+}
+
+function showStatusMessage(message, type = 'success') {
+  // Crear un elemento temporal para mostrar el mensaje
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg ${
+    type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
+  }`;
+  messageDiv.innerHTML = `
+    <div class="flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${
+          type === 'success' 
+            ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' 
+            : 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
+        }"></path>
+      </svg>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  document.body.appendChild(messageDiv);
+  
+  // Remover el mensaje después de 3 segundos
+  setTimeout(() => {
+    if (messageDiv.parentNode) {
+      messageDiv.parentNode.removeChild(messageDiv);
+    }
+  }, 3000);
+}
+
+function toggleUserStatus() {
+  if (!user.value) return;
+  showStatusModal.value = true;
+}
+
+async function confirmStatusChange() {
+  if (!user.value) return;
+  
+  try {
+    updatingStatus.value = true;
+    const newStatus = user.value.status === 'active' ? 'inactive' : 'active';
+    
+    // Actualizar en el store
+    await personnelStore.updateUserStatus(user.value.id, newStatus);
+    
+    // Actualizar el estado local
+    user.value.status = newStatus;
+    
+    // Agregar al historial de actividad
+    const action = newStatus === 'active' ? 'Usuario activado' : 'Usuario desactivado';
+    const details = newStatus === 'active' 
+      ? 'El usuario ha sido reactivado en el sistema' 
+      : 'El usuario ha sido desactivado del sistema';
+    
+    activityHistory.value.unshift({
+      id: Date.now(),
+      action: action,
+      details: details,
+      timestamp: new Date()
+    });
+    
+    // Cerrar modal
+    showStatusModal.value = false;
+    
+    const statusText = newStatus === 'active' ? 'activado' : 'desactivado';
+    showStatusMessage(`Usuario ${statusText} correctamente`, 'success');
+    
+  } catch (error) {
+    console.error('Error al cambiar estado del usuario:', error);
+    showStatusMessage('Error al cambiar el estado del usuario', 'error');
+  } finally {
+    updatingStatus.value = false;
+  }
 }
 
 function goBack() {
