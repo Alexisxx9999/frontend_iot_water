@@ -301,8 +301,22 @@ function openDeleteIncidentModal(incident) {
   showDeleteIncidentModal.value = true;
 }
 function handleIncidentSaved(incident) {
-  // Aquí iría la lógica para guardar/actualizar en el backend
-  refreshData();
+  // Si el incidente tiene id, es edición (aquí solo refrescamos)
+  if (incident.id) {
+    refreshData();
+    return;
+  }
+  // Si es nuevo, le asignamos un id único (por ejemplo, timestamp)
+  const newIncident = {
+    ...incident,
+    id: Date.now(),
+    date: new Date().toISOString(), // Fecha actual
+    status: 'Abierto', // Estado inicial
+    reportedBy: 'Usuario Demo' // Puedes cambiar esto por el usuario real si lo tienes
+  };
+  incidents.value.unshift(newIncident); // Lo agregamos al principio
+  pagination.value.total = incidents.value.length;
+  refreshData(); // Opcional: si quieres refrescar otros datos
 }
 function handleIncidentDeleted(incident) {
   // Aquí iría la lógica para eliminar en el backend
