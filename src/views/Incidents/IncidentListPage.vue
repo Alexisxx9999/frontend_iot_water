@@ -217,6 +217,7 @@ import { ref, onMounted, computed } from 'vue';
 import IncidentModal from '@/components/incidents/IncidentModal.vue';
 import DeleteIncidentModal from '@/components/incidents/DeleteIncidentModal.vue';
 import { formatDate } from '@/utils/incidents.js';
+import { useRouter } from 'vue-router';
 
 // Iconos para tarjetas de prioridad
 const IconCritical = {
@@ -261,6 +262,7 @@ const showNewIncidentModal = ref(false);
 const showEditIncidentModal = ref(false);
 const showDeleteIncidentModal = ref(false);
 const selectedIncident = ref(null);
+const router = useRouter();
 
 onMounted(() => {
   // Simulación de carga de datos desde backend
@@ -342,7 +344,9 @@ function refreshData() {
 function prevPage() { if (pagination.value.page > 1) { pagination.value.page--; refreshData(); } }
 function nextPage() { if (pagination.value.page < totalPages.value) { pagination.value.page++; refreshData(); } }
 function assignIncident(incident) { /* Lógica para asignar técnico */ }
-function viewIncident(incident) { /* Navegar a detalle */ }
+function viewIncident(incident) {
+  router.push(`/app/incidents/${incident.id}`);
+}
 function getPriorityBadgeClass(priority) { return 'px-2 py-1 rounded-full text-xs font-semibold ' + (priorities.find(p => p.key === priority)?.badgeClass || 'bg-gray-100 text-gray-700'); }
 function getPriorityLabel(priority) { return priorities.find(p => p.key === priority)?.label || priority; }
 function getDepartmentName(id) { return departments.value.find(d => d.id === id)?.name || id; }
