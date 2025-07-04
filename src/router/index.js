@@ -13,6 +13,8 @@ import IncidentListPage from '@/views/Incidents/IncidentListPage.vue';
 import IncidentDetailPage from '@/views/Incidents/IncidentDetailPage.vue';
 // CRM
 import CrmWhatsappPage from '@/views/CRM/CrmWhatsappPage.vue';
+import ConversationDetailPage from '@/views/CRM/ConversationDetailPage.vue';
+import ChatbotTrainingPage from '@/views/CRM/ChatbotTrainingPage.vue';
 // Complaints
 import ComplaintListPage from '@/views/Complaints/ComplaintListPage.vue';
 import ComplaintDetailPage from '@/views/Complaints/ComplaintDetailPage.vue';
@@ -52,6 +54,8 @@ const routes = [
       { path: 'incidents/:id', component: IncidentDetailPage },
       // CRM
       { path: 'crm', component: CrmWhatsappPage },
+      { path: 'crm/conversations/:id', component: ConversationDetailPage },
+      { path: 'crm/training', component: ChatbotTrainingPage },
       // Complaints
       { path: 'complaints', component: ComplaintListPage },
       { path: 'complaints/:id', component: ComplaintDetailPage },
