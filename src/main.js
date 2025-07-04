@@ -10,10 +10,64 @@ import './assets/styles/main.scss'
 
 // FontAwesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import {
+  faBars,
+  faTachometerAlt,
+  faSyncAlt,
+  faSpinner,
+  faExclamationTriangle,
+  faChartBar,
+  faCogs,
+  faChartLine,
+  faChartPie,
+  faSearch,
+  faMicrochip,
+  faMapMarkerAlt,
+  faUsers,
+  faWifi,
+  faTachometerAlt as faTachometer,
+  faDollarSign,
+  faArrowUp,
+  faArrowDown,
+  faCheckCircle,
+  faInfoCircle,
+  faToggleOn,
+  faExclamationTriangle as faExclamation,
+  faCog,
+  faTint,
+  faLeaf,
+  faSpinner as faSpinnerIcon
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faBars)
+library.add(
+  faBars,
+  faTachometerAlt,
+  faSyncAlt,
+  faSpinner,
+  faExclamationTriangle,
+  faChartBar,
+  faCogs,
+  faChartLine,
+  faChartPie,
+  faSearch,
+  faMicrochip,
+  faMapMarkerAlt,
+  faUsers,
+  faWifi,
+  faTachometer,
+  faDollarSign,
+  faArrowUp,
+  faArrowDown,
+  faCheckCircle,
+  faInfoCircle,
+  faToggleOn,
+  faExclamation,
+  faCog,
+  faTint,
+  faLeaf,
+  faSpinnerIcon
+)
 
 // Crear la aplicación
 const app = createApp(App)

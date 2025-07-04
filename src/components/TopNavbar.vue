@@ -36,59 +36,7 @@
         </div>
 
         <!-- Notifications -->
-        <div class="relative">
-          <button
-            @click="toggleNotifications"
-            class="p-2 text-[#23272f] hover:text-[#23272f] hover:bg-gray-100 rounded-lg transition-colors relative"
-          >
-            <BellIcon class="w-6 h-6" />
-            <span
-              v-if="notificationCount > 0"
-              class="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium shadow"
-            >
-              {{ notificationCount > 99 ? '99+' : notificationCount }}
-            </span>
-          </button>
-
-          <!-- Notifications dropdown -->
-          <div
-            v-if="showNotifications"
-            class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-          >
-            <div class="px-4 py-2 border-b border-gray-100">
-              <h3 class="text-sm font-medium text-[#23272f]">Notificaciones</h3>
-            </div>
-            <div class="max-h-64 overflow-y-auto">
-              <div
-                v-for="notification in notifications"
-                :key="notification.id"
-                class="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
-              >
-                <div class="flex items-start space-x-3">
-                  <div
-                    class="flex-shrink-0 w-2 h-2 rounded-full mt-2"
-                    :class="{
-                      'bg-green-400': notification.type === 'success',
-                      'bg-yellow-400': notification.type === 'warning',
-                      'bg-red-500': notification.type === 'error',
-                      'bg-cyan-400': notification.type === 'info'
-                    }"
-                  ></div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-[#23272f]">{{ notification.title }}</p>
-                    <p class="text-sm text-[#23272f] mt-1">{{ notification.message }}</p>
-                    <p class="text-xs text-[#23272f] mt-1">{{ notification.time }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="px-4 py-2 border-t border-gray-100">
-              <button class="text-sm text-[#23272f] hover:text-[#23272f] font-medium">
-                Ver todas las notificaciones
-              </button>
-            </div>
-          </div>
-        </div>
+        <NotificationBell @go-to-notifications="goToNotificationsPage" />
 
         <!-- User menu -->
         <div class="relative">
@@ -147,7 +95,7 @@
 
     <!-- Global overlay for dropdowns -->
     <div
-      v-if="showNotifications || showUserMenu"
+      v-if="showUserMenu"
       class="fixed inset-0 z-30"
       @click="closeDropdowns"
     ></div>
@@ -160,7 +108,6 @@ import { useRouter } from 'vue-router'
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
-  BellIcon,
   UserIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
@@ -169,28 +116,27 @@ import {
   ClockIcon
 } from '@heroicons/vue/24/outline'
 import { useLogout } from '@/utils/navigation.js'
+import NotificationBell from '@/components/common/NotificationBell.vue'
 
 export default {
   name: 'TopNavbar',
   components: {
     Bars3Icon,
     MagnifyingGlassIcon,
-    BellIcon,
     UserIcon,
     Cog6ToothIcon,
     ArrowRightOnRectangleIcon,
     ChevronDownIcon,
     CalendarIcon,
-    ClockIcon
+    ClockIcon,
+    NotificationBell
   },
   emits: ['toggle-sidebar'],
   setup() {
     const router = useRouter()
     const { logout } = useLogout()
     
-    const showNotifications = ref(false)
     const showUserMenu = ref(false)
-    const notificationCount = ref(3)
     const currentDate = ref('')
     const currentTime = ref('')
     
@@ -228,43 +174,11 @@ export default {
       })
     }
     
-    // Simulated notifications
-    const notifications = ref([
-      {
-        id: 1,
-        type: 'warning',
-        title: 'Dispositivo offline',
-        message: 'El sensor en la zona norte ha perdido conexión',
-        time: 'Hace 5 minutos'
-      },
-      {
-        id: 2,
-        type: 'success',
-        title: 'Incidente resuelto',
-        message: 'Se ha solucionado el problema de presión en la línea principal',
-        time: 'Hace 1 hora'
-      },
-      {
-        id: 3,
-        type: 'info',
-        title: 'Nueva denuncia',
-        message: 'Se ha recibido una nueva denuncia ciudadana',
-        time: 'Hace 2 horas'
-      }
-    ])
-    
-    const toggleNotifications = () => {
-      showNotifications.value = !showNotifications.value
-      showUserMenu.value = false
-    }
-    
     const toggleUserMenu = () => {
       showUserMenu.value = !showUserMenu.value
-      showNotifications.value = false
     }
     
     const closeDropdowns = () => {
-      showNotifications.value = false
       showUserMenu.value = false
     }
     
@@ -284,6 +198,11 @@ export default {
       }
     }
     
+    // Nueva función para redirigir a notificaciones
+    const goToNotificationsPage = () => {
+      router.push('/app/notifications')
+    }
+    
     onMounted(() => {
       updateDateTime()
       setInterval(updateDateTime, 1000)
@@ -295,20 +214,17 @@ export default {
     })
     
     return {
-      showNotifications,
       showUserMenu,
-      notificationCount,
-      notifications,
       currentDate,
       currentTime,
       userName,
       userEmail,
       userRole,
       userInitials,
-      toggleNotifications,
       toggleUserMenu,
       closeDropdowns,
-      handleLogout
+      handleLogout,
+      goToNotificationsPage
     }
   }
 }
@@ -329,28 +245,5 @@ export default {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-// Scrollbar para notificaciones
-.overflow-y-auto {
-  scrollbar-width: thin;
-  scrollbar-color: #ebeef1 #f1f5f9;
-}
-
-.overflow-y-auto::-webkit-scrollbar {
-  width: 4px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 2px;
-}
-
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
 }
 </style>

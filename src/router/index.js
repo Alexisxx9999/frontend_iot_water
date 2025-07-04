@@ -24,6 +24,10 @@ import PersonnelDetailPage from '@/views/Personnel/PersonnelDetailPage.vue';
 // Devices
 import DeviceListPage from '@/views/Devices/DeviceListPage.vue';
 import DeviceDetailPage from '@/views/Devices/DeviceDetailPage.vue';
+// Reports
+import ReportsPage from '@/views/Reports/ReportsPage.vue';
+// Notifications
+import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
 // Not Found
 import NotFoundPage from '@/views/NotFoundPage.vue';
 
@@ -63,6 +67,10 @@ const routes = [
       // Devices
       { path: 'devices', component: DeviceListPage },
       { path: 'devices/:id', component: DeviceDetailPage },
+      // Reports
+      { path: 'reports', component: ReportsPage },
+      // Notifications
+      { path: 'notifications', component: NotificationsPage },
     ],
   },
   // Not Found

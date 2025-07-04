@@ -51,6 +51,20 @@ export const sidebarMenuItems = [
     icon: 'person',
     route: '/app/personnel',
     badge: null
+  },
+  {
+    id: 'reports',
+    title: 'Reportes',
+    icon: 'reports',
+    route: '/app/reports',
+    badge: null
+  },
+  {
+    id: 'notifications',
+    title: 'Notificaciones',
+    icon: 'notifications',
+    route: '/app/notifications',
+    badge: null
   }
 ];
 
@@ -162,7 +176,9 @@ export const getMenuIcon = (iconName) => {
     people: '👥',
     report: '📋',
     map: '🗺️',
-    person: '👤'
+    person: '👤',
+    reports: '📈',
+    notifications: '🔔'
   };
 
   return iconMap[iconName] || '📄';
@@ -177,7 +193,9 @@ export const getBreadcrumbs = (route) => {
     '/app/crm/conversations': ['CRM', 'Conversaciones'],
     '/app/complaints': ['Denuncias Ciudadanas'],
     '/app/map': ['Mapa'],
-    '/app/personnel': ['Personal']
+    '/app/personnel': ['Personal'],
+    '/app/reports': ['Reportes'],
+    '/app/notifications': ['Notificaciones']
   };
 
   return breadcrumbMap[route] || ['Inicio'];
