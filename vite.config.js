@@ -43,5 +43,8 @@ export default defineConfig({
         }
       }
     }
+  },
+  optimizeDeps: {
+    include: ['object-assign', 'concaveman', 'rbush']
   }
 })

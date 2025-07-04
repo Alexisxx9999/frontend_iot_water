@@ -1,5 +1,6 @@
 import api from './api'
 
+<<<<<<< HEAD
 class MapService {
   // Obtener datos de geografía política
   async getGeographicData() {
@@ -8,10 +9,42 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo datos geográficos:', error)
+=======
+// Constantes para tipos de parroquia y rangos de consumo
+export const PARISH_TYPES = {
+  URBANA: 'urbana',
+  RURAL: 'rural',
+  MIXTA: 'mixta'
+}
+
+export const CONSUMPTION_RANGES = {
+  BAJO: { min: 0, max: 25, color: '#4CAF50', label: 'Bajo' },
+  MEDIO: { min: 25, max: 50, color: '#FFC107', label: 'Medio' },
+  ALTO: { min: 50, max: 75, color: '#FF9800', label: 'Alto' },
+  MUY_ALTO: { min: 75, max: 100, color: '#F44336', label: 'Muy Alto' }
+}
+
+export const TIME_PERIODS = {
+  ULTIMO_MES: 'last_month',
+  ULTIMOS_3_MESES: 'last_3_months',
+  ULTIMO_ANIO: 'last_year',
+  PERSONALIZADO: 'custom'
+}
+
+class MapService {
+  // Geografía Política
+  async getZonalAdministrations() {
+    try {
+      const response = await api.get('/map/zonal-administrations')
+      return response.data
+    } catch (error) {
+      console.error('Error fetching zonal administrations:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener resumen de consumo histórico
   async getConsumptionHistory(params = {}) {
     try {
@@ -19,10 +52,19 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo historial de consumo:', error)
+=======
+  async getParishes(filters = {}) {
+    try {
+      const response = await api.get('/map/parishes', { params: filters })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching parishes:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener datos de zonas administrativas
   async getAdministrativeZones() {
     try {
@@ -30,10 +72,19 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo zonas administrativas:', error)
+=======
+  async getGeographicData(filters = {}) {
+    try {
+      const response = await api.get('/map/geographic-data', { params: filters })
+      return response.data
+    } catch (error) {
+      // console.error('Error fetching geographic data:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener datos de parroquias
   async getParishes(zoneId = null) {
     try {
@@ -42,10 +93,20 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo parroquias:', error)
+=======
+  // Consumo Histórico
+  async getConsumptionHistory(filters = {}) {
+    try {
+      const response = await api.get('/map/consumption-history', { params: filters })
+      return response.data
+    } catch (error) {
+      // console.error('Error fetching consumption history:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener consumo por zona
   async getConsumptionByZone(zoneId, period = '1') {
     try {
@@ -55,10 +116,19 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo consumo por zona:', error)
+=======
+  async getConsumptionSummary(filters = {}) {
+    try {
+      const response = await api.get('/map/consumption-summary', { params: filters })
+      return response.data
+    } catch (error) {
+      // console.error('Error fetching consumption summary:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener variación temporal de consumo
   async getTemporalVariation(zoneId = null, months = 6) {
     try {
@@ -70,10 +140,19 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo variación temporal:', error)
+=======
+  async getConsumptionByZone(zoneId, filters = {}) {
+    try {
+      const response = await api.get(`/map/consumption/zone/${zoneId}`, { params: filters })
+      return response.data
+    } catch (error) {
+      // console.error('Error fetching zone consumption:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener distribución por tipo de parroquia
   async getParishTypeDistribution() {
     try {
@@ -81,10 +160,20 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo distribución por parroquia:', error)
+=======
+  // Datos del Mapa
+  async getMapData(filters = {}) {
+    try {
+      const response = await api.get('/map/data', { params: filters })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching map data:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener resumen general del sistema
   async getSystemSummary() {
     try {
@@ -92,23 +181,75 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo resumen del sistema:', error)
+=======
+  async getZoneDetails(zoneId) {
+    try {
+      const response = await api.get(`/map/zone/${zoneId}`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching zone details:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Exportar datos del mapa
   async exportMapData(filters = {}) {
     try {
       const response = await api.post('/exportar-mapa', filters, {
-        responseType: 'blob'
-      })
+=======
+  // Gráficos y Estadísticas
+  async getConsumptionByZonalAdmin(filters = {}) {
+    try {
+      const response = await api.get('/map/stats/consumption-by-zonal', { params: filters })
       return response.data
     } catch (error) {
-      console.error('Error exportando datos del mapa:', error)
+      // console.error('Error fetching consumption by zonal admin:', error)
       throw error
     }
   }
 
+  async getTemporalVariation(filters = {}) {
+    try {
+      const response = await api.get('/map/stats/temporal-variation', { params: filters })
+      return response.data
+    } catch (error) {
+      // console.error('Error fetching temporal variation:', error)
+      throw error
+    }
+  }
+
+  async getDistributionByParish(filters = {}) {
+    try {
+      const response = await api.get('/map/stats/distribution-by-parish', { params: filters })
+      return response.data
+    } catch (error) {
+      // console.error('Error fetching distribution by parish:', error)
+      throw error
+    }
+  }
+
+  // Exportación
+  async exportMapData(filters = {}, format = 'excel') {
+    try {
+      const response = await api.get('/map/export', { 
+        params: { ...filters, format },
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
+        responseType: 'blob'
+      })
+      return response.data
+    } catch (error) {
+<<<<<<< HEAD
+      console.error('Error exportando datos del mapa:', error)
+=======
+      console.error('Error exporting map data:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
+      throw error
+    }
+  }
+
+<<<<<<< HEAD
   // Obtener coordenadas de zonas
   async getZoneCoordinates() {
     try {
@@ -116,10 +257,20 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo coordenadas:', error)
+=======
+  // Gestión de Medidores en el Mapa
+  async getMetersInMap(filters = {}) {
+    try {
+      const response = await api.get('/map/meters', { params: filters })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching meters in map:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Filtrar datos por múltiples criterios
   async filterMapData(filters = {}) {
     try {
@@ -127,10 +278,19 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error filtrando datos del mapa:', error)
+=======
+  async addMeterToMap(meterData) {
+    try {
+      const response = await api.post('/map/meters', meterData)
+      return response.data
+    } catch (error) {
+      console.error('Error adding meter to map:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Obtener alertas de consumo
   async getConsumptionAlerts() {
     try {
@@ -138,10 +298,19 @@ class MapService {
       return response.data
     } catch (error) {
       console.error('Error obteniendo alertas:', error)
+=======
+  async updateMeterInMap(meterId, meterData) {
+    try {
+      const response = await api.put(`/map/meters/${meterId}`, meterData)
+      return response.data
+    } catch (error) {
+      console.error('Error updating meter in map:', error)
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
       throw error
     }
   }
 
+<<<<<<< HEAD
   // Datos simulados para desarrollo
   getMockData() {
     // Calcular parishDistribution y temporalData dinámicamente según las zonas
@@ -352,6 +521,51 @@ class MapService {
   formatVariation(value) {
     const sign = value >= 0 ? '+' : ''
     return `${sign}${value.toFixed(1)}%`
+=======
+  async deleteMeterFromMap(meterId) {
+    try {
+      const response = await api.delete(`/map/meters/${meterId}`)
+      return response.data
+    } catch (error) {
+      console.error('Error deleting meter from map:', error)
+      throw error
+    }
+  }
+
+  // Mock data para desarrollo
+  getMockMapData() {
+    return {
+      zonalAdministrations: [
+        { id: 1, name: 'Administración Zonal Norte', code: 'AZN', parishes: 12 },
+        { id: 2, name: 'Administración Zonal Sur', code: 'AZS', parishes: 8 },
+        { id: 3, name: 'Administración Zonal Este', code: 'AZE', parishes: 15 },
+        { id: 4, name: 'Administración Zonal Oeste', code: 'AZO', parishes: 10 }
+      ],
+      parishes: [
+        { id: 1, name: 'Parroquia San José', type: 'urbana', zonalAdminId: 1, consumption: 45.2 },
+        { id: 2, name: 'Parroquia La Merced', type: 'urbana', zonalAdminId: 1, consumption: 32.8 },
+        { id: 3, name: 'Parroquia Rural Norte', type: 'rural', zonalAdminId: 1, consumption: 18.5 },
+        { id: 4, name: 'Parroquia San Francisco', type: 'urbana', zonalAdminId: 2, consumption: 67.3 },
+        { id: 5, name: 'Parroquia Mixta Sur', type: 'mixta', zonalAdminId: 2, consumption: 41.7 },
+        { id: 6, name: 'Parroquia El Valle', type: 'urbana', zonalAdminId: 3, consumption: 55.9 },
+        { id: 7, name: 'Parroquia Rural Este', type: 'rural', zonalAdminId: 3, consumption: 22.1 },
+        { id: 8, name: 'Parroquia Los Chillos', type: 'mixta', zonalAdminId: 4, consumption: 38.4 }
+      ],
+      consumptionSummary: {
+        totalConsumption: 322.9,
+        monthlyVariation: 5.2,
+        averageConsumption: 40.4,
+        totalParishes: 8,
+        totalZonalAdmins: 4
+      },
+      meters: [
+        { id: 1, serialNumber: 'MTR001', parishId: 1, coordinates: [-0.2299, -78.5249], status: 'active' },
+        { id: 2, serialNumber: 'MTR002', parishId: 2, coordinates: [-0.2150, -78.5100], status: 'active' },
+        { id: 3, serialNumber: 'MTR003', parishId: 3, coordinates: [-0.2400, -78.5400], status: 'maintenance' },
+        { id: 4, serialNumber: 'MTR004', parishId: 4, coordinates: [-0.2000, -78.4800], status: 'active' }
+      ]
+    }
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
   }
 }
 
