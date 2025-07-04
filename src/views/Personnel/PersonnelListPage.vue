@@ -28,6 +28,9 @@
 
     <!-- Filtros -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Estadísticas -->
+      <PersonnelStats />
+      
       <div class="bg-white rounded-lg shadow p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="form-group">
@@ -210,7 +213,7 @@
                   {{ person.position }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  {{ formatDate(person.startDate) }}
+                  {{ getSeniority(person.startDate) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span :class="getStatusClass(person.status)">
@@ -288,11 +291,13 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePersonnelStore } from '@/stores/personnel';
 import NewPersonnelModal from '@/components/personnel/NewPersonnelModal.vue';
+import PersonnelStats from '@/components/personnel/PersonnelStats.vue';
 
 export default {
   name: 'PersonnelListPage',
   components: {
-    NewPersonnelModal
+    NewPersonnelModal,
+    PersonnelStats
   },
 
   setup() {
@@ -319,12 +324,12 @@ export default {
     });
 
     const tableHeaders = [
-      { text: 'ID', value: 'employeeId' },
-      { text: 'Nombre', value: 'firstName' },
+      { text: 'ID Empleado', value: 'employeeId' },
+      { text: 'Nombre Completo', value: 'firstName' },
       { text: 'Email', value: 'email' },
       { text: 'Departamento', value: 'department' },
       { text: 'Posición', value: 'position' },
-      { text: 'Fecha Inicio', value: 'startDate' },
+      { text: 'Antigüedad', value: 'startDate' },
       { text: 'Estado', value: 'status' }
     ];
 
@@ -434,6 +439,22 @@ export default {
       });
     };
 
+    const getSeniority = (startDate) => {
+      if (!startDate) return '';
+      const start = new Date(startDate);
+      const now = new Date();
+      const years = now.getFullYear() - start.getFullYear();
+      const months = now.getMonth() - start.getMonth();
+      
+      if (years > 0) {
+        return `${years} año${years > 1 ? 's' : ''}`;
+      } else if (months > 0) {
+        return `${months} mes${months > 1 ? 'es' : ''}`;
+      } else {
+        return 'Menos de 1 mes';
+      }
+    };
+
     const openNewPersonnelModal = () => {
       selectedPerson.value = null;
       showPersonnelModal.value = true;
@@ -487,6 +508,7 @@ export default {
       getStatusClass,
       getStatusText,
       formatDate,
+      getSeniority,
       openNewPersonnelModal,
       closePersonnelModal,
       viewDetails,
