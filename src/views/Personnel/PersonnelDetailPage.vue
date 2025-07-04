@@ -89,14 +89,44 @@
         <!-- Roles y Permisos -->
         <div class="bg-white rounded-lg shadow p-6">
           <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Roles</h2>
+            <h2 class="text-lg font-semibold text-gray-900">Roles y Permisos</h2>
             <button @click="showRolesModal = true" class="text-blue-600 hover:text-blue-800 text-sm">Gestionar Roles</button>
           </div>
+          
+          <!-- Roles Asignados -->
           <div class="mb-6">
             <h3 class="text-sm font-medium text-gray-500 mb-2">Roles Asignados</h3>
             <div class="space-y-2">
               <div v-for="role in user.roles" :key="role.id" class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-md">
-                <span>{{ role.name }}</span>
+                <span class="font-medium">{{ role.name }}</span>
+                <button
+                  @click="removeRole(role.id)"
+                  class="text-red-600 hover:text-red-800 text-xs"
+                  title="Remover rol"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <div v-if="user.roles.length === 0" class="text-sm text-gray-400 italic">
+                Sin roles asignados
+              </div>
+            </div>
+          </div>
+
+          <!-- Permisos Derivados -->
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Permisos Derivados</h3>
+            <div class="space-y-1">
+              <div v-for="permission in userPermissions" :key="permission.id" class="flex items-center text-sm">
+                <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>{{ permission.name }}</span>
+              </div>
+              <div v-if="userPermissions.length === 0" class="text-sm text-gray-400 italic">
+                Sin permisos asignados
               </div>
             </div>
           </div>
@@ -239,7 +269,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { usePersonnelStore } from '@/stores/personnel';
 import NewPersonnelModal from '@/components/personnel/NewPersonnelModal.vue';
@@ -283,6 +313,48 @@ const aiContributions = ref([
 const isCrmAgent = computed(() => {
   return user.value && user.value.roles.some(role => role.name.toLowerCase().includes('rrhh') || role.name.toLowerCase().includes('crm'));
 });
+
+const userPermissions = computed(() => {
+  if (!user.value) return [];
+  const allPermissions = [];
+  user.value.roles.forEach(role => {
+    const rolePermissions = getPermissionsByRole(role.id);
+    rolePermissions.forEach(permission => {
+      if (!allPermissions.find(p => p.id === permission.id)) {
+        allPermissions.push(permission);
+      }
+    });
+  });
+  return allPermissions;
+});
+
+function getPermissionsByRole(roleId) {
+  // Mapeo de roles a permisos (simulado)
+  const rolePermissions = {
+    1: [1, 6, 8], // Usuario: ver usuarios, ver CRM, ver reportes
+    2: [1, 2, 3, 4, 5], // RRHH: todos los permisos de usuarios
+    3: [1, 2, 3, 4, 5, 6, 7, 8, 9], // Administrador: todos los permisos
+    4: [1, 6, 7], // CRM: ver usuarios, ver CRM, gestionar CRM
+    5: [1, 2, 3, 6, 7, 8], // Supervisor: ver/crear/editar usuarios, CRM, reportes
+    6: [1, 6], // Técnico: ver usuarios, ver CRM
+    7: [6, 8] // Invitado: ver CRM, ver reportes
+  };
+  
+  const permissions = [
+    { id: 1, name: 'Ver usuarios' },
+    { id: 2, name: 'Crear usuarios' },
+    { id: 3, name: 'Editar usuarios' },
+    { id: 4, name: 'Eliminar usuarios' },
+    { id: 5, name: 'Gestionar roles' },
+    { id: 6, name: 'Ver CRM' },
+    { id: 7, name: 'Gestionar CRM' },
+    { id: 8, name: 'Ver reportes' },
+    { id: 9, name: 'Gestionar sistema' }
+  ];
+  
+  const permissionIds = rolePermissions[roleId] || [];
+  return permissions.filter(p => permissionIds.includes(p.id));
+}
 
 function getStatusClass(status) {
   const classes = 'px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full';
@@ -331,8 +403,33 @@ function getSchedule(schedule) {
 function formatDate(date) {
   return new Date(date).toLocaleString();
 }
-function handlePrint() {
-  window.print();
+async function handlePrint() {
+  try {
+    const profileData = await personnelStore.exportUserProfile(user.value.id);
+    
+    // Crear contenido para impresión
+    const printContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h1>Perfil de Usuario</h1>
+        <h2>${profileData.user.firstName} ${profileData.user.lastName}</h2>
+        <p><strong>ID:</strong> ${profileData.user.employeeId}</p>
+        <p><strong>Email:</strong> ${profileData.user.email}</p>
+        <p><strong>Departamento:</strong> ${profileData.user.department}</p>
+        <p><strong>Posición:</strong> ${profileData.user.position}</p>
+        <p><strong>Estado:</strong> ${getStatusText(profileData.user.status)}</p>
+        <p><strong>Fecha de exportación:</strong> ${profileData.exportDate.toLocaleString()}</p>
+      </div>
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+    
+    showStatusMessage('Reporte generado correctamente', 'success');
+  } catch (error) {
+    showStatusMessage('Error al generar reporte', 'error');
+  }
 }
 function editUser() {
   showEditModal.value = true;
@@ -345,8 +442,24 @@ function refreshUser() {
 }
 function saveRoles() {
   if (!user.value) return;
-  user.value.roles = availableRoles.value.filter(r => selectedRoles.value.includes(r.id));
-  showRolesModal.value = false;
+  
+  try {
+    savingRoles.value = true;
+    personnelStore.updateUserRoles(user.value.id, selectedRoles.value);
+    showRolesModal.value = false;
+    showStatusMessage('Roles actualizados correctamente', 'success');
+  } catch (error) {
+    showStatusMessage('Error al actualizar roles', 'error');
+  } finally {
+    savingRoles.value = false;
+  }
+}
+
+function removeRole(roleId) {
+  if (!user.value) return;
+  const newRoles = selectedRoles.value.filter(id => id !== roleId);
+  selectedRoles.value = newRoles;
+  saveRoles();
 }
 
 function showStatusMessage(message, type = 'success') {
@@ -432,6 +545,13 @@ onMounted(() => {
     selectedRoles.value = user.value.roles.map(r => r.id);
   }
 });
+
+// Actualizar roles seleccionados cuando cambie el usuario
+watch(() => user.value, (newUser) => {
+  if (newUser) {
+    selectedRoles.value = newUser.roles.map(r => r.id);
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>

@@ -25,7 +25,11 @@
     "vue": "^3.5.17",
     "vue-chartjs": "^5.3.2",
     "vue-router": "^4.5.1",
+<<<<<<< HEAD
+    "xlsx": "^0.18.5"
+=======
     "vue3-leaflet": "^1.0.50"
+>>>>>>> e0ed96d6e2d6533b8bf87dff7b0dc398dc526e3d
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",

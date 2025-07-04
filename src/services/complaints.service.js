@@ -14,7 +14,8 @@ const mockComplaints = [
     location: 'Calle Norte #123, Centro',
     reporter: 'Juan Pérez',
     createdAt: '2024-01-15T10:30:00',
-    deviceId: 'SEN001'
+    deviceId: 'SEN001',
+    technician: 'juan_perez'
   },
   {
     id: 'DEN002',
@@ -26,7 +27,8 @@ const mockComplaints = [
     location: 'Residencial Norte, Bloque 3',
     reporter: 'Ana López',
     createdAt: '2024-01-14T15:45:00',
-    deviceId: 'VAL002'
+    deviceId: 'VAL002',
+    technician: 'maria_garcia'
   },
   {
     id: 'DEN003',
@@ -38,7 +40,8 @@ const mockComplaints = [
     location: 'Avenida Este #456',
     reporter: 'Roberto Silva',
     createdAt: '2024-01-13T09:15:00',
-    deviceId: 'MET003'
+    deviceId: 'MET003',
+    technician: 'carlos_mendoza'
   },
   {
     id: 'DEN004',
@@ -50,7 +53,8 @@ const mockComplaints = [
     location: 'Zona Sur, Sector 2',
     reporter: 'Laura Martínez',
     createdAt: '2024-01-12T14:20:00',
-    deviceId: 'SEN001'
+    deviceId: 'SEN001',
+    technician: 'ana_lopez'
   }
 ]
 
