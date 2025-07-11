@@ -45,11 +45,11 @@ export const sidebarMenuItems = [
     route: '/app/incidents',
     badge: null
   },
+  // Aquí reemplazo 'Personal' por 'Nodos'
   {
-    id: 'personnel',
-    title: 'Personal',
-    icon: 'person',
-    route: '/app/personnel',
+    title: 'Nodos',
+    icon: 'mdi-access-point-network', // Cambia el icono si usas otro set
+    route: '/app/nodes',
     badge: null
   },
   {

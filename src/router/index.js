@@ -20,9 +20,10 @@ import ComplaintListPage from '@/views/Complaints/ComplaintListPage.vue';
 import ComplaintDetailPage from '@/views/Complaints/ComplaintDetailPage.vue';
 // Map
 import MapPage from '@/views/Map/MapPage.vue';
-// Personnel
-import PersonnelListPage from '@/views/Personnel/PersonnelListPage.vue';
-import PersonnelDetailPage from '@/views/Personnel/PersonnelDetailPage.vue';
+// Importar los nuevos componentes de nodos
+import NodeListPage from '@/views/Nodes/NodeListPage.vue';
+import NodeUpdatePage from '@/views/Nodes/NodeUpdatePage.vue';
+import NodeCreatePage from '@/views/Nodes/NodeCreatePage.vue';
 // Reports
 import HomeCrud from '@/views/Home/HomeCrud.vue';
 // Notifications
@@ -63,9 +64,10 @@ const routes = [
       { path: 'complaints/:id', component: ComplaintDetailPage },
       // Map
       { path: 'map', component: MapPage },
-      // Personnel
-      { path: 'personnel', component: PersonnelListPage },
-      { path: 'personnel/:id', component: PersonnelDetailPage },
+      // Nodos
+      { path: 'nodes', component: NodeListPage },
+      { path: 'nodes/create', component: NodeCreatePage },
+      { path: 'nodes/update/:id', component: NodeUpdatePage },
       // Reports
       { path: 'home-crud', component: HomeCrud },
       // Notifications
