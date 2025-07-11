@@ -409,6 +409,7 @@ import MapMeterModal from '@/components/map/MapMeterModal.vue'
 import DeleteMeterModal from '@/components/map/DeleteMeterModal.vue'
 import MapConsumptionChart from '@/components/map/MapConsumptionChart.vue'
 import EcuadorMapLeaflet from '@/components/map/EcuadorMapLeaflet.vue'
+import 'leaflet/dist/leaflet.css';
 
 export default {
   name: 'MapPage',
@@ -618,7 +619,6 @@ export default {
 </script>
 
 <style scoped>
-import 'leaflet/dist/leaflet.css';
 .custom-leaflet-marker {
   border: none;
   background: none;
