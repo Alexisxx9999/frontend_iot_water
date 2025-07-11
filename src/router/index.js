@@ -27,7 +27,7 @@ import PersonnelDetailPage from '@/views/Personnel/PersonnelDetailPage.vue';
 import DeviceListPage from '@/views/Devices/DeviceListPage.vue';
 import DeviceDetailPage from '@/views/Devices/DeviceDetailPage.vue';
 // Reports
-import ReportsPage from '@/views/Reports/ReportsPage.vue';
+import HomeCrud from '@/views/Home/HomeCrud.vue';
 // Notifications
 import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
 // Not Found
@@ -72,7 +72,7 @@ const routes = [
       { path: 'devices', component: DeviceListPage },
       { path: 'devices/:id', component: DeviceDetailPage },
       // Reports
-      { path: 'reports', component: ReportsPage },
+      { path: 'home-crud', component: HomeCrud },
       // Notifications
       { path: 'notifications', component: NotificationsPage },
     ],

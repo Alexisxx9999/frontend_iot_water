@@ -53,10 +53,10 @@ export const sidebarMenuItems = [
     badge: null
   },
   {
-    id: 'reports',
-    title: 'Reportes',
+    id: 'homecrud',
+    title: 'Home-CRUD',
     icon: 'reports',
-    route: '/app/reports',
+    route: '/app/home-crud',
     badge: null
   },
   {
