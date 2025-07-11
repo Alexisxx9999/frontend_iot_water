@@ -94,7 +94,7 @@
             </div>
             
             <!-- Título especial para Dispositivos -->
-            <div v-else-if="$route.path.startsWith('/app/devices')" class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 rounded-xl shadow-lg p-6 mb-4">
+            <div v-else-if="$route.path.startsWith('/app/devices') && $route.path !== '/app/devices/create' && !$route.path.match(/^\/app\/devices\/[\w-]+$/)" class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 rounded-xl shadow-lg p-6 mb-4">
               <div class="flex items-center gap-4">
                 <div class="bg-gray-800 bg-opacity-20 rounded-full p-3">
                   <svg xmlns='http://www.w3.org/2000/svg' class='h-8 w-8 text-blue-800' fill='currentColor' viewBox='0 0 24 24'>
@@ -128,16 +128,11 @@
           </div>
           
           <!-- Router View with Animation -->
-          <Transition 
-            name="page" 
-            mode="out-in"
-            appear
-          >
-            <router-view 
-              :key="$route.path"
-              class="animate-fade-in"
-            />
-          </Transition>
+          <router-view v-slot="{ Component }">
+            <Transition name="page" mode="out-in" appear>
+              <component :is="Component" :key="$route.path" class="animate-fade-in" />
+            </Transition>
+          </router-view>
         </div>
       </main>
     </div>

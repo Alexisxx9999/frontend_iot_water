@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { 
   HomeIcon, 
@@ -157,6 +157,14 @@ export default {
 
     // Estado para submenús expandidos
     const expandedSubmenus = ref(new Set())
+
+    // Detectar si es móvil
+    const isMobile = ref(window.innerWidth < 1024)
+    const handleResize = () => {
+      isMobile.value = window.innerWidth < 1024
+    }
+    onMounted(() => window.addEventListener('resize', handleResize))
+    onUnmounted(() => window.removeEventListener('resize', handleResize))
 
     // Determinar si un elemento del menú está activo
     const isActiveItem = (item) => {
@@ -261,7 +269,8 @@ export default {
       handleParentMenuClick,
       isSubmenuExpanded,
       toggleSubmenu,
-      isCurrentRoute
+      isCurrentRoute,
+      isMobile
     }
   }
 }

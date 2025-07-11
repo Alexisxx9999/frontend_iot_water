@@ -23,9 +23,6 @@ import MapPage from '@/views/Map/MapPage.vue';
 // Personnel
 import PersonnelListPage from '@/views/Personnel/PersonnelListPage.vue';
 import PersonnelDetailPage from '@/views/Personnel/PersonnelDetailPage.vue';
-// Devices
-import DeviceListPage from '@/views/Devices/DeviceListPage.vue';
-import DeviceDetailPage from '@/views/Devices/DeviceDetailPage.vue';
 // Reports
 import HomeCrud from '@/views/Home/HomeCrud.vue';
 // Notifications
@@ -69,15 +66,17 @@ const routes = [
       // Personnel
       { path: 'personnel', component: PersonnelListPage },
       { path: 'personnel/:id', component: PersonnelDetailPage },
-      // Devices
-      { path: 'devices', component: DeviceListPage },
-      { path: 'devices/:id', component: DeviceDetailPage },
       // Reports
       { path: 'home-crud', component: HomeCrud },
       // Notifications
       { path: 'notifications', component: NotificationsPage },
       // Gateways
       { path: 'gateways', component: GatewayListPage },
+      // Devices
+      { path: 'devices', component: () => import('@/views/Devices/DeviceListPage.vue') },
+      { path: 'devices/create', component: () => import('@/views/Devices/DeviceCreatePage.vue') },
+      { path: 'devices/:id', component: () => import('@/views/Devices/DeviceDetailPage.vue') },
+      { path: 'devices/:id/edit', component: () => import('@/views/Devices/DeviceEditPage.vue') },
     ],
   },
   // Eliminar la ruta suelta de /gateways
