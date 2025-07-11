@@ -65,6 +65,13 @@ export const sidebarMenuItems = [
     icon: 'notifications',
     route: '/app/notifications',
     badge: null
+  },
+  {
+    id: 'gateways',
+    title: 'Gateways',
+    icon: 'network',
+    route: '/app/gateways',
+    badge: null
   }
 ];
 
@@ -178,7 +185,8 @@ export const getMenuIcon = (iconName) => {
     map: '🗺️',
     person: '👤',
     reports: '📈',
-    notifications: '🔔'
+    notifications: '🔔',
+    network: '🛜'
   };
 
   return iconMap[iconName] || '📄';

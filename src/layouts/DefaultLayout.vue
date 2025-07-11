@@ -150,15 +150,17 @@
     >
       <div class="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity"></div>
     </div>
+    <ToastNotification :message="toastMessage" :type="toastType" :visible="toastVisible" />
   </div>
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, provide } from 'vue'
 import { useRoute } from 'vue-router'
 import { HomeIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import SidebarMenu from '@/components/SidebarMenu.vue'
 import TopNavbar from '@/components/TopNavbar.vue'
+import ToastNotification from '@/components/common/ToastNotification.vue'
 
 export default {
   name: 'DefaultLayout',
@@ -166,7 +168,8 @@ export default {
     SidebarMenu,
     TopNavbar,
     HomeIcon,
-    ChevronRightIcon
+    ChevronRightIcon,
+    ToastNotification
   },
   setup() {
     const route = useRoute()
@@ -258,6 +261,18 @@ export default {
       return descriptionMap[route.path] || ''
     })
     
+    // Estado global para toast
+    const toastMessage = ref('')
+    const toastType = ref('info')
+    const toastVisible = ref(false)
+    function showToast(message, type = 'info', duration = 2000) {
+      toastMessage.value = message
+      toastType.value = type
+      toastVisible.value = true
+      setTimeout(() => { toastVisible.value = false }, duration)
+    }
+    provide('showToast', showToast)
+    
     return {
       isMobileOpen,
       toggleMobileSidebar,
@@ -265,7 +280,11 @@ export default {
       pageTitle,
       pageDescription,
       onSidebarCollapsedChange,
-      mainContentClass
+      mainContentClass,
+      toastMessage,
+      toastType,
+      toastVisible,
+      showToast
     }
   }
 }

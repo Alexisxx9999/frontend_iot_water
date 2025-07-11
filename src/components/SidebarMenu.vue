@@ -120,7 +120,8 @@ import {
   UserGroupIcon,
   XMarkIcon,
   ChevronDownIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  ServerStackIcon
 } from '@heroicons/vue/24/outline'
 import { sidebarMenuItems, useSidebarState, useNavigation, useLogout } from '@/utils/navigation.js'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -234,7 +235,8 @@ export default {
         map: MapIcon,
         report: DocumentTextIcon,
         warning: ExclamationTriangleIcon,
-        person: UserGroupIcon
+        person: UserGroupIcon,
+        network: ServerStackIcon // Para Gateways
       }
       return iconMap[iconName] || HomeIcon
     }

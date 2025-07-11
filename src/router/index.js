@@ -30,6 +30,7 @@ import DeviceDetailPage from '@/views/Devices/DeviceDetailPage.vue';
 import HomeCrud from '@/views/Home/HomeCrud.vue';
 // Notifications
 import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
+import GatewayListPage from '@/views/Gateways/GatewayListPage.vue';
 // Not Found
 import NotFoundPage from '@/views/NotFoundPage.vue';
 
@@ -75,9 +76,11 @@ const routes = [
       { path: 'home-crud', component: HomeCrud },
       // Notifications
       { path: 'notifications', component: NotificationsPage },
+      // Gateways
+      { path: 'gateways', component: GatewayListPage },
     ],
   },
-  // Not Found
+  // Eliminar la ruta suelta de /gateways
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundPage },
 ];
 
