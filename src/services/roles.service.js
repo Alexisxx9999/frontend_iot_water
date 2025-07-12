@@ -1,4 +1,5 @@
 import axios from 'axios'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 // Datos mock para simular la base de datos
 let mockRoles = [
@@ -39,6 +40,15 @@ export const rolesService = {
     if (idx !== -1) {
       mockRoles[idx] = { ...mockRoles[idx], ...data }
       return Promise.resolve(mockRoles[idx])
+    }
+    return Promise.reject('Rol no encontrado')
+  },
+  async deleteRole(id) {
+    // return axios.delete(`/api/roles/${id}`)
+    const idx = mockRoles.findIndex(r => r.id === Number(id))
+    if (idx !== -1) {
+      mockRoles.splice(idx, 1)
+      return Promise.resolve(true)
     }
     return Promise.reject('Rol no encontrado')
   }

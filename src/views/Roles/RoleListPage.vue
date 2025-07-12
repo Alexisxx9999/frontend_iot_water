@@ -44,6 +44,7 @@
             </td>
             <td class="actions-cell">
               <router-link :to="`/app/roles/edit/${rol.id}`" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></router-link>
+              <button @click="confirmarEliminar(rol)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
             </td>
           </tr>
         </tbody>
@@ -64,6 +65,7 @@ import { rolesService } from '../../services/roles.service.js'
 const roles = ref([])
 const search = ref('')
 const estadoFiltro = ref('')
+const eliminarId = ref(null)
 
 onMounted(async () => {
   roles.value = await rolesService.getRoles()
@@ -90,6 +92,17 @@ const rolesInactivos = computed(() => rolesFiltrados.value.filter(r => r.estadoR
 function limpiarFiltros() {
   search.value = ''
   estadoFiltro.value = ''
+}
+
+function confirmarEliminar(rol) {
+  if (confirm(`¿Seguro que deseas eliminar el rol "${rol.nombreRol}"?`)) {
+    eliminarRol(rol.id)
+  }
+}
+
+async function eliminarRol(id) {
+  await rolesService.deleteRole(id)
+  roles.value = await rolesService.getRoles()
 }
 </script>
 
@@ -266,5 +279,13 @@ function limpiarFiltros() {
 .no-results i {
   font-size: 2rem;
   margin-bottom: 8px;
+}
+.btn-danger {
+  background: #e74c3c;
+  color: #fff;
+  padding: 8px 16px;
+}
+.btn-danger:hover {
+  background: #c0392b;
 }
 </style> 
