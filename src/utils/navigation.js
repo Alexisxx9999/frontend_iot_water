@@ -10,13 +10,7 @@ export const sidebarMenuItems = [
     route: '/app/dashboard',
     badge: null
   },
-  {
-    id: 'crm',
-    title: 'CRM',
-    icon: 'people',
-    route: '/app/crm',
-    badge: null
-  },
+  // Eliminado: CRM
   {
     id: 'devices',
     title: 'Dispositivos',
@@ -24,27 +18,7 @@ export const sidebarMenuItems = [
     route: '/app/devices',
     badge: null
   },
-  {
-    id: 'map',
-    title: 'Mapa',
-    icon: 'map',
-    route: '/app/map',
-    badge: null
-  },
-  {
-    id: 'complaints',
-    title: 'Denuncias Ciudadanas',
-    icon: 'report',
-    route: '/app/complaints',
-    badge: null
-  },
-  {
-    id: 'incidents',
-    title: 'Gestión de Problemas',
-    icon: 'warning',
-    route: '/app/incidents',
-    badge: null
-  },
+  // Eliminados: map, complaints, incidents
   // Aquí reemplazo 'Personal' por 'Nodos'
   {
     title: 'Nodos',
@@ -66,18 +40,19 @@ export const sidebarMenuItems = [
     route: '/app/home',
     badge: null
   },
-  {
-    id: 'notifications',
-    title: 'Notificaciones',
-    icon: 'notifications',
-    route: '/app/notifications',
-    badge: null
-  },
+  // Eliminado: notifications
   {
     id: 'gateways',
     title: 'Gateways',
     icon: 'network',
     route: '/app/gateways',
+    badge: null
+  },
+  {
+    id: 'lecturas',
+    title: 'Lecturas',
+    icon: 'report',
+    route: '/app/lecturas',
     badge: null
   }
 ];
