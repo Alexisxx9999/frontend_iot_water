@@ -36,8 +36,6 @@
         </div>
 
         <!-- Notifications -->
-        <NotificationBell @go-to-notifications="goToNotificationsPage" />
-
         <!-- User menu -->
         <div class="relative">
           <button
@@ -116,7 +114,7 @@ import {
   ClockIcon
 } from '@heroicons/vue/24/outline'
 import { useLogout } from '@/utils/navigation.js'
-import NotificationBell from '@/components/common/NotificationBell.vue'
+// import NotificationBell from '@/components/common/NotificationBell.vue'
 
 export default {
   name: 'TopNavbar',
@@ -129,7 +127,7 @@ export default {
     ChevronDownIcon,
     CalendarIcon,
     ClockIcon,
-    NotificationBell
+    // NotificationBell
   },
   emits: ['toggle-sidebar'],
   setup() {

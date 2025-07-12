@@ -8,18 +8,6 @@ import RegisterPage from '@/views/Auth/RegisterPage.vue';
 import ForgotPasswordPage from '@/views/Auth/ForgotPasswordPage.vue';
 // Dashboard
 import DashboardOverview from '@/views/Dashboard/DashboardOverview.vue';
-// Incidents
-import IncidentListPage from '@/views/Incidents/IncidentListPage.vue';
-import IncidentDetailPage from '@/views/Incidents/IncidentDetailPage.vue';
-// CRM
-import CrmWhatsappPage from '@/views/CRM/CrmWhatsappPage.vue';
-import ConversationDetailPage from '@/views/CRM/ConversationDetailPage.vue';
-import ChatbotTrainingPage from '@/views/CRM/ChatbotTrainingPage.vue';
-// Complaints
-import ComplaintListPage from '@/views/Complaints/ComplaintListPage.vue';
-import ComplaintDetailPage from '@/views/Complaints/ComplaintDetailPage.vue';
-// Map
-import MapPage from '@/views/Map/MapPage.vue';
 // Importar los nuevos componentes de nodos
 import NodeListPage from '@/views/Nodes/NodeListPage.vue';
 import NodeUpdatePage from '@/views/Nodes/NodeUpdatePage.vue';
@@ -34,10 +22,13 @@ import SectorListPage from '@/views/Sectors/SectorListPage.vue';
 import SectorCreatePage from '@/views/Sectors/SectorCreatePage.vue';
 import SectorEditPage from '@/views/Sectors/SectorEditPage.vue';
 // Notifications
-import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
+// import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
 import GatewayListPage from '@/views/Gateways/GatewayListPage.vue';
 import GatewayCreatePage from '@/views/Gateways/GatewayCreatePage.vue';
 import GatewayEditPage from '@/views/Gateways/GatewayEditPage.vue';
+import LecturaListPage from '@/views/Lecturas/LecturaListPage.vue';
+import LecturaCreatePage from '@/views/Lecturas/LecturaCreatePage.vue';
+import LecturaUpdatePage from '@/views/Lecturas/LecturaUpdatePage.vue';
 // Not Found
 import NotFoundPage from '@/views/NotFoundPage.vue';
 
@@ -62,17 +53,17 @@ const routes = [
       { path: '', redirect: '/app/dashboard' },
       { path: 'dashboard', component: DashboardOverview },
       // Incidents
-      { path: 'incidents', component: IncidentListPage },
-      { path: 'incidents/:id', component: IncidentDetailPage },
+      // { path: 'incidents', component: IncidentListPage },
+      // { path: 'incidents/:id', component: IncidentDetailPage },
       // CRM
-      { path: 'crm', component: CrmWhatsappPage },
-      { path: 'crm/conversations/:id', component: ConversationDetailPage },
-      { path: 'crm/training', component: ChatbotTrainingPage },
+      // { path: 'crm', component: CrmWhatsappPage },
+      // { path: 'crm/conversations/:id', component: ConversationDetailPage },
+      // { path: 'crm/training', component: ChatbotTrainingPage },
       // Complaints
-      { path: 'complaints', component: ComplaintListPage },
-      { path: 'complaints/:id', component: ComplaintDetailPage },
+      // { path: 'complaints', component: ComplaintListPage },
+      // { path: 'complaints/:id', component: ComplaintDetailPage },
       // Map
-      { path: 'map', component: MapPage },
+      // { path: 'map', component: MapPage },
       // Nodos
       { path: 'nodes', component: NodeListPage },
       { path: 'nodes/create', component: NodeCreatePage },
@@ -91,7 +82,7 @@ const routes = [
       { path: 'sectors/create', component: SectorCreatePage },
       { path: 'sectors/edit/:id', component: SectorEditPage },
       // Notifications
-      { path: 'notifications', component: NotificationsPage },
+      // { path: 'notifications', component: NotificationsPage },
             // Gateways
             { path: 'gateways', component: GatewayListPage },
             { path: 'gateways/create', component: GatewayCreatePage },
@@ -101,6 +92,10 @@ const routes = [
             { path: 'devices/create', component: () => import('@/views/Devices/DeviceCreatePage.vue') },
             { path: 'devices/:id', component: () => import('@/views/Devices/DeviceDetailPage.vue') },
             { path: 'devices/:id/edit', component: () => import('@/views/Devices/DeviceEditPage.vue') },
+      // Lecturas
+      { path: 'lecturas', component: LecturaListPage },
+      { path: 'lecturas/create', component: LecturaCreatePage },
+      { path: 'lecturas/update/:id', component: LecturaUpdatePage },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundPage },
