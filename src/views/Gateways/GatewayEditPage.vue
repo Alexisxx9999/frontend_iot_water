@@ -224,7 +224,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from '@/composables/useToast'
-import { useGatewaysStore } from '@/stores/gateways'
+import { useGatewayService } from '@/services/gateways.service'
 
 export default {
   name: 'GatewayEditPage',
@@ -232,13 +232,14 @@ export default {
     const router = useRouter()
     const route = useRoute()
     const { showToast } = useToast()
-    
+    const gatewayService = useGatewayService()
+
     const loading = ref(true)
     const error = ref(null)
     const gateway = ref(null)
     const isSubmitting = ref(false)
     const errors = reactive({})
-    
+
     const form = reactive({
       code: '',
       address: '',
@@ -255,17 +256,17 @@ export default {
       try {
         loading.value = true
         error.value = null
-        
-        // Simular llamada a API para obtener el gateway
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Buscar el gateway correcto en el array global (mock)
+        // Buscar primero en el servicio mock
         let foundGateway = null
-        if (window && window.__GATEWAYS__) {
+        try {
+          foundGateway = await gatewayService.list().then(list => list.find(g => g.id == route.params.id))
+        } catch {}
+        // Si no se encuentra, buscar en window.__GATEWAYS__
+        if (!foundGateway && typeof window !== 'undefined' && window.__GATEWAYS__) {
           foundGateway = window.__GATEWAYS__.find(g => g.id == route.params.id)
         }
         if (!foundGateway) {
-          error.value = 'No se encontró el gateway solicitado'
+          error.value = 'No se encontró el gateway solicitado. Puede que haya sido eliminado o que los datos estén desincronizados.'
           return
         }
         gateway.value = foundGateway
@@ -276,10 +277,9 @@ export default {
         form.longitude = foundGateway.longitude
         form.altitude = foundGateway.altitude
         form.installationDate = foundGateway.installationDate
-        form.status = foundGateway.status
+        form.status = foundGateway.status || ''
         form.description = foundGateway.description || ''
         form.dataUrl = foundGateway.dataUrl || ''
-        
       } catch (err) {
         error.value = 'No se pudo cargar la información del gateway'
         console.error('Error loading gateway:', err)
@@ -294,64 +294,36 @@ export default {
       errors.latitude = ''
       errors.longitude = ''
       errors.installationDate = ''
-      errors.status = ''
-      
+      // errors.status = '' // Eliminar validación de estado obligatorio
       if (!form.code.trim()) {
         errors.code = 'El código es requerido'
       }
-      
       if (!form.address.trim()) {
         errors.address = 'La dirección es requerida'
       }
-
       if (!form.latitude) {
         errors.latitude = 'La latitud es requerida'
       }
-
       if (!form.longitude) {
         errors.longitude = 'La longitud es requerida'
       }
-
       if (!form.installationDate) {
         errors.installationDate = 'La fecha de instalación es requerida'
       }
-      
-      if (!form.status) {
-        errors.status = 'El estado es requerido'
-      }
-      
-      return !errors.code && !errors.address && !errors.latitude && !errors.longitude && !errors.installationDate && !errors.status
-    }
-
-    // Actualizar el gateway en memoria tras editar (mock)
-    const updateGatewayInList = () => {
-      // Buscar el array de gateways en window (solo para mock/demo)
-      if (window && window.__GATEWAYS__) {
-        const idx = window.__GATEWAYS__.findIndex(g => g.id == route.params.id)
-        if (idx > -1) {
-          window.__GATEWAYS__[idx] = { ...window.__GATEWAYS__[idx], ...form }
-        }
-      }
+      // Estado ya no es obligatorio
+      return !errors.code && !errors.address && !errors.latitude && !errors.longitude && !errors.installationDate
     }
 
     const handleSubmit = async () => {
       if (!validateForm()) return
-      
       isSubmitting.value = true
-      
       try {
-        await gatewaysStore.updateItem(gateway.value.id, { ...form })
-        // Actualizar el array global para el mock
-        if (window && window.__GATEWAYS__) {
-          const idx = window.__GATEWAYS__.findIndex(g => g.id == gateway.value.id)
-          if (idx > -1) {
-            window.__GATEWAYS__[idx] = { ...window.__GATEWAYS__[idx], ...form }
-          }
-        }
+        await gatewayService.update(gateway.value.id, { ...form })
         window.showSimpleToast('Gateway editado correctamente', 'success')
         router.push('/app/gateways')
       } catch (error) {
         window.showSimpleToast('Error al editar el gateway', 'error')
+        router.push('/app/gateways')
       } finally {
         isSubmitting.value = false
       }

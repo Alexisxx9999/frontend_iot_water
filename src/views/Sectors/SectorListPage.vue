@@ -16,15 +16,15 @@
         <i class="fas fa-search search-icon"></i>
       </div>
       <div class="filter-actions">
-        <select v-model="statusFilter" class="filter-select">
+        <select v-model="statusFilter" class="filter-select custom-select">
           <option value="">Todos los estados</option>
           <option value="active">Activo</option>
           <option value="inactive">Inactivo</option>
         </select>
-        <button @click="refreshData" class="btn btn-secondary">
-          <i class="fas fa-refresh"></i> Actualizar
+        <button @click="refreshData" class="btn-modern btn-blue">
+          <i class="fas fa-rotate-right"></i> Actualizar
         </button>
-        <router-link to="/app/sectors/create" class="btn btn-primary">
+        <router-link to="/app/sectors/create" class="btn-modern btn-green">
           <i class="fas fa-plus"></i> Nuevo Sector
         </router-link>
       </div>
@@ -646,6 +646,49 @@ export default {
 }
 .text-inactive {
   color: #b91c1c;
+}
+
+.btn-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.7em;
+  padding: 0.55em 1.3em;
+  font-size: 1.05em;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px #0001;
+  outline: none;
+}
+.btn-blue {
+  background: #2563eb;
+  color: #fff;
+}
+.btn-blue:hover {
+  background: #1d4ed8;
+}
+.btn-green {
+  background: #22c55e;
+  color: #fff;
+}
+.btn-green:hover {
+  background: #16a34a;
+}
+.custom-select {
+  border-radius: 0.7em;
+  padding: 0.5em 1.2em;
+  font-size: 1.05em;
+  border: 1.5px solid #d1d5db;
+  background: #f9fafb;
+  color: #222;
+  margin-right: 0.7em;
+  transition: border 0.18s;
+}
+.custom-select:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
 }
 
 @media (max-width: 768px) {

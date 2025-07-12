@@ -54,6 +54,13 @@ export const sidebarMenuItems = [
     icon: 'report',
     route: '/app/lecturas',
     badge: null
+  },
+  {
+    id: 'sectors',
+    title: 'Sectores',
+    icon: 'map',
+    route: '/app/sectors',
+    badge: null
   }
 ];
 

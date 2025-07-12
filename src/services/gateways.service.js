@@ -1,62 +1,91 @@
-import { ref } from 'vue'
+// Servicio de Gateways con datos simulados (mock)
 
-// const mockGateways = ref([
-//   { id: 1, code: 'GW-001', address: 'Av. Central', latitude: -0.19, longitude: -78.5, altitude: 2800, installationDate: '2023-01-10', state: 'activo' },
-//   { id: 2, code: 'GW-002', address: 'Calle 10', latitude: -0.21, longitude: -78.6, altitude: 2850, installationDate: '2023-02-15', state: 'desactivado' },
-//   { id: 3, code: 'GW-003', address: 'Av. Amazonas', latitude: -0.18, longitude: -78.47, altitude: 2780, installationDate: '2023-03-20', state: 'activo' },
-//   { id: 4, code: 'GW-004', address: 'Calle 12', latitude: -0.22, longitude: -78.61, altitude: 2870, installationDate: '2023-04-05', state: 'desactivado' },
-//   { id: 5, code: 'GW-005', address: 'Av. República', latitude: -0.20, longitude: -78.52, altitude: 2810, installationDate: '2023-05-12', state: 'activo' },
-//   { id: 6, code: 'GW-006', address: 'Calle 15', latitude: -0.23, longitude: -78.62, altitude: 2880, installationDate: '2023-06-18', state: 'desactivado' },
-//   { id: 7, code: 'GW-007', address: 'Av. Naciones Unidas', latitude: -0.17, longitude: -78.46, altitude: 2770, installationDate: '2023-07-22', state: 'activo' },
-//   { id: 8, code: 'GW-008', address: 'Calle 20', latitude: -0.24, longitude: -78.63, altitude: 2890, installationDate: '2023-08-30', state: 'desactivado' }
-// ]) // Eliminar el mock
-
-const API_URL = 'https://tu-backend.com/api/gateways' // Cambia por tu URL real
+let gatewaysItems = [
+  {
+    id: 1,
+    code: 'GW-001',
+    address: 'Av. Central',
+    latitude: -0.19,
+    longitude: -78.5,
+    altitude: 2800,
+    installationDate: '2023-01-10',
+    state: 'activo'
+  },
+  {
+    id: 2,
+    code: 'GW-002',
+    address: 'Calle 10',
+    latitude: -0.21,
+    longitude: -78.6,
+    altitude: 2850,
+    installationDate: '2023-02-15',
+    state: 'desactivado'
+  }
+]
+let nextId = 3
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 export function useGatewayService() {
   return {
     async list() {
-      const res = await fetch(API_URL)
-      if (!res.ok) throw new Error('Error al obtener gateways')
-      return await res.json()
+      await delay(500)
+      return [...gatewaysItems]
     },
     async create(data) {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      if (!res.ok) throw new Error('Error al crear gateway')
-      return await res.json()
+      await delay(700)
+      // Validación simple: código único
+      if (gatewaysItems.some(gw => gw.code === data.code)) {
+        throw new Error('Ya existe un gateway con ese código')
+      }
+      const newItem = {
+        id: nextId++,
+        ...data
+      }
+      gatewaysItems.push(newItem)
+      return { ...newItem }
     },
     async update(id, data) {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      if (!res.ok) throw new Error('Error al actualizar gateway')
-      return await res.json()
+      await delay(700)
+      const index = gatewaysItems.findIndex(gw => gw.id === parseInt(id))
+      if (index === -1) throw new Error('Gateway no encontrado')
+      // Validar código único (excepto el propio)
+      if (gatewaysItems.some(gw => gw.code === data.code && gw.id !== parseInt(id))) {
+        throw new Error('Ya existe un gateway con ese código')
+      }
+      const updatedItem = { ...gatewaysItems[index], ...data, id: parseInt(id) }
+      gatewaysItems[index] = updatedItem
+      // Actualizar también window.__GATEWAYS__ si existe
+      if (typeof window !== 'undefined' && window.__GATEWAYS__) {
+        const idx = window.__GATEWAYS__.findIndex(g => g.id === parseInt(id))
+        if (idx !== -1) window.__GATEWAYS__[idx] = { ...updatedItem }
+      }
+      return { ...updatedItem }
     },
     async deactivate(id) {
-      const res = await fetch(`${API_URL}/${id}/deactivate`, { method: 'POST' })
-      if (!res.ok) throw new Error('Error al desactivar gateway')
-      return await res.json()
+      await delay(400)
+      const index = gatewaysItems.findIndex(gw => gw.id === parseInt(id))
+      if (index === -1) throw new Error('Gateway no encontrado')
+      gatewaysItems[index].state = 'desactivado'
+      return { ...gatewaysItems[index] }
     },
     async activate(id) {
-      const res = await fetch(`${API_URL}/${id}/activate`, { method: 'POST' })
-      if (!res.ok) throw new Error('Error al activar gateway')
-      return await res.json()
+      await delay(400)
+      const index = gatewaysItems.findIndex(gw => gw.id === parseInt(id))
+      if (index === -1) throw new Error('Gateway no encontrado')
+      gatewaysItems[index].state = 'activo'
+      return { ...gatewaysItems[index] }
     },
     async delete(id) {
-      const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Error al eliminar gateway')
+      await delay(400)
+      const index = gatewaysItems.findIndex(gw => gw.id === parseInt(id))
+      if (index === -1) throw new Error('Gateway no encontrado')
+      gatewaysItems.splice(index, 1)
       return true
     },
     async sendData(gateway, url) {
-      // Simular envío de datos
-      await new Promise(r => setTimeout(r, 1500))
-      // Aquí iría la llamada real al backend
+      await delay(1000)
+      // Simulación de envío de datos
+      return true
     }
   }
 } 
