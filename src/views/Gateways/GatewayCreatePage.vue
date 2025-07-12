@@ -164,23 +164,6 @@
             ></textarea>
           </div>
 
-          <!-- URL de datos -->
-          <div>
-            <label for="dataUrl" class="block text-sm font-medium text-gray-700">
-              URL para envío de datos
-            </label>
-            <input
-              id="dataUrl"
-              v-model="form.dataUrl"
-              type="url"
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="https://api.example.com/gateway-data"
-            />
-            <p class="mt-1 text-sm text-gray-500">
-              URL opcional donde se enviarán los datos del gateway
-            </p>
-          </div>
-
           <!-- Botones -->
           <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <router-link
@@ -211,12 +194,14 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from '@/composables/useToast'
+import { useGatewaysStore } from '@/stores/gateways'
 
 export default {
   name: 'GatewayCreatePage',
   setup() {
     const router = useRouter()
     const { showToast } = useToast()
+    const gatewaysStore = useGatewaysStore()
     
     const isSubmitting = ref(false)
     const errors = reactive({})
@@ -274,19 +259,18 @@ export default {
       isSubmitting.value = true
       
       try {
-        // Simular llamada a API
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Aquí iría la llamada real a la API
-        // await gatewayService.createGateway(form)
-        
-        showToast('Gateway creado exitosamente', 'success')
-        
-        // Redirigir al listado
+        const newGateway = { ...form, id: Date.now() }
+        await gatewaysStore.createItem(newGateway)
+        // Actualizar el array global para el mock
+        if (window && window.__GATEWAYS__) {
+          window.__GATEWAYS__.push(newGateway)
+        } else if (window) {
+          window.__GATEWAYS__ = [newGateway]
+        }
+        window.showSimpleToast('Gateway creado correctamente', 'success')
         router.push('/app/gateways')
       } catch (error) {
-        showToast('Error al crear el gateway', 'error')
-        console.error('Error creating gateway:', error)
+        window.showSimpleToast('Error al crear el gateway', 'error')
       } finally {
         isSubmitting.value = false
       }

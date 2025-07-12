@@ -1,48 +1,41 @@
 import { ref } from 'vue'
 
-const toasts = ref([])
+// Instancia global de toasts
+export const toasts = ref([])
 let nextId = 1
 
+export function showToast(message, type = 'info', duration = 5000) {
+  const id = nextId++
+  const toast = {
+    id,
+    message,
+    type,
+    duration
+  }
+  toasts.value.push(toast)
+  setTimeout(() => {
+    removeToast(id)
+  }, duration)
+  return id
+}
+
+export function removeToast(id) {
+  const index = toasts.value.findIndex(toast => toast.id === id)
+  if (index > -1) {
+    toasts.value.splice(index, 1)
+  }
+}
+
 export function useToast() {
-  const showToast = (message, type = 'info', duration = 5000) => {
-    const id = nextId++
-    const toast = {
-      id,
-      message,
-      type,
-      duration
-    }
-    
-    toasts.value.push(toast)
-    
-    // Auto remove after duration
-    setTimeout(() => {
-      removeToast(id)
-    }, duration)
-    
-    return id
-  }
-  
-  const removeToast = (id) => {
-    const index = toasts.value.findIndex(toast => toast.id === id)
-    if (index > -1) {
-      toasts.value.splice(index, 1)
-    }
-  }
-  
-  const success = (message, duration) => showToast(message, 'success', duration)
-  const error = (message, duration) => showToast(message, 'error', duration)
-  const warning = (message, duration) => showToast(message, 'warning', duration)
-  const info = (message, duration) => showToast(message, 'info', duration)
-  
+  // Devuelve las funciones globales
   return {
     toasts,
     showToast,
     removeToast,
-    success,
-    error,
-    warning,
-    info
+    success: (msg, d) => showToast(msg, 'success', d),
+    error: (msg, d) => showToast(msg, 'error', d),
+    warning: (msg, d) => showToast(msg, 'warning', d),
+    info: (msg, d) => showToast(msg, 'info', d)
   }
 }
 
@@ -51,8 +44,6 @@ export function createToastComponent() {
   return {
     name: 'ToastContainer',
     setup() {
-      const { toasts, removeToast } = useToast()
-      
       return {
         toasts,
         removeToast

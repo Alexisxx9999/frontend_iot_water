@@ -194,23 +194,6 @@
             ></textarea>
           </div>
 
-          <!-- URL de datos -->
-          <div>
-            <label for="dataUrl" class="block text-sm font-medium text-gray-700">
-              URL para envío de datos
-            </label>
-            <input
-              id="dataUrl"
-              v-model="form.dataUrl"
-              type="url"
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="https://api.example.com/gateway-data"
-            />
-            <p class="mt-1 text-sm text-gray-500">
-              URL opcional donde se enviarán los datos del gateway
-            </p>
-          </div>
-
           <!-- Botones -->
           <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <router-link
@@ -241,6 +224,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from '@/composables/useToast'
+import { useGatewaysStore } from '@/stores/gateways'
 
 export default {
   name: 'GatewayEditPage',
@@ -275,32 +259,26 @@ export default {
         // Simular llamada a API para obtener el gateway
         await new Promise(resolve => setTimeout(resolve, 1000))
         
-        // Mock data - aquí iría la llamada real a la API
-        const mockGateway = {
-          id: route.params.id,
-          code: 'GW-001',
-          address: 'Av. Principal 123, Quito',
-          latitude: '-0.1807',
-          longitude: '-78.4678',
-          altitude: '2850',
-          installationDate: '2023-01-01',
-          status: 'active',
-          description: 'Gateway principal del sector norte',
-          dataUrl: 'https://api.example.com/gateway-data'
+        // Buscar el gateway correcto en el array global (mock)
+        let foundGateway = null
+        if (window && window.__GATEWAYS__) {
+          foundGateway = window.__GATEWAYS__.find(g => g.id == route.params.id)
         }
-        
-        gateway.value = mockGateway
-        
+        if (!foundGateway) {
+          error.value = 'No se encontró el gateway solicitado'
+          return
+        }
+        gateway.value = foundGateway
         // Llenar el formulario
-        form.code = mockGateway.code
-        form.address = mockGateway.address
-        form.latitude = mockGateway.latitude
-        form.longitude = mockGateway.longitude
-        form.altitude = mockGateway.altitude
-        form.installationDate = mockGateway.installationDate
-        form.status = mockGateway.status
-        form.description = mockGateway.description || ''
-        form.dataUrl = mockGateway.dataUrl || ''
+        form.code = foundGateway.code
+        form.address = foundGateway.address
+        form.latitude = foundGateway.latitude
+        form.longitude = foundGateway.longitude
+        form.altitude = foundGateway.altitude
+        form.installationDate = foundGateway.installationDate
+        form.status = foundGateway.status
+        form.description = foundGateway.description || ''
+        form.dataUrl = foundGateway.dataUrl || ''
         
       } catch (err) {
         error.value = 'No se pudo cargar la información del gateway'
@@ -362,20 +340,18 @@ export default {
       isSubmitting.value = true
       
       try {
-        // Simular llamada a API
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Aquí iría la llamada real a la API
-        // await gatewayService.updateGateway(route.params.id, form)
-        
-        updateGatewayInList() // Actualizar en memoria
-        showToast('Gateway actualizado exitosamente', 'success')
-        
-        // Redirigir al listado
+        await gatewaysStore.updateItem(gateway.value.id, { ...form })
+        // Actualizar el array global para el mock
+        if (window && window.__GATEWAYS__) {
+          const idx = window.__GATEWAYS__.findIndex(g => g.id == gateway.value.id)
+          if (idx > -1) {
+            window.__GATEWAYS__[idx] = { ...window.__GATEWAYS__[idx], ...form }
+          }
+        }
+        window.showSimpleToast('Gateway editado correctamente', 'success')
         router.push('/app/gateways')
       } catch (error) {
-        showToast('Error al actualizar el gateway', 'error')
-        console.error('Error updating gateway:', error)
+        window.showSimpleToast('Error al editar el gateway', 'error')
       } finally {
         isSubmitting.value = false
       }

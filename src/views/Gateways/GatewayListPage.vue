@@ -88,9 +88,6 @@
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Estado
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Última actividad
-                </th>
                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Acciones
                 </th>
@@ -140,9 +137,6 @@
                     {{ getStatusText(gateway.status) }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatDate(gateway.lastActivity) }}
-                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div class="flex items-center justify-end space-x-2">
                     <!-- Enviar datos -->
@@ -187,7 +181,7 @@
 
                     <!-- Eliminar -->
                     <button
-                      @click="confirmDelete(gateway)"
+                      @click="() => { gatewayToDelete = gateway; showDeleteModal = true }"
                       class="text-red-600 hover:text-red-900"
                       title="Eliminar"
                     >
@@ -250,7 +244,7 @@
               Cancelar
             </button>
             <button
-              @click="deleteGateway"
+              @click="confirmDelete(gatewayToDelete?.id)"
               class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700"
             >
               Eliminar
@@ -425,17 +419,12 @@ export default {
       }
     }
 
-    const confirmDelete = (gateway) => {
-      gatewayToDelete.value = gateway
-      showDeleteModal.value = true
-    }
-
-    const deleteGateway = async () => {
+    const confirmDelete = async (id) => {
       try {
         // Simular llamada a API
         await new Promise(resolve => setTimeout(resolve, 500))
         
-        const index = gateways.value.findIndex(g => g.id === gatewayToDelete.value.id)
+        const index = gateways.value.findIndex(g => g.id === id)
         if (index > -1) {
           gateways.value.splice(index, 1)
         }
@@ -443,9 +432,11 @@ export default {
         showToast('Gateway eliminado exitosamente', 'success')
         showDeleteModal.value = false
         gatewayToDelete.value = null
+        window.showSimpleToast('Gateway eliminado correctamente', 'success')
       } catch (error) {
         showToast('Error al eliminar el gateway', 'error')
         console.error('Error deleting gateway:', error)
+        window.showSimpleToast('Error al eliminar el gateway', 'error')
       }
     }
 
@@ -464,8 +455,7 @@ export default {
       formatDate,
       toggleStatus,
       sendData,
-      confirmDelete,
-      deleteGateway
+      confirmDelete
     }
   }
 }

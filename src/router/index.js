@@ -29,6 +29,10 @@ import HomeListPage from '@/views/Home/HomeListPage.vue';
 import HomeCreatePage from '@/views/Home/HomeCreatePage.vue';
 import HomeEditPage from '@/views/Home/HomeEditPage.vue';
 import HomeDetailPage from '@/views/Home/HomeDetailPage.vue';
+// Sectors CRUD
+import SectorListPage from '@/views/Sectors/SectorListPage.vue';
+import SectorCreatePage from '@/views/Sectors/SectorCreatePage.vue';
+import SectorEditPage from '@/views/Sectors/SectorEditPage.vue';
 // Notifications
 import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
 import GatewayListPage from '@/views/Gateways/GatewayListPage.vue';
@@ -82,6 +86,10 @@ const routes = [
       { path: 'home/create', component: HomeCreatePage },
       { path: 'home/edit/:id', component: HomeEditPage },
       { path: 'home/detail/:id', component: HomeDetailPage },
+      // Sectors CRUD
+      { path: 'sectors', component: SectorListPage },
+      { path: 'sectors/create', component: SectorCreatePage },
+      { path: 'sectors/edit/:id', component: SectorEditPage },
       // Notifications
       { path: 'notifications', component: NotificationsPage },
             // Gateways
