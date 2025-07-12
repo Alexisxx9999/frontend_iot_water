@@ -146,6 +146,7 @@
       <div class="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity"></div>
     </div>
     <ToastNotification :message="toastMessage" :type="toastType" :visible="toastVisible" />
+    <ToastContainer />
   </div>
 </template>
 
@@ -156,6 +157,7 @@ import { HomeIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import SidebarMenu from '@/components/SidebarMenu.vue'
 import TopNavbar from '@/components/TopNavbar.vue'
 import ToastNotification from '@/components/common/ToastNotification.vue'
+import { createToastComponent } from '@/composables/useToast'
 
 export default {
   name: 'DefaultLayout',
@@ -164,7 +166,8 @@ export default {
     TopNavbar,
     HomeIcon,
     ChevronRightIcon,
-    ToastNotification
+    ToastNotification,
+    ToastContainer: createToastComponent()
   },
   setup() {
     const route = useRoute()

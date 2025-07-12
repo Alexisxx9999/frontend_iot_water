@@ -32,6 +32,8 @@ import HomeDetailPage from '@/views/Home/HomeDetailPage.vue';
 // Notifications
 import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
 import GatewayListPage from '@/views/Gateways/GatewayListPage.vue';
+import GatewayCreatePage from '@/views/Gateways/GatewayCreatePage.vue';
+import GatewayEditPage from '@/views/Gateways/GatewayEditPage.vue';
 // Not Found
 import NotFoundPage from '@/views/NotFoundPage.vue';
 
@@ -82,13 +84,15 @@ const routes = [
       { path: 'home/detail/:id', component: HomeDetailPage },
       // Notifications
       { path: 'notifications', component: NotificationsPage },
-      // Gateways
-      { path: 'gateways', component: GatewayListPage },
-      // Devices
-      { path: 'devices', component: () => import('@/views/Devices/DeviceListPage.vue') },
-      { path: 'devices/create', component: () => import('@/views/Devices/DeviceCreatePage.vue') },
-      { path: 'devices/:id', component: () => import('@/views/Devices/DeviceDetailPage.vue') },
-      { path: 'devices/:id/edit', component: () => import('@/views/Devices/DeviceEditPage.vue') },
+            // Gateways
+            { path: 'gateways', component: GatewayListPage },
+            { path: 'gateways/create', component: GatewayCreatePage },
+            { path: 'gateways/:id/edit', component: GatewayEditPage },
+            // Devices
+            { path: 'devices', component: () => import('@/views/Devices/DeviceListPage.vue') },
+            { path: 'devices/create', component: () => import('@/views/Devices/DeviceCreatePage.vue') },
+            { path: 'devices/:id', component: () => import('@/views/Devices/DeviceDetailPage.vue') },
+            { path: 'devices/:id/edit', component: () => import('@/views/Devices/DeviceEditPage.vue') },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundPage },
