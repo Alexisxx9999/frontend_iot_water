@@ -59,8 +59,12 @@ const form = ref({
 const goBack = () => router.push('/app/roles')
 
 const handleSubmit = async () => {
-  await rolesService.createRole(form.value)
-  router.push('/app/roles')
+  try {
+    await rolesService.createRole(form.value)
+    router.push('/app/roles')
+  } catch (error) {
+    // La notificación de error ya se muestra desde el servicio
+  }
 }
 </script>
 

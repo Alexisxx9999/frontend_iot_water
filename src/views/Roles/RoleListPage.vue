@@ -55,17 +55,30 @@
         <button @click="limpiarFiltros" class="btn btn-primary">Limpiar filtros</button>
       </div>
     </div>
+    <!-- Modal de confirmación -->
+    <div v-if="mostrarModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>¿Seguro que deseas eliminar el rol "{{ rolAEliminar?.nombreRol }}"?</h3>
+        <div class="modal-actions">
+          <button @click="mostrarModal = false" class="btn btn-secondary">Cancelar</button>
+          <button @click="eliminarRolConfirmado" class="btn btn-danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { rolesService } from '../../services/roles.service.js'
+import { showNotification } from '../../utils/errorHandler'
 
 const roles = ref([])
 const search = ref('')
 const estadoFiltro = ref('')
 const eliminarId = ref(null)
+const mostrarModal = ref(false)
+const rolAEliminar = ref(null)
 
 onMounted(async () => {
   roles.value = await rolesService.getRoles()
@@ -95,14 +108,15 @@ function limpiarFiltros() {
 }
 
 function confirmarEliminar(rol) {
-  if (confirm(`¿Seguro que deseas eliminar el rol "${rol.nombreRol}"?`)) {
-    eliminarRol(rol.id)
-  }
+  rolAEliminar.value = rol
+  mostrarModal.value = true
 }
 
-async function eliminarRol(id) {
-  await rolesService.deleteRole(id)
+async function eliminarRolConfirmado() {
+  await rolesService.deleteRole(rolAEliminar.value.id)
   roles.value = await rolesService.getRoles()
+  mostrarModal.value = false
+  rolAEliminar.value = null
 }
 </script>
 
@@ -287,5 +301,28 @@ async function eliminarRol(id) {
 }
 .btn-danger:hover {
   background: #c0392b;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  min-width: 320px;
+  text-align: center;
+}
+.modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 </style> 
