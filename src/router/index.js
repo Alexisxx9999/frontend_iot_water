@@ -68,6 +68,10 @@ const routes = [
       { path: 'nodes', component: NodeListPage },
       { path: 'nodes/create', component: NodeCreatePage },
       { path: 'nodes/update/:id', component: NodeUpdatePage },
+      // Roles
+      { path: 'roles', name: 'RoleList', component: () => import('../views/Roles/RoleListPage.vue') },
+      { path: 'roles/create', name: 'RoleCreate', component: () => import('../views/Roles/RoleCreatePage.vue') },
+      { path: 'roles/edit/:id', name: 'RoleEdit', component: () => import('../views/Roles/RoleUpdatePage.vue'), props: true },
       // Reports
       { path: 'home-crud', component: HomeCrud },
       // Notifications
@@ -81,7 +85,6 @@ const routes = [
       { path: 'devices/:id/edit', component: () => import('@/views/Devices/DeviceEditPage.vue') },
     ],
   },
-  // Eliminar la ruta suelta de /gateways
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundPage },
 ];
 

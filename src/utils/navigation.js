@@ -53,6 +53,13 @@ export const sidebarMenuItems = [
     badge: null
   },
   {
+    id: 'roles',
+    title: 'Roles',
+    icon: 'person',
+    route: '/app/roles',
+    badge: null
+  },
+  {
     id: 'homecrud',
     title: 'Home-CRUD',
     icon: 'reports',
