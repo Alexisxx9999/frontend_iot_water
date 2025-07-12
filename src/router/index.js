@@ -24,8 +24,11 @@ import MapPage from '@/views/Map/MapPage.vue';
 import NodeListPage from '@/views/Nodes/NodeListPage.vue';
 import NodeUpdatePage from '@/views/Nodes/NodeUpdatePage.vue';
 import NodeCreatePage from '@/views/Nodes/NodeCreatePage.vue';
-// Reports
-import HomeCrud from '@/views/Home/HomeCrud.vue';
+// Home CRUD
+import HomeListPage from '@/views/Home/HomeListPage.vue';
+import HomeCreatePage from '@/views/Home/HomeCreatePage.vue';
+import HomeEditPage from '@/views/Home/HomeEditPage.vue';
+import HomeDetailPage from '@/views/Home/HomeDetailPage.vue';
 // Notifications
 import NotificationsPage from '@/views/Notifications/NotificationsPage.vue';
 import GatewayListPage from '@/views/Gateways/GatewayListPage.vue';
@@ -68,8 +71,11 @@ const routes = [
       { path: 'nodes', component: NodeListPage },
       { path: 'nodes/create', component: NodeCreatePage },
       { path: 'nodes/update/:id', component: NodeUpdatePage },
-      // Reports
-      { path: 'home-crud', component: HomeCrud },
+      // Home CRUD
+      { path: 'home', component: HomeListPage },
+      { path: 'home/create', component: HomeCreatePage },
+      { path: 'home/edit/:id', component: HomeEditPage },
+      { path: 'home/detail/:id', component: HomeDetailPage },
       // Notifications
       { path: 'notifications', component: NotificationsPage },
       // Gateways

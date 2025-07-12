@@ -39,7 +39,7 @@ import {
   faSpinner as faSpinnerIcon
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import '@fortawesome/fontawesome-free/css/all.min.css'
+
 
 library.add(
   faBars,
