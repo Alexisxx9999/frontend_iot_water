@@ -14,7 +14,7 @@
           placeholder="Buscar por nombre, misión o visión..."
           class="search-input"
         />
-        <i class="fas fa-search search-icon"></i>
+        <font-awesome-icon :icon="['fas', 'search']" class="search-icon" />
       </div>
       
       <div class="filter-actions">
@@ -25,11 +25,11 @@
         </select>
         
         <button @click="refreshData" class="btn btn-secondary">
-          <i class="fas fa-refresh"></i> Actualizar
+          <font-awesome-icon :icon="['fas', 'sync-alt']" /> Actualizar
         </button>
         
         <router-link to="/app/home/create" class="btn btn-primary">
-          <i class="fas fa-plus"></i> Nuevo Registro
+          <font-awesome-icon :icon="['fas', 'plus']" /> Nuevo Registro
         </router-link>
       </div>
     </div>
@@ -42,11 +42,11 @@
       </div>
 
       <div v-else-if="filteredItems.length === 0" class="empty-state">
-        <i class="fas fa-inbox empty-icon"></i>
+        <font-awesome-icon :icon="['fas', 'inbox']" class="empty-icon" />
         <h3>No se encontraron registros</h3>
         <p>{{ searchTerm ? 'Intenta con otros términos de búsqueda' : 'No hay registros disponibles' }}</p>
         <router-link to="/app/home/create" class="btn btn-primary">
-          <i class="fas fa-plus"></i> Crear primer registro
+          <font-awesome-icon :icon="['fas', 'plus']" /> Crear primer registro
         </router-link>
       </div>
 
@@ -94,7 +94,7 @@
                   class="btn-icon btn-view"
                   title="Ver detalles"
                 >
-                  <i class="fas fa-eye"></i>
+                  <font-awesome-icon :icon="['fas', 'eye']" />
                 </router-link>
                 
                 <router-link 
@@ -102,16 +102,19 @@
                   class="btn-icon btn-edit"
                   title="Editar"
                 >
-                  <i class="fas fa-edit"></i>
+                  <font-awesome-icon :icon="['fas', 'edit']" />
                 </router-link>
                 
+                <!-- Función de eliminar comentada - solo cambiar estado por ahora -->
+                <!--
                 <button 
                   @click="deleteItem(item.id)" 
                   class="btn-icon btn-delete"
                   title="Eliminar"
                 >
-                  <i class="fas fa-trash"></i>
+                  <font-awesome-icon :icon="['fas', 'trash']" />
                 </button>
+                -->
               </div>
             </td>
           </tr>
@@ -125,7 +128,7 @@
           :disabled="currentPage === 1"
           class="btn-page"
         >
-          <i class="fas fa-chevron-left"></i>
+          <font-awesome-icon :icon="['fas', 'chevron-left']" />
         </button>
         
         <span class="page-info">
@@ -137,7 +140,7 @@
           :disabled="currentPage === totalPages"
           class="btn-page"
         >
-          <i class="fas fa-chevron-right"></i>
+          <font-awesome-icon :icon="['fas', 'chevron-right']" />
         </button>
       </div>
     </div>
@@ -148,7 +151,7 @@
         <div class="modal-header">
           <h3>Confirmar eliminación</h3>
           <button @click="showDeleteModal = false" class="btn-close">
-            <i class="fas fa-times"></i>
+            <font-awesome-icon :icon="['fas', 'times']" />
           </button>
         </div>
         <div class="modal-body">

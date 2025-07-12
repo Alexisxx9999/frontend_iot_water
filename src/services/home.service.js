@@ -10,32 +10,10 @@ let homeItems = [
     estado: 'active',
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z'
-  },
-  {
-    id: 2,
-    nombre: 'AquaTech Ecuador',
-    email: 'info@aquatech.ec',
-    celular: '0987654321',
-    mision: 'Desarrollar y comercializar tecnologías avanzadas para el monitoreo y control de sistemas de agua potable y riego.',
-    vision: 'Convertirnos en la empresa referente de tecnologías acuáticas en Ecuador, exportando soluciones a toda Latinoamérica.',
-    estado: 'active',
-    createdAt: '2024-02-20T14:15:00Z',
-    updatedAt: '2024-02-20T14:15:00Z'
-  },
-  {
-    id: 3,
-    nombre: 'Smart Water Systems',
-    email: 'admin@smartwater.com',
-    celular: '0976543210',
-    mision: 'Implementar sistemas inteligentes de gestión hídrica que optimicen el uso del agua y reduzcan el desperdicio.',
-    vision: 'Crear un ecosistema tecnológico que revolucione la forma en que se gestiona el agua en las ciudades del futuro.',
-    estado: 'inactive',
-    createdAt: '2024-03-10T09:45:00Z',
-    updatedAt: '2024-03-10T09:45:00Z'
   }
 ]
 
-let nextId = 4
+let nextId = 2
 
 // Simular delay de red
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))

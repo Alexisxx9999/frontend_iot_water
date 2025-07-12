@@ -36,7 +36,20 @@ import {
   faCog,
   faTint,
   faLeaf,
-  faSpinner as faSpinnerIcon
+  faSpinner as faSpinnerIcon,
+  faEye,
+  faEdit,
+  faTrash,
+  faPlus,
+  faTimes,
+  faArrowLeft,
+  faSave,
+  faCopy,
+  faPlay,
+  faPause,
+  faChevronLeft,
+  faChevronRight,
+  faInbox
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -67,7 +80,20 @@ library.add(
   faCog,
   faTint,
   faLeaf,
-  faSpinnerIcon
+  faSpinnerIcon,
+  faEye,
+  faEdit,
+  faTrash,
+  faPlus,
+  faTimes,
+  faArrowLeft,
+  faSave,
+  faCopy,
+  faPlay,
+  faPause,
+  faChevronLeft,
+  faChevronRight,
+  faInbox
 )
 
 // Crear la aplicación
