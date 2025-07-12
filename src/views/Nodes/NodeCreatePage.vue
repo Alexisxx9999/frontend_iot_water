@@ -77,7 +77,7 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" @click="$router.push('/nodes')" class="btn-cancel">
+          <button type="button" @click="$router.push('/app/nodes')" class="btn-cancel">
             Cancelar
           </button>
           <button type="submit" class="btn-submit" :disabled="isSubmitting">

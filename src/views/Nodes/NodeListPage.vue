@@ -72,7 +72,7 @@
       <div class="empty-icon">📡</div>
       <h3>No hay nodos registrados</h3>
       <p>Crea tu primer nodo IoT para comenzar</p>
-      <router-link to="/nodes/create" class="btn-create">
+      <router-link to="/app/nodes/create" class="btn-create">
         Crear Primer Nodo
       </router-link>
     </div>
