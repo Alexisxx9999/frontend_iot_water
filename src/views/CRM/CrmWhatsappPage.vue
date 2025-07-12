@@ -1,60 +1,108 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="mb-6 flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">Bandeja de Conversaciones</h1>
-          <p class="text-sm text-gray-500">
-            Gestiona y responde todas las conversaciones de clientes en tiempo real.
-          </p>
-        </div>
-        <div class="flex items-center space-x-3">
-          <button
-            @click="goToTraining"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-            </svg>
-            Entrenamiento IA
-          </button>
-        </div>
+  <div class="crm-page">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <span class="icon">👥</span>
+          CRM
+        </h1>
+        <p class="page-subtitle">
+          Gestión de relaciones con clientes
+        </p>
       </div>
+    </div>
 
-      <!-- KPIs -->
-      <CrmKpiPanel class="mb-8" />
-
-      <!-- Lista de conversaciones -->
-      <ConversationList @conversation-selected="goToDetail" />
+    <div class="page-content">
+      <section class="content-section">
+        <h2 class="section-title">
+          <span class="icon">📊</span>
+          Gestión de Clientes
+        </h2>
+        <div class="content-placeholder">
+          <p>Contenido del CRM en desarrollo...</p>
+        </div>
+      </section>
     </div>
   </div>
 </template>
 
-<script setup>
-import CrmKpiPanel from '@/components/crm/CrmKpiPanel.vue';
-import ConversationList from '@/components/crm/ConversationList.vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-function goToDetail(conversation) {
-  router.push(`/app/crm/conversations/${conversation.id}`);
-}
-
-function goToTraining() {
-  router.push('/app/crm/training');
+<script>
+export default {
+  name: 'CrmWhatsappPage',
+  setup() {
+    return {}
+  }
 }
 </script>
 
 <style scoped>
-.section-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
+.crm-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
-h1 {
-  font-size: 2.5rem;
-  color: #2196f3;
+
+.page-header {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content h1 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-content p {
+  margin: 0.5rem 0 0 0;
+  color: #7f8c8d;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.content-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.content-placeholder {
+  padding: 2rem;
+  text-align: center;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.content-placeholder p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .crm-page {
+    padding: 1rem;
+  }
 }
 </style> 
