@@ -43,8 +43,8 @@
               <span :class="['status-badge', rol.estadoRol === 'Activo' ? 'active' : 'inactive']">{{ rol.estadoRol }}</span>
             </td>
             <td class="actions-cell">
-              <router-link :to="`/app/roles/edit/${rol.id}`" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></router-link>
-              <button @click="confirmarEliminar(rol)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+              <router-link :to="`/app/roles/edit/${rol.id}`" class="btn btn-warning btn-sm"><font-awesome-icon icon="edit" /></router-link>
+              <button @click="confirmarEliminar(rol)" class="btn btn-danger btn-sm"><font-awesome-icon icon="trash" /></button>
             </td>
           </tr>
         </tbody>

@@ -67,10 +67,10 @@
                 <span :class="['status-badge', nodo.activo ? 'active' : 'inactive']">{{ nodo.activo ? 'Activo' : 'Inactivo' }}</span>
               </td>
               <td class="actions-cell">
-                <router-link :to="`/app/nodes/update/${nodo.id}`" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></router-link>
-                <button @click="openDeleteModal(nodo)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                <button v-if="nodo.activo" @click="deactivateNode(nodo.id)" class="btn btn-secondary btn-sm"><i class="fas fa-pause"></i></button>
-                <button v-else @click="activateNode(nodo.id)" class="btn btn-success btn-sm"><i class="fas fa-play"></i></button>
+                <router-link :to="`/app/nodes/update/${nodo.id}`" class="btn btn-warning btn-sm"><font-awesome-icon icon="edit" /></router-link>
+                <button @click="openDeleteModal(nodo)" class="btn btn-danger btn-sm"><font-awesome-icon icon="trash" /></button>
+                <button v-if="nodo.activo" @click="deactivateNode(nodo.id)" class="btn btn-secondary btn-sm"><font-awesome-icon icon="pause" /></button>
+                <button v-else @click="activateNode(nodo.id)" class="btn btn-success btn-sm"><font-awesome-icon icon="play" /></button>
               </td>
             </tr>
           </tbody>
