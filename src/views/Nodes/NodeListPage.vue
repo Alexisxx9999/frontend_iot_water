@@ -6,9 +6,9 @@
         <i class="fas fa-plus"></i> Nuevo Nodo
       </router-link>
     </div>
-    <div v-if="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Cargando nodos...</p>
+    <LoadingSpinner v-if="loading" message="Cargando nodos..." />
+    <div v-else-if="error" class="error-message">
+      <p>{{ error }}</p>
     </div>
     <div v-else class="content">
       <div class="filters-section">
@@ -38,7 +38,7 @@
       <div class="stats-bar">
         <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value">{{ nodosFiltrados.length }}</span></div>
         <div class="stat-item"><span class="stat-label">Activos:</span><span class="stat-value active">{{ nodosActivos }}</span></div>
-        <div class="stat-item"><span class="stat-label inactive">Inactivos:</span><span class="stat-value inactive">{{ nodosInactivos }}</span></div>
+        <div class="stat-item"><span class="stat-label">Inactivos:</span><span class="stat-value inactive">{{ nodosInactivos }}</span></div>
       </div>
       <div class="table-container">
         <table class="nodos-table">
@@ -53,11 +53,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="nodo in nodosFiltrados" :key="nodo.id">
-              <td><strong>{{ nodo.codigo }}</strong></td>
-              <td>{{ nodo.tipo }}</td>
+            <tr v-for="nodo in nodosFiltrados" :key="nodo.id" class="nodo-row">
+              <td class="codigo-cell"><strong>{{ nodo.codigo }}</strong></td>
+              <td><span class="tipo-badge">{{ nodo.tipo }}</span></td>
               <td>{{ formatDate(nodo.fechaInstalacion) }}</td>
-              <td>
+              <td class="bateria-cell">
                 <div class="battery-indicator">
                   <div class="battery-level" :style="{ width: nodo.bateria + '%' }"></div>
                   <span class="battery-text">{{ nodo.bateria }}%</span>
@@ -67,10 +67,12 @@
                 <span :class="['status-badge', nodo.activo ? 'active' : 'inactive']">{{ nodo.activo ? 'Activo' : 'Inactivo' }}</span>
               </td>
               <td class="actions-cell">
-                <router-link :to="`/app/nodes/update/${nodo.id}`" class="btn btn-warning btn-sm"><font-awesome-icon icon="edit" /></router-link>
-                <button @click="openDeleteModal(nodo)" class="btn btn-danger btn-sm"><font-awesome-icon icon="trash" /></button>
-                <button v-if="nodo.activo" @click="deactivateNode(nodo.id)" class="btn btn-secondary btn-sm"><font-awesome-icon icon="pause" /></button>
-                <button v-else @click="activateNode(nodo.id)" class="btn btn-success btn-sm"><font-awesome-icon icon="play" /></button>
+                <div class="action-buttons">
+                  <router-link :to="`/app/nodes/update/${nodo.id}`" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></router-link>
+                  <button @click="openDeleteModal(nodo)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                  <button v-if="nodo.activo" @click="deactivateNode(nodo.id)" class="btn btn-secondary btn-sm"><i class="fas fa-pause"></i></button>
+                  <button v-else @click="activateNode(nodo.id)" class="btn btn-success btn-sm"><i class="fas fa-play"></i></button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -82,11 +84,21 @@
         </div>
       </div>
     </div>
-    <div v-if="mostrarModal" class="modal-overlay">
-      <div class="modal-content">
-        <div class="modal-header"><h3><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h3></div>
-        <div class="modal-body"><p>¿Estás seguro de que quieres eliminar el nodo <strong>{{ nodoAEliminar?.codigo }}</strong>?</p><p class="warning-text">Esta acción no se puede deshacer.</p></div>
-        <div class="modal-footer"><button @click="closeDeleteModal" class="btn btn-secondary">Cancelar</button><button @click="deleteNodeConfirmed" class="btn btn-danger"><i class="fas fa-trash"></i> Eliminar</button></div>
+    <div v-if="mostrarModal" class="modal-overlay" @click="closeDeleteModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h3>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que quieres eliminar el nodo <strong>{{ nodoAEliminar?.codigo }}</strong>?</p>
+          <p class="warning-text">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+          <button @click="closeDeleteModal" class="btn btn-secondary">Cancelar</button>
+          <button @click="deleteNodeConfirmed" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -94,9 +106,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { nodeService } from '../../services/node.service.js'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 
 const nodes = ref([])
 const loading = ref(true)
+const error = ref(null)
 const filtros = ref({ codigo: '', tipo: '', estado: '' })
 const mostrarModal = ref(false)
 const nodoAEliminar = ref(null)
@@ -295,8 +309,22 @@ onMounted(() => {
   border-bottom: 1px solid #e9ecef;
   vertical-align: middle;
 }
-.nodos-table tr:hover {
+.nodo-row:hover {
   background-color: #f8f9fa;
+}
+.codigo-cell {
+  font-weight: 600;
+}
+.bateria-cell {
+  text-align: center;
+}
+.tipo-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
 }
 .status-badge {
   padding: 4px 8px;
@@ -337,11 +365,14 @@ onMounted(() => {
 .actions-cell {
   text-align: center;
 }
+.action-buttons {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
 .btn-sm {
   padding: 6px 10px;
   font-size: 12px;
-  border-radius: 6px;
-  margin-right: 3px;
 }
 .btn-warning {
   background-color: #ffc107;
@@ -445,12 +476,9 @@ onMounted(() => {
   .nodos-table td {
     padding: 10px 8px;
   }
-  .actions-cell {
-    display: flex;
+  .action-buttons {
     flex-direction: column;
     gap: 3px;
-    justify-content: center;
-    align-items: center;
   }
 }
 </style> 

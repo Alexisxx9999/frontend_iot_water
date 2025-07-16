@@ -1,56 +1,51 @@
 <template>
-  <div class="home-list-page">
-    <div class="page-header">
+  <div class="home-list-page unified-list-container">
+    <div class="page-header unified-header">
       <h1>Gestión de Información Home</h1>
       <p>Administra la información principal de la empresa</p>
     </div>
 
     <!-- Filtros y búsqueda -->
-    <div class="filters-section">
-      <div class="search-box">
+    <div class="filters-section unified-filters">
+      <div class="search-box unified-search-box">
         <input 
           v-model="searchTerm" 
           type="text" 
           placeholder="Buscar por nombre, misión o visión..."
-          class="search-input"
+          class="search-input unified-search-input"
         />
-        <font-awesome-icon :icon="['fas', 'search']" class="search-icon" />
+        <font-awesome-icon :icon="['fas', 'search']" class="search-icon unified-search-icon" />
       </div>
-      
-      <div class="filter-actions">
-        <select v-model="statusFilter" class="filter-select">
+      <div class="filter-actions unified-filter-actions">
+        <select v-model="statusFilter" class="filter-select unified-filter-select">
           <option value="">Todos los estados</option>
           <option value="active">Activo</option>
           <option value="inactive">Inactivo</option>
         </select>
-        
-        <button @click="refreshData" class="btn btn-secondary">
+        <button @click="refreshData" class="btn btn-secondary unified-btn">
           <font-awesome-icon :icon="['fas', 'sync-alt']" /> Actualizar
         </button>
-        
-        <router-link to="/app/home/create" class="btn btn-primary">
+        <router-link to="/app/home/create" class="btn btn-primary unified-btn">
           <font-awesome-icon :icon="['fas', 'plus']" /> Nuevo Registro
         </router-link>
       </div>
     </div>
 
     <!-- Tabla de registros -->
-    <div class="table-container">
-      <div v-if="loading" class="loading-container">
+    <div class="table-container unified-table-container">
+      <div v-if="loading" class="loading-container unified-loading-container">
         <div class="spinner"></div>
         <p>Cargando registros...</p>
       </div>
-
-      <div v-else-if="filteredItems.length === 0" class="empty-state">
-        <font-awesome-icon :icon="['fas', 'inbox']" class="empty-icon" />
+      <div v-else-if="filteredItems.length === 0" class="empty-state unified-empty-state">
+        <font-awesome-icon :icon="['fas', 'inbox']" class="empty-icon unified-empty-icon" />
         <h3>No se encontraron registros</h3>
         <p>{{ searchTerm ? 'Intenta con otros términos de búsqueda' : 'No hay registros disponibles' }}</p>
-        <router-link to="/app/home/create" class="btn btn-primary">
+        <router-link to="/app/home/create" class="btn btn-primary unified-btn">
           <font-awesome-icon :icon="['fas', 'plus']" /> Crear primer registro
         </router-link>
       </div>
-
-      <table v-else class="data-table">
+      <table v-else class="data-table unified-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -63,53 +58,51 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in paginatedItems" :key="item.id" class="table-row">
+          <tr v-for="item in paginatedItems" :key="item.id" class="table-row unified-table-row">
             <td>{{ item.id }}</td>
             <td>
-              <div class="name-cell">
+              <div class="name-cell unified-name-cell">
                 <strong>{{ item.nombre }}</strong>
                 <small>{{ item.email }}</small>
               </div>
             </td>
             <td>
-              <div class="text-cell" :title="item.mision">
+              <div class="text-cell unified-text-cell" :title="item.mision">
                 {{ truncateText(item.mision, 50) }}
               </div>
             </td>
             <td>
-              <div class="text-cell" :title="item.vision">
+              <div class="text-cell unified-text-cell" :title="item.vision">
                 {{ truncateText(item.vision, 50) }}
               </div>
             </td>
             <td>{{ item.celular }}</td>
             <td>
-              <span :class="['status-badge', item.estado]">
+              <span :class="['status-badge unified-status-badge', item.estado === 'active' ? 'estado-activo' : 'estado-inactivo']">
                 {{ item.estado === 'active' ? 'Activo' : 'Inactivo' }}
               </span>
             </td>
-            <td class="actions-cell">
-              <div class="action-buttons">
+            <td class="actions-cell unified-actions-cell">
+              <div class="action-buttons unified-action-buttons">
                 <router-link 
                   :to="`/app/home/detail/${item.id}`" 
-                  class="btn-icon btn-view"
+                  class="btn-icon btn-view unified-btn-icon"
                   title="Ver detalles"
                 >
                   <font-awesome-icon :icon="['fas', 'eye']" />
                 </router-link>
-                
                 <router-link 
                   :to="`/app/home/edit/${item.id}`" 
-                  class="btn-icon btn-edit"
+                  class="btn-icon btn-edit unified-btn-icon"
                   title="Editar"
                 >
                   <font-awesome-icon :icon="['fas', 'edit']" />
                 </router-link>
-                
-                <!-- Función de eliminar comentada - solo cambiar estado por ahora -->
+                <!-- Eliminar (opcional) -->
                 <!--
                 <button 
                   @click="deleteItem(item.id)" 
-                  class="btn-icon btn-delete"
+                  class="btn-icon btn-delete unified-btn-icon"
                   title="Eliminar"
                 >
                   <font-awesome-icon :icon="['fas', 'trash']" />
@@ -120,49 +113,45 @@
           </tr>
         </tbody>
       </table>
-
       <!-- Paginación -->
-      <div v-if="totalPages > 1" class="pagination">
+      <div v-if="totalPages > 1" class="pagination unified-pagination">
         <button 
           @click="currentPage--" 
           :disabled="currentPage === 1"
-          class="btn-page"
+          class="btn-page unified-btn-page"
         >
           <font-awesome-icon :icon="['fas', 'chevron-left']" />
         </button>
-        
-        <span class="page-info">
+        <span class="page-info unified-page-info">
           Página {{ currentPage }} de {{ totalPages }}
         </span>
-        
         <button 
           @click="currentPage++" 
           :disabled="currentPage === totalPages"
-          class="btn-page"
+          class="btn-page unified-btn-page"
         >
           <font-awesome-icon :icon="['fas', 'chevron-right']" />
         </button>
       </div>
     </div>
-
     <!-- Modal de confirmación de eliminación -->
-    <div v-if="showDeleteModal" class="modal-overlay" @click="showDeleteModal = false">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
+    <div v-if="showDeleteModal" class="modal-overlay unified-modal-overlay" @click="showDeleteModal = false">
+      <div class="modal-content unified-modal-content" @click.stop>
+        <div class="modal-header unified-modal-header">
           <h3>Confirmar eliminación</h3>
-          <button @click="showDeleteModal = false" class="btn-close">
+          <button @click="showDeleteModal = false" class="btn-close unified-btn-close">
             <font-awesome-icon :icon="['fas', 'times']" />
           </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body unified-modal-body">
           <p>¿Estás seguro de que deseas eliminar este registro?</p>
-          <p class="warning-text">Esta acción no se puede deshacer.</p>
+          <p class="warning-text unified-warning-text">Esta acción no se puede deshacer.</p>
         </div>
-        <div class="modal-footer">
-          <button @click="showDeleteModal = false" class="btn btn-secondary">
+        <div class="modal-footer unified-modal-footer">
+          <button @click="showDeleteModal = false" class="btn btn-secondary unified-btn">
             Cancelar
           </button>
-          <button @click="confirmDelete" class="btn btn-danger">
+          <button @click="confirmDelete" class="btn btn-danger unified-btn">
             Eliminar
           </button>
         </div>
@@ -286,398 +275,210 @@ export default {
 </script>
 
 <style scoped>
-.home-list-page {
+.unified-list-container {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
   padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  margin: 2rem auto;
+  max-width: 1200px;
 }
-
-.page-header {
+.unified-header {
   margin-bottom: 2rem;
-  text-align: center;
 }
-
-.page-header h1 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-size: 2.5rem;
+.unified-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #225b8c;
 }
-
-.page-header p {
-  color: #7f8c8d;
-  font-size: 1.1rem;
-}
-
-.filters-section {
+.unified-filters {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
-
-.search-box {
+.unified-search-box {
   position: relative;
   flex: 1;
-  max-width: 400px;
 }
-
-.search-input {
+.unified-search-input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 2px solid #e1e8ed;
+  padding: 10px 40px 10px 16px;
   border-radius: 8px;
+  border: 1px solid #e0e7ef;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  background: #f4f8fb;
+  color: #222;
 }
-
-.search-input:focus {
-  outline: none;
-  border-color: #3498db;
-}
-
-.search-icon {
+.unified-search-icon {
   position: absolute;
-  left: 0.75rem;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #95a5a6;
+  color: #66adf4;
+  font-size: 18px;
 }
-
-.filter-actions {
+.unified-filter-actions {
   display: flex;
   gap: 1rem;
-  align-items: center;
 }
-
-.filter-select {
-  padding: 0.75rem;
-  border: 2px solid #e1e8ed;
+.unified-filter-select {
+  padding: 8px 12px;
   border-radius: 8px;
-  background: white;
+  border: 1px solid #e0e7ef;
+  background: #f4f8fb;
   font-size: 1rem;
+  color: #222;
 }
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
+.unified-btn {
+  font-weight: 600;
   border-radius: 8px;
   font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  padding: 10px 22px;
+  transition: background 0.2s, box-shadow 0.2s;
 }
-
-.btn-primary {
-  background: #3498db;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #2980b9;
-}
-
-.btn-secondary {
-  background: #95a5a6;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: #7f8c8d;
-}
-
-.table-container {
-  background: white;
+.unified-table-container {
+  background: #f8f9fa;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
 }
-
-.loading-container {
-  padding: 3rem;
-  text-align: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.empty-state {
-  padding: 4rem 2rem;
-  text-align: center;
-}
-
-.empty-icon {
-  font-size: 4rem;
-  color: #bdc3c7;
-  margin-bottom: 1rem;
-}
-
-.empty-state h3 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.empty-state p {
-  color: #7f8c8d;
-  margin-bottom: 2rem;
-}
-
-.data-table {
+.unified-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 15px;
 }
-
-.data-table th {
-  background: #f8f9fa;
-  padding: 1rem;
+.unified-table th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 700;
+  padding: 15px;
   text-align: left;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #e1e8ed;
+  border-bottom: 2px solid #e9ecef;
 }
-
-.data-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #e1e8ed;
+.unified-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
   vertical-align: middle;
 }
-
-.table-row:hover {
-  background: #f8f9fa;
+.unified-table-row:hover {
+  background-color: #f8f9fa;
 }
-
-.name-cell strong {
-  display: block;
-  color: #2c3e50;
+.unified-name-cell strong {
+  font-weight: 600;
 }
-
-.name-cell small {
-  color: #7f8c8d;
-  font-size: 0.9rem;
+.unified-status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 5px;
 }
-
-.text-cell {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.status-badge.active {
-  background: #d4edda;
+.estado-activo {
+  background-color: #d4edda;
   color: #155724;
 }
-
-.status-badge.inactive {
-  background: #f8d7da;
+.estado-inactivo {
+  background-color: #f8d7da;
   color: #721c24;
 }
-
-.actions-cell {
-  width: 120px;
-}
-
-.action-buttons {
+.unified-action-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 5px;
   justify-content: center;
 }
-
-.btn-icon {
-  width: 36px;
-  height: 36px;
-  border: none;
+.unified-btn-icon {
+  padding: 6px 10px;
+  font-size: 12px;
   border-radius: 6px;
-  cursor: pointer;
+}
+.unified-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+.unified-empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ddd;
+}
+.unified-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  text-decoration: none;
+  gap: 10px;
+  margin-top: 20px;
 }
-
-.btn-view {
-  background: #17a2b8;
-  color: white;
+.unified-btn-page {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
 }
-
-.btn-view:hover {
-  background: #138496;
-}
-
-.btn-edit {
-  background: #ffc107;
-  color: #212529;
-}
-
-.btn-edit:hover {
-  background: #e0a800;
-}
-
-.btn-delete {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-delete:hover {
-  background: #c82333;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  gap: 1rem;
-  border-top: 1px solid #e1e8ed;
-}
-
-.btn-page {
-  padding: 0.5rem 1rem;
-  border: 1px solid #e1e8ed;
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-page:hover:not(:disabled) {
-  background: #f8f9fa;
-}
-
-.btn-page:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: #7f8c8d;
+.unified-page-info {
+  font-size: 1.1rem;
   font-weight: 500;
 }
-
-/* Modal */
-.modal-overlay {
+.unified-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
-
-.modal-content {
+.unified-modal-content {
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-
-.modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e1e8ed;
+.unified-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
-
-.modal-header h3 {
-  margin: 0;
-  color: #2c3e50;
-}
-
-.btn-close {
+.unified-btn-close {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  color: #7f8c8d;
 }
-
-.modal-body {
-  padding: 1.5rem;
+.unified-modal-body {
+  padding: 20px;
 }
-
-.warning-text {
+.unified-warning-text {
   color: #dc3545;
   font-weight: 500;
+  margin-top: 10px;
 }
-
-.modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid #e1e8ed;
+.unified-modal-footer {
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
   display: flex;
+  gap: 10px;
   justify-content: flex-end;
-  gap: 1rem;
 }
-
-.btn-danger {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background: #c82333;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-  .home-list-page {
-    padding: 1rem;
+  .unified-header h1 {
+    font-size: 1.3rem;
   }
-  
-  .filters-section {
+  .unified-table th,
+  .unified-table td {
+    padding: 10px 8px;
+    font-size: 0.95rem;
+  }
+  .unified-action-buttons {
     flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .search-box {
-    max-width: none;
-  }
-  
-  .filter-actions {
-    justify-content: center;
-  }
-  
-  .data-table {
-    font-size: 0.9rem;
-  }
-  
-  .data-table th,
-  .data-table td {
-    padding: 0.75rem 0.5rem;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-    gap: 0.25rem;
+    gap: 3px;
   }
 }
 </style> 

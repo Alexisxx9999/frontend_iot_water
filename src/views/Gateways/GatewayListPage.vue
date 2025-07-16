@@ -1,20 +1,20 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen bg-gray-50 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-10">
       <!-- Header -->
-      <div class="mb-8">
+      <div class="mb-10">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900">Gateways</h1>
-            <p class="mt-2 text-sm text-gray-600">
+            <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">Gateways</h1>
+            <p class="mt-2 text-base text-gray-600 font-normal">
               Administrar gateways del sistema IoT
             </p>
           </div>
           <router-link
             to="/app/gateways/create"
-            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            class="inline-flex items-center px-5 py-2.5 border border-transparent rounded-lg shadow text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
           >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
             Nuevo Gateway
@@ -23,7 +23,7 @@
       </div>
 
       <!-- Filtros y búsqueda -->
-      <div class="bg-white shadow rounded-lg mb-6">
+      <div class="bg-white shadow rounded-xl mb-8">
         <div class="p-6">
           <div class="flex flex-col sm:flex-row gap-4">
             <!-- Buscador -->
@@ -39,17 +39,17 @@
                   id="search"
                   v-model="searchTerm"
                   type="text"
-                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  class="block w-full pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
                   placeholder="Buscar por código, dirección o estado..."
                 />
               </div>
             </div>
 
             <!-- Filtro de estado -->
-            <div class="sm:w-48">
+            <div class="sm:w-56">
               <select
                 v-model="statusFilter"
-                class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="block w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-base py-2.5"
               >
                 <option value="">Todos los estados</option>
                 <option value="active">Activo</option>
@@ -62,91 +62,75 @@
       </div>
 
       <!-- Tabla -->
-      <div class="bg-white shadow rounded-lg overflow-hidden">
+      <div class="bg-white shadow rounded-xl overflow-hidden">
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Gateway
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Dirección
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Latitud
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Longitud
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Altitud
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha Instalación
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estado
-                </th>
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
+                <th class="px-7 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Gateway</th>
+                <th class="px-7 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Dirección</th>
+                <th class="px-7 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Latitud</th>
+                <th class="px-7 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Longitud</th>
+                <th class="px-7 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Altitud</th>
+                <th class="px-7 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Fecha Instalación</th>
+                <th class="px-7 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Estado</th>
+                <th class="px-7 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="gateway in filteredGateways" :key="gateway.id" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr v-for="(gateway, idx) in filteredGateways" :key="gateway.id" :class="idx % 2 === 0 ? 'bg-white' : 'bg-blue-50 hover:bg-blue-100'" class="hover:bg-blue-50 transition-colors duration-150">
+                <td class="px-7 py-5 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
-                      <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex-shrink-0 h-11 w-11">
+                      <div class="h-11 w-11 rounded-full bg-blue-100 flex items-center justify-center">
+                        <svg class="h-7 w-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
                         </svg>
                       </div>
                     </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">{{ gateway.code }}</div>
-                      <div v-if="gateway.description" class="text-sm text-gray-500">{{ gateway.description }}</div>
+                    <div class="ml-5">
+                      <div class="text-base font-semibold text-gray-900">{{ gateway.code }}</div>
+                      <div v-if="gateway.description" class="text-sm text-gray-500 font-normal">{{ gateway.description }}</div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ gateway.address }}</div>
+                <td class="px-7 py-5 whitespace-nowrap">
+                  <div class="text-base text-gray-900">{{ gateway.address }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ gateway.latitude }}</div>
+                <td class="px-7 py-5 whitespace-nowrap">
+                  <div class="text-base text-gray-900">{{ gateway.latitude }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ gateway.longitude }}</div>
+                <td class="px-7 py-5 whitespace-nowrap">
+                  <div class="text-base text-gray-900">{{ gateway.longitude }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ gateway.altitude }}</div>
+                <td class="px-7 py-5 whitespace-nowrap">
+                  <div class="text-base text-gray-900">{{ gateway.altitude }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ formatDate(gateway.installationDate, true) }}</div>
+                <td class="px-7 py-5 whitespace-nowrap">
+                  <div class="text-base text-gray-900">{{ formatDate(gateway.installationDate, true) }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-7 py-5 whitespace-nowrap">
                   <span
-                    class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                    class="inline-flex px-3 py-1 text-xs font-bold rounded-full shadow-sm border"
                     :class="{
-                      'bg-green-100 text-green-800': gateway.status === 'active',
-                      'bg-red-100 text-red-800': gateway.status === 'inactive',
-                      'bg-yellow-100 text-yellow-800': gateway.status === 'maintenance'
+                      'bg-green-500 text-white border-green-500': gateway.status === 'active',
+                      'bg-yellow-400 text-white border-yellow-400': gateway.status === 'maintenance',
+                      'bg-red-500 text-white border-red-500': gateway.status === 'inactive'
                     }"
                   >
                     {{ getStatusText(gateway.status) }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td class="px-7 py-5 whitespace-nowrap text-right text-base font-medium">
                   <div class="flex items-center justify-end space-x-2">
                     <!-- Enviar datos -->
                     <button
                       v-if="gateway.dataUrl"
                       @click="sendData(gateway)"
-                      class="text-blue-600 hover:text-blue-900"
+                      class="rounded-full p-2 bg-blue-100 hover:bg-blue-200 text-blue-700 transition"
                       title="Enviar datos"
                     >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
                       </svg>
                     </button>
@@ -154,10 +138,10 @@
                     <!-- Editar -->
                     <router-link
                       :to="`/app/gateways/${gateway.id}/edit`"
-                      class="text-indigo-600 hover:text-indigo-900"
+                      class="rounded-full p-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 transition"
                       title="Editar"
                     >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                       </svg>
                     </router-link>
@@ -165,16 +149,16 @@
                     <!-- Activar/Desactivar -->
                     <button
                       @click="toggleStatus(gateway)"
-                      :class="{
-                        'text-green-600 hover:text-green-900': gateway.status === 'inactive',
-                        'text-red-600 hover:text-red-900': gateway.status === 'active'
-                      }"
+                      :class="[
+                        'rounded-full p-2 transition',
+                        gateway.status === 'inactive' ? 'bg-green-100 hover:bg-green-200 text-green-700' : 'bg-red-100 hover:bg-red-200 text-red-700'
+                      ]"
                       :title="gateway.status === 'active' ? 'Desactivar' : 'Activar'"
                     >
-                      <svg v-if="gateway.status === 'active'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg v-if="gateway.status === 'active'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
                       </svg>
-                      <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
                     </button>
@@ -182,10 +166,10 @@
                     <!-- Eliminar -->
                     <button
                       @click="() => { gatewayToDelete = gateway; showDeleteModal = true }"
-                      class="text-red-600 hover:text-red-900"
+                      class="rounded-full p-2 bg-red-100 hover:bg-red-200 text-red-700 transition"
                       title="Eliminar"
                     >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                       </svg>
                     </button>
@@ -197,20 +181,20 @@
         </div>
 
         <!-- Estado vacío -->
-        <div v-if="filteredGateways.length === 0" class="text-center py-12">
-          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-if="filteredGateways.length === 0" class="text-center py-16">
+          <svg class="mx-auto h-14 w-14 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
           </svg>
-          <h3 class="mt-2 text-sm font-medium text-gray-900">No se encontraron gateways</h3>
-          <p class="mt-1 text-sm text-gray-500">
+          <h3 class="mt-3 text-base font-semibold text-gray-900">No se encontraron gateways</h3>
+          <p class="mt-2 text-base text-gray-500">
             {{ searchTerm || statusFilter ? 'Intenta ajustar los filtros de búsqueda.' : 'Comienza creando tu primer gateway.' }}
           </p>
-          <div class="mt-6">
+          <div class="mt-7">
             <router-link
               to="/app/gateways/create"
-              class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              class="inline-flex items-center px-5 py-2.5 border border-transparent rounded-lg shadow text-base font-semibold text-white bg-blue-600 hover:bg-blue-700"
             >
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
               </svg>
               Nuevo Gateway
