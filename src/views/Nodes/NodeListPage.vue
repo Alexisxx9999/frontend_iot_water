@@ -188,7 +188,9 @@ onMounted(() => {
   box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
   padding: 2rem;
   margin: 2rem auto;
-  max-width: 1200px;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
 }
 .header {
   display: flex;

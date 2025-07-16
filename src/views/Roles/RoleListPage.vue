@@ -1,133 +1,104 @@
 <template>
-  <div class="role-list">
+  <div class="medidor-list">
     <div class="header">
       <h1><i class="fas fa-user-shield"></i> Gestión de Roles</h1>
       <router-link to="/app/roles/create" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nuevo Rol
       </router-link>
     </div>
-    <div class="filters-section">
-      <div class="search-box">
-        <input v-model="search" type="text" placeholder="Buscar por nombre o descripción..." class="search-input">
-        <i class="fas fa-search search-icon"></i>
-      </div>
-      <div class="filter-controls">
-        <select v-model="estadoFiltro" class="filter-select">
-          <option value="">Todos los estados</option>
-          <option value="Activo">Activo</option>
-          <option value="Inactivo">Inactivo</option>
-        </select>
-        <button @click="limpiarFiltros" class="btn btn-secondary"><i class="fas fa-times"></i> Limpiar</button>
-      </div>
+    <LoadingSpinner v-if="loading" message="Cargando roles..." />
+    <div v-else-if="error" class="error-message">
+      <p>{{ error }}</p>
     </div>
-    <div class="stats-bar">
-      <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value">{{ rolesFiltrados.length }}</span></div>
-      <div class="stat-item"><span class="stat-label">Activos:</span><span class="stat-value active">{{ rolesActivos }}</span></div>
-      <div class="stat-item"><span class="stat-label inactive">Inactivos:</span><span class="stat-value inactive">{{ rolesInactivos }}</span></div>
-    </div>
-    <div class="table-container">
-      <table class="roles-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="rol in rolesFiltrados" :key="rol.id">
-            <td><strong>{{ rol.nombreRol }}</strong></td>
-            <td>{{ rol.descripcionRol }}</td>
-            <td>
-              <span :class="['status-badge', rol.estadoRol === 'Activo' ? 'active' : 'inactive']">{{ rol.estadoRol }}</span>
-            </td>
-            <td class="actions-cell">
-              <router-link :to="`/app/roles/edit/${rol.id}`" class="btn btn-warning btn-sm"><font-awesome-icon icon="edit" /></router-link>
-              <button @click="confirmarEliminar(rol)" class="btn btn-danger btn-sm"><font-awesome-icon icon="trash" /></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-if="rolesFiltrados.length === 0" class="no-results">
-        <i class="fas fa-search"></i>
-        <p>No se encontraron roles con los filtros aplicados</p>
-        <button @click="limpiarFiltros" class="btn btn-primary">Limpiar filtros</button>
-      </div>
-    </div>
-    <!-- Modal de confirmación -->
-    <div v-if="mostrarModal" class="modal-overlay">
-      <div class="modal-content">
-        <h3>¿Seguro que deseas eliminar el rol "{{ rolAEliminar?.nombreRol }}"?</h3>
-        <div class="modal-actions">
-          <button @click="mostrarModal = false" class="btn btn-secondary">Cancelar</button>
-          <button @click="eliminarRolConfirmado" class="btn btn-danger">Eliminar</button>
+    <div v-else class="content">
+      <div class="filters-section">
+        <div class="search-box">
+          <input v-model="search" type="text" placeholder="Buscar por nombre o descripción..." class="search-input">
+          <i class="fas fa-search search-icon"></i>
         </div>
+        <div class="filter-controls">
+          <select v-model="estadoFiltro" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+          <button @click="limpiarFiltros" class="btn btn-secondary"><i class="fas fa-times"></i> Limpiar</button>
+        </div>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value">{{ rolesFiltrados.length }}</span></div>
+        <div class="stat-item"><span class="stat-label">Activos:</span><span class="stat-value active">{{ rolesActivos }}</span></div>
+        <div class="stat-item"><span class="stat-label inactive">Inactivos:</span><span class="stat-value inactive">{{ rolesInactivos }}</span></div>
+      </div>
+      <div class="table-container">
+        <table class="medidores-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="rol in rolesFiltrados" :key="rol.id" class="medidor-row">
+              <td class="codigo-cell"><strong>{{ rol.nombreRol }}</strong></td>
+              <td>{{ rol.descripcionRol }}</td>
+              <td>
+                <span :class="['status-badge', rol.estadoRol === 'Activo' ? 'estado-activo' : 'estado-inactivo']">{{ rol.estadoRol }}</span>
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <router-link :to="`/app/roles/edit/${rol.id}`" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></router-link>
+                  <button @click="confirmarEliminar(rol)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-if="rolesFiltrados.length === 0" class="no-results"><i class="fas fa-search"></i><p>No se encontraron roles con los filtros aplicados</p><button @click="limpiarFiltros" class="btn btn-primary">Limpiar filtros</button></div>
+      </div>
+    </div>
+    <div v-if="mostrarModal" class="modal-overlay" @click="cancelarEliminar">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header"><h3><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h3></div>
+        <div class="modal-body"><p>¿Estás seguro de que quieres eliminar el rol <strong>{{ rolAEliminar?.nombreRol }}</strong>?</p><p class="warning-text">Esta acción no se puede deshacer.</p></div>
+        <div class="modal-footer"><button @click="cancelarEliminar" class="btn btn-secondary">Cancelar</button><button @click="eliminarRolConfirmado" class="btn btn-danger"><i class="fas fa-trash"></i> Eliminar</button></div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { rolesService } from '../../services/roles.service.js'
-import { showNotification } from '../../utils/errorHandler'
-
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 const roles = ref([])
-const search = ref('')
-const estadoFiltro = ref('')
-const eliminarId = ref(null)
+const loading = ref(true)
+const error = ref(null)
 const mostrarModal = ref(false)
 const rolAEliminar = ref(null)
-
-onMounted(async () => {
-  roles.value = await rolesService.getRoles()
-})
-
-const rolesFiltrados = computed(() => {
-  let result = [...roles.value]
-  if (search.value) {
-    const s = search.value.toLowerCase()
-    result = result.filter(r =>
-      r.nombreRol.toLowerCase().includes(s) ||
-      r.descripcionRol.toLowerCase().includes(s)
-    )
-  }
-  if (estadoFiltro.value) {
-    result = result.filter(r => r.estadoRol === estadoFiltro.value)
-  }
-  return result
-})
-
+const search = ref('')
+const estadoFiltro = ref('')
+onMounted(async () => { await loadRoles() })
+const loadRoles = async () => { try { loading.value = true; roles.value = await rolesService.getRoles() } catch (err) { error.value = 'Error al cargar los roles: ' + err.message } finally { loading.value = false } }
+const rolesFiltrados = computed(() => { let result = [...roles.value]; if (search.value) { const s = search.value.toLowerCase(); result = result.filter(r => r.nombreRol.toLowerCase().includes(s) || r.descripcionRol.toLowerCase().includes(s)) } if (estadoFiltro.value) { result = result.filter(r => r.estadoRol === estadoFiltro.value) } return result })
 const rolesActivos = computed(() => rolesFiltrados.value.filter(r => r.estadoRol === 'Activo').length)
 const rolesInactivos = computed(() => rolesFiltrados.value.filter(r => r.estadoRol === 'Inactivo').length)
-
-function limpiarFiltros() {
-  search.value = ''
-  estadoFiltro.value = ''
-}
-
-function confirmarEliminar(rol) {
-  rolAEliminar.value = rol
-  mostrarModal.value = true
-}
-
-async function eliminarRolConfirmado() {
-  await rolesService.deleteRole(rolAEliminar.value.id)
-  roles.value = await rolesService.getRoles()
-  mostrarModal.value = false
-  rolAEliminar.value = null
-}
+function limpiarFiltros() { search.value = ''; estadoFiltro.value = '' }
+function confirmarEliminar(rol) { rolAEliminar.value = rol; mostrarModal.value = true }
+function cancelarEliminar() { mostrarModal.value = false; rolAEliminar.value = null }
+async function eliminarRolConfirmado() { if (!rolAEliminar.value) return; try { await rolesService.deleteRole(rolAEliminar.value.id); roles.value = roles.value.filter(r => r.id !== rolAEliminar.value.id); mostrarModal.value = false; rolAEliminar.value = null } catch (err) { error.value = 'Error al eliminar el rol: ' + err.message } }
 </script>
-
 <style scoped>
-.role-list {
+.medidor-list {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
   padding: 2rem;
   margin: 2rem auto;
-  max-width: 1200px;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
 }
 .header {
   display: flex;
@@ -142,49 +113,6 @@ async function eliminarRolConfirmado() {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  font-size: 1rem;
-  text-decoration: none;
-}
-.btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  padding: 10px 22px;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.10);
-}
-.btn-primary:hover {
-  background: #764ba2;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.18);
-}
-.btn-secondary {
-  background: #ecf0f1;
-  color: #7f8c8d;
-  padding: 10px 18px;
-}
-.btn-secondary:hover {
-  background: #bdc3c7;
-}
-.btn-warning {
-  background: #f1c40f;
-  color: #fff;
-  padding: 8px 16px;
-}
-.btn-warning:hover {
-  background: #f39c12;
-}
-.btn-sm {
-  font-size: 0.98em;
-  padding: 7px 12px;
-  border-radius: 6px;
 }
 .filters-section {
   display: flex;
@@ -241,88 +169,151 @@ async function eliminarRolConfirmado() {
   gap: 8px;
 }
 .stat-label {
-  font-weight: 600;
+  font-weight: 500;
+}
+.stat-value {
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 .stat-value.active {
-  color: #27ae60;
+  color: #28a745;
 }
 .stat-value.inactive {
-  color: #e74c3c;
+  color: #dc3545;
 }
 .table-container {
-  margin-top: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
 }
-.roles-table {
+.medidores-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.07);
+  font-size: 15px;
 }
-.roles-table th, .roles-table td {
-  border: 1px solid #e1e5e9;
-  padding: 12px 14px;
+.medidores-table th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 700;
+  padding: 15px;
   text-align: left;
+  border-bottom: 2px solid #e9ecef;
 }
-.status-badge {
-  display: inline-block;
-  padding: 5px 16px;
-  border-radius: 12px;
+.medidores-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+}
+.medidor-row:hover {
+  background-color: #f8f9fa;
+}
+.codigo-cell {
   font-weight: 600;
-  font-size: 0.98em;
-  background: #f4f8fb;
-}
-.status-badge.active {
-  color: #27ae60;
-  background: #eafaf1;
-}
-.status-badge.inactive {
-  color: #e74c3c;
-  background: #faeaea;
 }
 .actions-cell {
+  text-align: center;
+}
+.action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 5px;
+  justify-content: center;
+}
+.btn-sm {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #c82333;
 }
 .no-results {
   text-align: center;
-  margin: 2rem 0;
-  color: #888;
+  padding: 60px 20px;
+  color: #666;
 }
 .no-results i {
-  font-size: 2rem;
-  margin-bottom: 8px;
-}
-.btn-danger {
-  background: #e74c3c;
-  color: #fff;
-  padding: 8px 16px;
-}
-.btn-danger:hover {
-  background: #c0392b;
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ddd;
 }
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.3);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 .modal-content {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
-  min-width: 320px;
-  text-align: center;
+  background: white;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-.modal-actions {
-  margin-top: 1.5rem;
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+.modal-header h3 {
+  margin: 0;
+  color: #dc3545;
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.modal-body {
+  padding: 20px;
+}
+.warning-text {
+  color: #dc3545;
+  font-weight: 500;
+  margin-top: 10px;
+}
+.modal-footer {
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  .filter-controls {
+    flex-direction: column;
+  }
+  .stats-bar {
+    flex-direction: column;
+  }
+  .medidores-table {
+    font-size: 14px;
+  }
+  .medidores-table th,
+  .medidores-table td {
+    padding: 10px 8px;
+  }
+  .action-buttons {
+    flex-direction: column;
+    gap: 3px;
+  }
 }
 </style> 
