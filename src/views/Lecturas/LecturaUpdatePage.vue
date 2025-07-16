@@ -2,7 +2,7 @@
   <div class="lectura-form-page">
     <div class="lectura-form-card">
       <h1>Actualizar Lectura</h1>
-      <form @submit.prevent="actualizarLectura" class="lectura-form">
+      <form @submit.prevent="actuali" class="lectura-form">
         <div class="form-group">
           <label>Medidor</label>
           <select v-model="form.medidorId" required>
