@@ -1,10 +1,11 @@
 <template>
-  <div class="sector-list-page">
-    <div class="page-header">
-      <h1>Gestión de Sectores</h1>
-      <p>Administra los sectores de la ciudad y sus códigos postales</p>
+  <div class="medidor-list">
+    <div class="header">
+      <h1><i class="fas fa-list"></i> Gestión de Sectores</h1>
+      <router-link to="/app/sectors/create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nuevo Sector
+      </router-link>
     </div>
-    <!-- Filtros y búsqueda -->
     <div class="filters-section">
       <div class="search-box">
         <input 
@@ -15,30 +16,25 @@
         />
         <i class="fas fa-search search-icon"></i>
       </div>
-      <div class="filter-actions">
-        <select v-model="statusFilter" class="filter-select custom-select">
+      <div class="filter-controls">
+        <select v-model="statusFilter" class="filter-select">
           <option value="">Todos los estados</option>
           <option value="active">Activo</option>
           <option value="inactive">Inactivo</option>
         </select>
-        <button @click="refreshData" class="btn-modern btn-blue">
+        <button @click="refreshData" class="btn btn-secondary">
           <i class="fas fa-rotate-right"></i> Actualizar
         </button>
-        <router-link to="/app/sectors/create" class="btn-modern btn-green">
-          <i class="fas fa-plus"></i> Nuevo Sector
-        </router-link>
       </div>
     </div>
-    <!-- Tabla de registros -->
     <div class="table-container">
       <div v-if="loading" class="loading-container">
         <div class="spinner"></div>
         <p>Cargando sectores...</p>
       </div>
-      <div v-else-if="filteredItems.length === 0" class="empty-state">
-        <i class="fas fa-map-marker-alt empty-icon"></i>
-        <h3>No se encontraron sectores</h3>
-        <p>{{ searchTerm ? 'Intenta con otros términos de búsqueda' : 'No hay sectores disponibles' }}</p>
+      <div v-else-if="filteredItems.length === 0" class="no-results">
+        <i class="fas fa-search"></i>
+        <p>No se encontraron sectores con los filtros aplicados</p>
         <router-link to="/app/sectors/create" class="btn btn-primary">
           <i class="fas fa-plus"></i> Crear primer sector
         </router-link>
@@ -57,12 +53,11 @@
         <tbody>
           <tr v-for="item in paginatedItems" :key="item.id" class="table-row">
             <td>{{ item.id }}</td>
-            <td><strong>{{ item.nombreSector }}</strong></td>
-            <td><span class="postal-code">{{ item.codigoPostalSector }}</span></td>
+            <td class="codigo-cell"><strong>{{ item.nombreSector }}</strong></td>
+            <td><span class="tipo-badge">{{ item.codigoPostalSector }}</span></td>
             <td><div class="text-cell" :title="item.descripcionSector">{{ truncateText(item.descripcionSector, 60) }}</div></td>
             <td>
-              <span class="state-dot" :class="item.estado === 'active' ? 'dot-active' : 'dot-inactive'"></span>
-              <span class="state-text" :class="item.estado === 'active' ? 'text-active' : 'text-inactive'">
+              <span :class="['status-badge', item.estado === 'active' ? 'active' : 'inactive']">
                 {{ item.estado === 'active' ? 'Activo' : 'Inactivo' }}
               </span>
             </td>
@@ -70,24 +65,23 @@
               <div class="action-buttons">
                 <router-link
                   :to="`/app/sectors/edit/${item.id}`"
-                  class="btn-action btn-edit"
+                  class="btn btn-warning btn-sm"
                   title="Editar sector"
                 >
-                  <span class="emoji">✏️</span> Editar
+                  <i class="fas fa-edit"></i>
                 </router-link>
                 <button
                   @click="deleteItem(item.id)"
-                  class="btn-action btn-delete"
+                  class="btn btn-danger btn-sm"
                   :title="'Eliminar sector'"
                 >
-                  <span class="emoji">🗑️</span> Eliminar
+                  <i class="fas fa-trash"></i>
                 </button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <!-- Paginación -->
       <div v-if="totalPages > 1" class="pagination">
         <button @click="currentPage--" :disabled="currentPage === 1" class="btn-page">
           <i class="fas fa-chevron-left"></i>
@@ -98,7 +92,6 @@
         </button>
       </div>
     </div>
-    <!-- Modal de confirmación de eliminación -->
     <div v-if="showDeleteModal" class="modal-overlay" @click="showDeleteModal = false">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
@@ -214,253 +207,186 @@ export default {
 }
 </script>
 <style scoped>
-.sector-list-page {
+.medidor-list {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
   padding: 2rem;
+  margin: 2rem auto;
   max-width: 1200px;
-  margin: 0 auto;
 }
-
-.page-header {
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 2rem;
-  text-align: center;
 }
-
-.page-header h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
+.header h1 {
+  font-size: 2rem;
   font-weight: 700;
+  color: #225b8c;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-
-.page-header p {
-  color: #7f8c8d;
-  font-size: 1.1rem;
-}
-
 .filters-section {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
-
 .search-box {
   position: relative;
   flex: 1;
-  max-width: 400px;
 }
-
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 2px solid #e1e8ed;
+  padding: 10px 40px 10px 16px;
   border-radius: 8px;
+  border: 1px solid #e0e7ef;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  background: #f4f8fb;
+  color: #222;
 }
-
-.search-input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
 .search-icon {
   position: absolute;
-  left: 1rem;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #95a5a6;
+  color: #66adf4;
+  font-size: 18px;
 }
-
-.filter-actions {
+.filter-controls, .filter-actions {
   display: flex;
   gap: 1rem;
-  align-items: center;
 }
-
-.filter-select {
-  padding: 0.75rem 1rem;
-  border: 2px solid #e1e8ed;
+.filter-select, .custom-select {
+  padding: 8px 12px;
   border-radius: 8px;
+  border: 1px solid #e0e7ef;
+  background: #f4f8fb;
   font-size: 1rem;
-  background: white;
-  cursor: pointer;
+  color: #222;
 }
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
+.stats-bar {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+.stat-item {
+  background: #f4f8fb;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  color: #225b8c;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
+  gap: 8px;
 }
-
-.btn-primary {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  color: white;
+.stat-label {
+  font-weight: 500;
 }
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+.stat-value {
+  font-weight: bold;
+  font-size: 1.2rem;
 }
-
-.btn-secondary {
-  background: #ecf0f1;
-  color: #2c3e50;
+.stat-value.active {
+  color: #28a745;
 }
-
-.btn-secondary:hover {
-  background: #d5dbdb;
+.stat-value.maintenance {
+  color: #ffc107;
 }
-
-.btn-danger {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-  color: white;
+.stat-value.inactive {
+  color: #dc3545;
 }
-
-.btn-danger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-}
-
 .table-container {
-  background: white;
+  background: #f8f9fa;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
 }
-
-.loading-container {
-  padding: 3rem;
-  text-align: center;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.empty-state {
-  padding: 4rem 2rem;
-  text-align: center;
-}
-
-.empty-icon {
-  font-size: 4rem;
-  color: #bdc3c7;
-  margin-bottom: 1rem;
-}
-
-.empty-state h3 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.empty-state p {
-  color: #7f8c8d;
-  margin-bottom: 2rem;
-}
-
-.data-table {
+.data-table, .medidores-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 15px;
 }
-
-.data-table th {
-  background: #f8f9fa;
-  padding: 1rem;
+.data-table th, .medidores-table th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 700;
+  padding: 15px;
   text-align: left;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #e1e8ed;
+  border-bottom: 2px solid #e9ecef;
 }
-
-.data-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #e1e8ed;
+.data-table td, .medidores-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
 }
-
-.table-row:hover {
-  background: #f8f9fa;
+.table-row:hover, .medidor-row:hover {
+  background-color: #f8f9fa;
 }
-
-.name-cell strong {
-  color: #2c3e50;
+.codigo-cell, .name-cell strong {
   font-weight: 600;
 }
-
-.postal-code {
-  background: #e8f4fd;
-  color: #2980b9;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-family: monospace;
-  font-weight: 600;
+.consumo-cell {
+  text-align: center;
 }
-
-.text-cell {
-  max-width: 300px;
-  color: #7f8c8d;
-  line-height: 1.4;
+.consumo-value {
+  font-weight: bold;
+  color: #007bff;
 }
-
+.tipo-badge, .postal-code {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+}
 .status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 5px;
+  text-transform: none;
 }
-
-.status-badge.active {
-  background: #d4edda;
+.status-badge.active, .dot-active {
+  background-color: #d4edda;
   color: #155724;
 }
-
-.status-badge.inactive {
-  background: #f8d7da;
+.status-badge.maintenance {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.status-badge.inactive, .dot-inactive {
+  background-color: #f8d7da;
   color: #721c24;
 }
-
+.mensaje-mantenimiento {
+  font-size: 11px;
+  color: #856404;
+  margin-top: 5px;
+}
 .actions-cell {
+  text-align: center;
   width: 120px;
 }
-
 .action-buttons {
   display: flex;
-  gap: 0.6rem;
+  gap: 5px;
   justify-content: center;
   align-items: center;
 }
-.btn-action {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  border: none;
+.btn-sm, .btn-action {
+  padding: 6px 10px;
+  font-size: 12px;
   border-radius: 1.2rem;
-  font-size: 0.98rem;
   font-weight: 600;
-  padding: 0.32rem 0.85rem;
+  border: none;
   cursor: pointer;
   background: #f1f5f9;
   color: #334155;
@@ -469,132 +395,83 @@ export default {
   position: relative;
   outline: none;
   min-height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
-.btn-action:focus {
+.btn-sm:focus, .btn-action:focus {
   outline: 2px solid #2563eb;
 }
-.btn-action:hover {
+.btn-sm:hover, .btn-action:hover {
   background: #e0e7ff;
   color: #2563eb;
   box-shadow: 0 2px 8px #2563eb22;
   transform: scale(1.03);
 }
-.btn-edit {
-  background: #fef9c3;
-  color: #b45309;
-  border: 1.2px solid #fde68a;
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
 }
-.btn-edit:hover {
-  background: #fde68a;
-  color: #a16207;
-  border-color: #fbbf24;
+.btn-warning:hover {
+  background-color: #e0a800;
 }
-.btn-delete {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1.2px solid #fecaca;
+.btn-danger, .btn-delete {
+  background-color: #dc3545;
+  color: white;
 }
-.btn-delete:hover {
-  background: #fecaca;
-  color: #991b1b;
-  border-color: #ef4444;
+.btn-danger:hover, .btn-delete:hover {
+  background-color: #c82333;
 }
-.btn-action .emoji {
-  font-size: 1.08em;
-  margin-right: 0.15em;
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
 }
-.btn-action i {
-  font-size: 1.25rem;
+.btn-info:hover {
+  background-color: #138496;
 }
-.btn-action[title]:hover:after {
-  content: attr(title);
-  position: absolute;
-  bottom: -2.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #334155;
-  color: #fff;
-  padding: 0.25rem 0.7rem;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0.95;
-  z-index: 10;
-  box-shadow: 0 2px 8px #0002;
+.no-results, .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
 }
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: #f8f9fa;
+.no-results i, .empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #ddd;
 }
-
-.btn-page {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #e1e8ed;
-  background: white;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.btn-page:hover:not(:disabled) {
-  border-color: #3498db;
-  color: #3498db;
-}
-
-.btn-page:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: #7f8c8d;
-  font-weight: 600;
-}
-
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
-
 .modal-content {
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-
 .modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e1e8ed;
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .modal-header h3 {
   margin: 0;
-  color: #2c3e50;
+  color: #dc3545;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-
 .btn-close {
   background: none;
   border: none;
@@ -602,120 +479,42 @@ export default {
   cursor: pointer;
   color: #95a5a6;
 }
-
 .modal-body {
-  padding: 1.5rem;
+  padding: 20px;
 }
-
 .warning-text {
-  color: #e74c3c;
-  font-weight: 600;
-  margin-top: 0.5rem;
+  color: #dc3545;
+  font-weight: 500;
+  margin-top: 10px;
 }
-
 .modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid #e1e8ed;
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
   display: flex;
-  gap: 1rem;
+  gap: 10px;
   justify-content: flex-end;
 }
-
-.state-dot {
-  display: inline-block;
-  width: 0.85em;
-  height: 0.85em;
-  border-radius: 50%;
-  margin-right: 0.45em;
-  vertical-align: middle;
-  box-shadow: 0 1px 3px #0001;
-}
-.dot-active {
-  background: #22c55e;
-}
-.dot-inactive {
-  background: #ef4444;
-}
-.state-text {
-  font-weight: 600;
-  font-size: 1.01em;
-  vertical-align: middle;
-}
-.text-active {
-  color: #15803d;
-}
-.text-inactive {
-  color: #b91c1c;
-}
-
-.btn-modern {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  font-weight: 600;
-  border: none;
-  border-radius: 0.7em;
-  padding: 0.55em 1.3em;
-  font-size: 1.05em;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
-  box-shadow: 0 2px 8px #0001;
-  outline: none;
-}
-.btn-blue {
-  background: #2563eb;
-  color: #fff;
-}
-.btn-blue:hover {
-  background: #1d4ed8;
-}
-.btn-green {
-  background: #22c55e;
-  color: #fff;
-}
-.btn-green:hover {
-  background: #16a34a;
-}
-.custom-select {
-  border-radius: 0.7em;
-  padding: 0.5em 1.2em;
-  font-size: 1.05em;
-  border: 1.5px solid #d1d5db;
-  background: #f9fafb;
-  color: #222;
-  margin-right: 0.7em;
-  transition: border 0.18s;
-}
-.custom-select:focus {
-  border: 1.5px solid #2563eb;
-  outline: none;
-}
-
 @media (max-width: 768px) {
-  .sector-list-page {
-    padding: 1rem;
-  }
-  
-  .filters-section {
+  .header {
     flex-direction: column;
+    gap: 15px;
     align-items: stretch;
   }
-  
-  .search-box {
-    max-width: none;
+  .filter-controls, .filter-actions {
+    flex-direction: column;
   }
-  
-  .filter-actions {
-    justify-content: center;
+  .stats-bar {
+    flex-direction: column;
   }
-  
-  .data-table {
-    font-size: 0.875rem;
+  .data-table, .medidores-table {
+    font-size: 14px;
   }
-  
-  .data-table th,
-  .data-table td {
-    padding: 0.75rem 0.5rem;
+  .data-table th, .data-table td, .medidores-table th, .medidores-table td {
+    padding: 10px 8px;
+  }
+  .action-buttons {
+    flex-direction: column;
+    gap: 3px;
   }
 }
 </style>
