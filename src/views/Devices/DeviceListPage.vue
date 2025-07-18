@@ -1,7 +1,18 @@
 <template>
   <div class="medidor-list">
+    <div class="institutional-video-banner">
+      <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
+        <source src="/videos/istockphoto-1727476237-640_adpp_is.mp4" type="video/mp4" />
+        Tu navegador no soporta video HTML5.
+      </video>
+      <div class="banner-overlay"></div>
+      <div class="banner-caption">
+        <h2>Gestión de Dispositivos</h2>
+        <p>Controla y administra todos los medidores inteligentes de tu red.</p>
+      </div>
+    </div>
     <div class="header">
-      <h1><i class="fas fa-list"></i> Lista de Medidores</h1>
+      <h1 class="heading-1"><font-awesome-icon icon="list" /> Lista de Medidores</h1>
       <router-link to="/app/devices/create" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nuevo Medidor
       </router-link>
@@ -36,7 +47,7 @@
         </div>
       </div>
       <div class="stats-bar">
-        <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value">{{ medidoresFiltrados.length }}</span></div>
+        <div class="stat-item"><span class="text-body">Total:</span><span class="stat-value">{{ medidoresFiltrados.length }}</span></div>
         <div class="stat-item"><span class="stat-label">Activos:</span><span class="stat-value active">{{ medidoresActivos }}</span></div>
         <div class="stat-item"><span class="stat-label">Mantenimiento:</span><span class="stat-value maintenance">{{ medidoresMantenimiento }}</span></div>
         <div class="stat-item"><span class="stat-label">Inactivos:</span><span class="stat-value inactive">{{ medidoresInactivos }}</span></div>
@@ -45,14 +56,14 @@
         <table class="medidores-table">
           <thead>
             <tr>
-              <th>Código</th>
-              <th>Tipo</th>
-              <th>Consumo Actual (m³)</th>
-              <th>Estado</th>
-              <th>Marca</th>
-              <th>Modelo</th>
-              <th>Última Lectura</th>
-              <th>Acciones</th>
+              <th class="subtitle">Código</th>
+              <th class="subtitle">Tipo</th>
+              <th class="subtitle">Consumo Actual (m³)</th>
+              <th class="subtitle">Estado</th>
+              <th class="subtitle">Marca</th>
+              <th class="subtitle">Modelo</th>
+              <th class="subtitle">Última Lectura</th>
+              <th class="subtitle">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -69,9 +80,11 @@
               <td>{{ formatDate(medidor.fechaLectura) }}</td>
               <td class="actions-cell">
                 <div class="action-buttons">
-                  <router-link :to="`/app/devices/${medidor.id}`" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></router-link>
-                  <router-link :to="`/app/devices/${medidor.id}/edit`" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></router-link>
-                  <button @click="confirmarEliminar(medidor)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                  <router-link :to="`/app/devices/${medidor.id}`" class="btn btn-info btn-sm">
+                    <font-awesome-icon icon="eye" />
+                  </router-link>
+                  <router-link :to="`/app/devices/${medidor.id}/edit`" class="btn btn-warning btn-sm"><font-awesome-icon icon="edit" /></router-link>
+                  <button @click="confirmarEliminar(medidor)" class="btn btn-danger btn-sm"><font-awesome-icon icon="trash" /></button>
                 </div>
               </td>
             </tr>
@@ -94,6 +107,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import medidorService from '@/services/medidorService'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import logo from '@/assets/images/logo.png'
+import logo1 from '@/assets/images/logo1.png'
 const router = useRouter()
 const medidores = ref([])
 const loading = ref(true)
@@ -137,11 +152,12 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
 }
 .header h1 {
   font-size: 2rem;
-  font-weight: 700;
-  color: #225b8c;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--primary-color);
   display: flex;
   align-items: center;
   gap: 10px;
+  font-family: 'Inter', sans-serif;
 }
 .filters-section {
   display: flex;
@@ -157,17 +173,18 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   width: 100%;
   padding: 10px 40px 10px 16px;
   border-radius: 8px;
-  border: 1px solid #e0e7ef;
+  border: 1px solid var(--border-color);
   font-size: 1rem;
-  background: #f4f8fb;
-  color: #222;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
 }
 .search-icon {
   position: absolute;
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #66adf4;
+  color: var(--primary-color);
   font-size: 18px;
 }
 .filter-controls {
@@ -177,15 +194,19 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
 .filter-select {
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #e0e7ef;
-  background: #f4f8fb;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
   font-size: 1rem;
-  color: #222;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
 }
 .stats-bar {
   display: flex;
   gap: 2rem;
   margin-bottom: 1.5rem;
+  background: #f4f8fb;
+  border-radius: 10px;
+  padding: 12px 0;
 }
 .stat-item {
   background: #f4f8fb;
@@ -205,13 +226,13 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   font-size: 1.2rem;
 }
 .stat-value.active {
-  color: #28a745;
+  color: var(--success-color);
 }
 .stat-value.maintenance {
-  color: #ffc107;
+  color: var(--warning-color);
 }
 .stat-value.inactive {
-  color: #dc3545;
+  color: var(--danger-color);
 }
 .table-container {
   background: #f8f9fa;
@@ -223,6 +244,7 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   width: 100%;
   border-collapse: collapse;
   font-size: 15px;
+  font-family: 'Inter', sans-serif;
 }
 .medidores-table th {
   background: #e3f2fd;
@@ -295,36 +317,56 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   padding: 6px 10px;
   font-size: 12px;
 }
+/* Botones personalizados para DeviceListPage */
 .btn-warning {
-  background-color: #ffc107;
+  background: #ffc107;
   color: #212529;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 .btn-warning:hover {
-  background-color: #e0a800;
+  background: #e0a800;
 }
 .btn-danger {
-  background-color: #dc3545;
-  color: white;
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 .btn-danger:hover {
-  background-color: #c82333;
+  background: #c82333;
 }
 .btn-info {
-  background-color: #17a2b8;
-  color: white;
+  background: #b2ebf2 !important;
+  color: #1976d2 !important;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 .btn-info:hover {
-  background-color: #138496;
+  background: #81d4fa !important;
+  color: #0d47a1 !important;
 }
 .no-results {
   text-align: center;
   padding: 60px 20px;
-  color: #666;
+  color: var(--text-secondary);
 }
 .no-results i {
   font-size: 48px;
   margin-bottom: 20px;
-  color: #ddd;
+  color: var(--border-color);
 }
 .modal-overlay {
   position: fixed;
@@ -339,19 +381,19 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   z-index: 1000;
 }
 .modal-content {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 10px;
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-strong);
 }
 .modal-header {
   padding: 20px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-color);
 }
 .modal-header h3 {
   margin: 0;
-  color: #dc3545;
+  color: var(--danger-color);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -360,16 +402,72 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   padding: 20px;
 }
 .warning-text {
-  color: #dc3545;
+  color: var(--danger-color);
   font-weight: 500;
   margin-top: 10px;
 }
 .modal-footer {
   padding: 20px;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--border-color);
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+}
+.institutional-video-banner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.banner-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,40,60,0.55) 60%, rgba(0,0,0,0.35) 100%);
+  z-index: 1;
+}
+.banner-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 2.5rem;
+  z-index: 2;
+}
+.banner-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.banner-caption p {
+  font-size: 1.15rem;
+  color: #e0e6f0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 @media (max-width: 768px) {
   .header {

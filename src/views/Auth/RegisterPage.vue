@@ -129,18 +129,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/styles/main.scss' as *;
+
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #288aef
+  background: var(--bg-secondary);
 }
 .auth-card {
   display: flex;
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 22px;
-  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.18);
+  box-shadow: var(--shadow-medium);
   overflow: hidden;
   min-width: 900px;
   max-width: 1200px;
@@ -151,13 +153,14 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: #fff;
+  background: var(--bg-primary);
 }
 .auth-title {
   font-size: 2.2rem;
-  font-weight: 700;
-  color: #222;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
+  font-family: 'Inter', sans-serif;
 }
 .auth-form {
   display: flex;
@@ -167,17 +170,17 @@ export default {
 .input-group {
   display: flex;
   align-items: center;
-  background: #f4f8fb;
+  background: var(--bg-tertiary);
   border-radius: 8px;
   padding: 0.7rem 1rem;
-  border: 1px solid #e0e7ef;
+  border: 1px solid var(--border-color);
   transition: border-color 0.2s;
   &:focus-within {
-    border-color: #66adf4;
+    border-color: var(--primary-color);
   }
   .input-icon {
     margin-right: 0.7rem;
-    color: #66adf4;
+    color: var(--primary-color);
     display: flex;
     align-items: center;
   }
@@ -187,9 +190,10 @@ export default {
     background: transparent;
     font-size: 1rem;
     flex: 1;
-    color: #222;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
     &::placeholder {
-      color: #b0b8c1;
+      color: var(--text-muted);
     }
   }
   select {
@@ -199,28 +203,17 @@ export default {
 }
 .auth-btn {
   width: 100%;
-  background: #66adf4;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.95rem 0;
+  @extend .btn;
+  @extend .btn-primary;
   font-size: 1.15rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: var(--font-weight-semibold, 600);
   gap: 0.5rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.10);
-  transition: background 0.2s;
-  &:hover {
-    background: #225b8c;
-  }
+  padding: 0.95rem 0;
 }
 .auth-right {
   flex: 1 1 420px;
-  background: rgb(233, 236, 237);
-  color: #225b8c;
+  background: var(--bg-secondary);
+  color: var(--primary-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -232,33 +225,35 @@ export default {
   width: 120px;
   height: auto;
   margin-bottom: 2rem;
-  filter: drop-shadow(0 2px 8px rgba(34, 91, 140, 0.15));
+  filter: drop-shadow(0 2px 8px var(--primary-color, rgba(34, 91, 140, 0.15)));
 }
 .welcome-title {
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold, 700);
   margin-bottom: 1rem;
   letter-spacing: 1px;
+  color: var(--primary-color);
+  font-family: 'Inter', sans-serif;
 }
 .welcome-desc {
   font-size: 1.13rem;
   margin-bottom: 2.2rem;
-  color: #225b8c;
+  color: var(--primary-color);
 }
 .signup-btn {
-  background: #fff;
-  color: #225b8c;
-  font-weight: 600;
+  background: var(--bg-primary);
+  color: var(--primary-color);
+  font-weight: var(--font-weight-semibold, 600);
   border: none;
   border-radius: 8px;
   padding: 0.9rem 2.5rem;
   font-size: 1.13rem;
-  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.10);
+  box-shadow: var(--shadow-soft);
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
   &:hover {
-    background: #eaf6ff;
-    color: #3a7fc1;
+    background: var(--bg-tertiary);
+    color: var(--primary-color);
   }
 }
 @media (max-width: 1100px) {

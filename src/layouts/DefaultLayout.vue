@@ -240,7 +240,7 @@ export default {
         '/app/incidents': 'Gestión de Incidentes',
         '/app/personnel': 'Administración de Personal'
       }
-      return routeMap[route.path] || 'Página'
+      return routeMap[route.path] || ''
     })
     
     const pageDescription = computed(() => {

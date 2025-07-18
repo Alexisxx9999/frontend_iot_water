@@ -152,10 +152,14 @@ const getMensajeMantenimiento = estado => getEstadoDescription(estado)
 </script>
 
 <style scoped>
+@use '@/assets/styles/main.scss' as *;
+
 .medidor-create {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background: var(--bg-primary);
+  font-family: 'Inter', sans-serif;
 }
 
 .header {
@@ -166,11 +170,14 @@ const getMensajeMantenimiento = estado => getEstadoDescription(estado)
 }
 
 .header h1 {
-  color: #2c3e50;
+  color: var(--primary-color);
   margin: 0;
   display: flex;
   align-items: center;
   gap: 15px;
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold, 700);
+  font-family: 'Inter', sans-serif;
 }
 
 .content {

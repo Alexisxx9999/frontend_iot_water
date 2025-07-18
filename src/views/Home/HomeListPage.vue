@@ -1,10 +1,21 @@
 <template>
-  <div class="home-list-page unified-list-container">
-    <div class="page-header unified-header">
+  <div class="home-list-page">
+    <div class="institutional-carousel">
+      <div class="carousel-slide" v-for="(slide, idx) in carouselSlides" :key="idx" v-show="currentSlide === idx">
+        <img v-if="slide.img" :src="slide.img" class="carousel-img" :alt="slide.alt" />
+        <div class="carousel-caption">
+          <h2>{{ slide.title }}</h2>
+          <p>{{ slide.text }}</p>
+        </div>
+      </div>
+      <div class="carousel-controls">
+        <button v-for="(slide, idx) in carouselSlides" :key="idx" :class="['carousel-dot', {active: currentSlide === idx}]" @click="currentSlide = idx"></button>
+      </div>
+    </div>
+    <div class="page-header">
       <h1>Gestión de Información Home</h1>
       <p>Administra la información principal de la empresa</p>
     </div>
-
     <!-- Filtros y búsqueda -->
     <div class="filters-section unified-filters">
       <div class="search-box unified-search-box">
@@ -30,7 +41,6 @@
         </router-link>
       </div>
     </div>
-
     <!-- Tabla de registros -->
     <div class="table-container unified-table-container">
       <div v-if="loading" class="loading-container unified-loading-container">
@@ -122,8 +132,8 @@
         >
           <font-awesome-icon :icon="['fas', 'chevron-left']" />
         </button>
-        <span class="page-info unified-page-info">
-          Página {{ currentPage }} de {{ totalPages }}
+        <span class="page-info">
+          {{ currentPage }} de {{ totalPages }}
         </span>
         <button 
           @click="currentPage++" 
@@ -163,6 +173,8 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { useHomeStore } from '@/stores/home'
+import logo from '@/assets/images/logo.png'
+import logo1 from '@/assets/images/logo1.png'
 
 export default {
   name: 'HomeListPage',
@@ -177,6 +189,37 @@ export default {
     const itemsPerPage = ref(10)
     const showDeleteModal = ref(false)
     const itemToDelete = ref(null)
+
+    // Carrusel institucional
+    const carouselSlides = [
+      {
+        img: logo,
+        alt: 'Logo IoT Water',
+        title: 'Bienvenido a IoT Water',
+        text: 'Innovación y tecnología para la gestión eficiente del agua en tu ciudad.'
+      },
+      {
+        img: logo1,
+        alt: 'Logo Alternativo',
+        title: 'Comprometidos con el futuro',
+        text: 'Transformamos la administración del agua con soluciones inteligentes.'
+      },
+      {
+        img: null,
+        alt: '',
+        title: '¡Juntos por un Ecuador más sostenible!',
+        text: 'La tecnología al servicio de la comunidad y el medio ambiente.'
+      }
+    ]
+    const currentSlide = ref(0)
+    let intervalId = null
+    onMounted(() => {
+      intervalId = setInterval(() => {
+        currentSlide.value = (currentSlide.value + 1) % carouselSlides.length
+      }, 5000)
+    })
+    // Limpieza del intervalo si el componente se destruye
+    // onUnmounted(() => clearInterval(intervalId))
 
     // Computed properties
     const filteredItems = computed(() => {
@@ -268,7 +311,9 @@ export default {
       refreshData,
       deleteItem,
       confirmDelete,
-      truncateText
+      truncateText,
+      carouselSlides,
+      currentSlide
     }
   }
 }
@@ -480,5 +525,75 @@ export default {
     flex-direction: column;
     gap: 3px;
   }
+}
+.institutional-carousel {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: linear-gradient(90deg, #e3f2fd 60%, #f8fafc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-slide {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 2.2rem 2.5rem;
+  animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.carousel-img {
+  height: 110px;
+  width: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(34, 91, 140, 0.10);
+  background: #fff;
+  padding: 0.5rem;
+}
+.carousel-caption {
+  flex: 1;
+  text-align: left;
+}
+.carousel-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #225b8c;
+  margin-bottom: 0.5rem;
+}
+.carousel-caption p {
+  font-size: 1.15rem;
+  color: #3b4a5a;
+  margin-bottom: 0;
+}
+.carousel-controls {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+}
+.carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #b0b8c1;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.carousel-dot.active {
+  background: #225b8c;
 }
 </style> 

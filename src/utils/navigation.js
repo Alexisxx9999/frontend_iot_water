@@ -3,13 +3,6 @@ import { useRouter } from 'vue-router';
 
 // Configuración del menú lateral
 export const sidebarMenuItems = [
-  {
-    id: 'dashboard',
-    title: 'Dashboard',
-    icon: 'dashboard',
-    route: '/app/dashboard',
-    badge: null
-  },
   // Eliminado: CRM
   {
     id: 'devices',

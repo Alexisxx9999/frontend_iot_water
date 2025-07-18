@@ -49,17 +49,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/assets/styles/main.scss' as *;
+
 .forgot-password-page {
+  max-width: 400px;
+  margin: 60px auto;
+  background: var(--bg-primary);
+  border-radius: 18px;
+  box-shadow: var(--shadow-medium);
+  padding: 2.5rem 2rem 2rem 2rem;
+  text-align: center;
+
   h2 {
     font-size: 1.75rem;
-    font-weight: 600;
-    color: #333;
+    font-weight: var(--font-weight-bold, 600);
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
+    font-family: 'Inter', sans-serif;
   }
 
   .forgot-subtitle {
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 2rem;
+    font-family: 'Inter', sans-serif;
   }
 }
 
@@ -71,52 +83,36 @@ export default {
     label {
       display: block;
       margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #333;
+      font-weight: var(--font-weight-medium, 500);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
     }
 
     input {
+      @extend .input;
       width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-
-      &:focus {
-        outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-      }
+      font-family: 'Inter', sans-serif;
     }
   }
 }
 
 .forgot-button {
+  @extend .btn;
+  @extend .btn-warning;
   width: 100%;
-  padding: 0.75rem;
-  background: #ffc107;
-  color: #333;
-  border: none;
-  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background: #e0a800;
-  }
+  font-weight: var(--font-weight-semibold, 600);
+  font-family: 'Inter', sans-serif;
 }
 
 .forgot-links {
   margin-top: 1.5rem;
 
   a {
-    color: #007bff;
+    color: var(--primary-color);
     text-decoration: none;
     font-size: 0.9rem;
-
+    font-family: 'Inter', sans-serif;
     &:hover {
       text-decoration: underline;
     }

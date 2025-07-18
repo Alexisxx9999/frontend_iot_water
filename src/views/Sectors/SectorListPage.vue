@@ -1,10 +1,20 @@
 <template>
-  <div class="medidor-list">
-    <div class="header">
-      <h1><i class="fas fa-list"></i> Gestión de Sectores</h1>
-      <router-link to="/app/sectors/create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Nuevo Sector
-      </router-link>
+  <div class="sector-list-page">
+    <div class="institutional-carousel">
+      <div class="carousel-slide" v-for="(slide, idx) in carouselSlides" :key="idx" v-show="currentSlide === idx">
+        <img v-if="slide.img" :src="slide.img" class="carousel-img" :alt="slide.alt" />
+        <div class="carousel-caption">
+          <h2>{{ slide.title }}</h2>
+          <p>{{ slide.text }}</p>
+        </div>
+      </div>
+      <div class="carousel-controls">
+        <button v-for="(slide, idx) in carouselSlides" :key="idx" :class="['carousel-dot', {active: currentSlide === idx}]" @click="currentSlide = idx"></button>
+      </div>
+    </div>
+    <div class="page-header">
+      <h1>Gestión de Sectores</h1>
+      <p>Administra los sectores de la ciudad y sus códigos postales</p>
     </div>
     <div class="filters-section">
       <div class="search-box">
@@ -86,7 +96,7 @@
         <button @click="currentPage--" :disabled="currentPage === 1" class="btn-page">
           <i class="fas fa-chevron-left"></i>
         </button>
-        <span class="page-info">Página {{ currentPage }} de {{ totalPages }}</span>
+        <span class="page-info">{{ currentPage }} de {{ totalPages }}</span>
         <button @click="currentPage++" :disabled="currentPage === totalPages" class="btn-page">
           <i class="fas fa-chevron-right"></i>
         </button>
@@ -114,6 +124,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useSectorsStore } from '@/stores/sectors'
 import { showToast } from '@/composables/useToast'
+import logo from '@/assets/images/logo.png'
+import logo1 from '@/assets/images/logo1.png'
 
 export default {
   name: 'SectorListPage',
@@ -185,8 +197,33 @@ export default {
       if (text.length <= maxLength) return text
       return text.substring(0, maxLength) + '...'
     }
+    // Carrusel institucional
+    const carouselSlides = [
+      {
+        img: logo,
+        alt: 'Logo IoT Water',
+        title: 'Gestión de Sectores',
+        text: 'Administra los sectores y códigos postales de tu ciudad con IoT Water.'
+      },
+      {
+        img: logo1,
+        alt: 'Logo Alternativo',
+        title: 'Organización y eficiencia',
+        text: 'Optimiza la gestión territorial y sectorial con tecnología.'
+      },
+      {
+        img: null,
+        alt: '',
+        title: '¡Crecimiento para tu comunidad!',
+        text: 'La administración inteligente de sectores impulsa el desarrollo.'
+      }
+    ]
+    const currentSlide = ref(0)
+    let intervalId = null
     onMounted(() => {
-      loadData()
+      intervalId = setInterval(() => {
+        currentSlide.value = (currentSlide.value + 1) % carouselSlides.length
+      }, 5000)
     })
     return {
       loading,
@@ -201,7 +238,9 @@ export default {
       refreshData,
       deleteItem,
       confirmDelete,
-      truncateText
+      truncateText,
+      carouselSlides,
+      currentSlide
     }
   }
 }
@@ -494,6 +533,148 @@ export default {
   gap: 10px;
   justify-content: flex-end;
 }
+
+.state-dot {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  border-radius: 50%;
+  margin-right: 0.45em;
+  vertical-align: middle;
+  box-shadow: 0 1px 3px #0001;
+}
+.dot-active {
+  background: #22c55e;
+}
+.dot-inactive {
+  background: #ef4444;
+}
+.state-text {
+  font-weight: 600;
+  font-size: 1.01em;
+  vertical-align: middle;
+}
+.text-active {
+  color: #15803d;
+}
+.text-inactive {
+  color: #b91c1c;
+}
+
+.btn-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.7em;
+  padding: 0.55em 1.3em;
+  font-size: 1.05em;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px #0001;
+  outline: none;
+}
+.btn-blue {
+  background: #2563eb;
+  color: #fff;
+}
+.btn-blue:hover {
+  background: #1d4ed8;
+}
+.btn-green {
+  background: #22c55e;
+  color: #fff;
+}
+.btn-green:hover {
+  background: #16a34a;
+}
+.custom-select {
+  border-radius: 0.7em;
+  padding: 0.5em 1.2em;
+  font-size: 1.05em;
+  border: 1.5px solid #d1d5db;
+  background: #f9fafb;
+  color: #222;
+  margin-right: 0.7em;
+  transition: border 0.18s;
+}
+.custom-select:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+}
+
+.institutional-carousel {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: linear-gradient(90deg, #e3f2fd 60%, #f8fafc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-slide {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 2.2rem 2.5rem;
+  animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.carousel-img {
+  height: 110px;
+  width: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(34, 91, 140, 0.10);
+  background: #fff;
+  padding: 0.5rem;
+}
+.carousel-caption {
+  flex: 1;
+  text-align: left;
+}
+.carousel-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #225b8c;
+  margin-bottom: 0.5rem;
+}
+.carousel-caption p {
+  font-size: 1.15rem;
+  color: #3b4a5a;
+  margin-bottom: 0;
+}
+.carousel-controls {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+}
+.carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #b0b8c1;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.carousel-dot.active {
+  background: #225b8c;
+}
+
 @media (max-width: 768px) {
   .header {
     flex-direction: column;

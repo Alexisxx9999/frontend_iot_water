@@ -7,7 +7,7 @@ import LoginPage from '@/views/Auth/LoginPage.vue';
 import RegisterPage from '@/views/Auth/RegisterPage.vue';
 import ForgotPasswordPage from '@/views/Auth/ForgotPasswordPage.vue';
 // Dashboard
-import DashboardOverview from '@/views/Dashboard/DashboardOverview.vue';
+// import DashboardOverview from '@/views/Dashboard/DashboardOverview.vue';
 // Importar los nuevos componentes de nodos
 import NodeListPage from '@/views/Nodes/NodeListPage.vue';
 import NodeUpdatePage from '@/views/Nodes/NodeUpdatePage.vue';
@@ -50,8 +50,8 @@ const routes = [
     path: '/app',
     component: DefaultLayout,
     children: [
-      { path: '', redirect: '/app/dashboard' },
-      { path: 'dashboard', component: DashboardOverview },
+      { path: '', redirect: '/app/home' },
+      // { path: 'dashboard', component: DashboardOverview },
       // Incidents
       // { path: 'incidents', component: IncidentListPage },
       // { path: 'incidents/:id', component: IncidentDetailPage },

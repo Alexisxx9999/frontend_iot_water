@@ -8,6 +8,7 @@
 @use './_map.scss' as *;
 
 // Importar fuentes de Google
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
@@ -24,9 +25,10 @@
   --bg-secondary: #f8fafc;
   --bg-tertiary: #f1f5f9;
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  /* Color de texto principal elegante y profesional */
+  --text-primary: #23272f;
+  --text-secondary: #64748b;
+  --text-muted: #b0b8c1;
 
   --border-color: #e2e8f0;
   --border-light: #f1f5f9;
@@ -62,7 +64,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   line-height: 1.6;
@@ -333,4 +335,49 @@ body {
 
 .p-5 {
   padding: 3rem;
+}
+
+// Jerarquía tipográfica global elegante y sobria
+.heading-1 {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+}
+.heading-2 {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  line-height: 1.18;
+  margin-bottom: 1rem;
+}
+.heading-3 {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.7rem;
+}
+.subtitle {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+.text-body {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+.text-muted {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-size: 0.97rem;
+  color: var(--text-muted);
 }

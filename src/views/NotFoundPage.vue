@@ -2,8 +2,8 @@
   <div class="not-found-page">
     <div class="not-found-content">
       <div class="error-icon">404</div>
-      <h1>Página no encontrada</h1>
-      <p>Lo sentimos, la página que buscas no existe o ha sido movida.</p>
+      <h1>No encontrada</h1>
+      <p>Lo sentimos, el recurso que buscas no existe o ha sido movido.</p>
       <div class="actions">
         <router-link to="/app/dashboard" class="btn-primary">
           Ir al Dashboard

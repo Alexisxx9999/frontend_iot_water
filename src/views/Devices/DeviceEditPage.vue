@@ -191,10 +191,14 @@ const getMensajeMantenimiento = estado => getEstadoDescription(estado)
 const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 </script>
 <style scoped>
+@use '@/assets/styles/main.scss' as *;
+
 .medidor-edit {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background: var(--bg-primary);
+  font-family: 'Inter', sans-serif;
 }
 
 .header {
@@ -205,11 +209,14 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
 }
 
 .header h1 {
-  color: #2c3e50;
+  color: var(--primary-color);
   margin: 0;
   display: flex;
   align-items: center;
   gap: 15px;
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold, 700);
+  font-family: 'Inter', sans-serif;
 }
 
 .header-actions {
