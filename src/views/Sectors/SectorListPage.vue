@@ -1,55 +1,56 @@
 <template>
   <div class="sector-list-page">
-    <div class="institutional-carousel">
-      <div class="carousel-slide" v-for="(slide, idx) in carouselSlides" :key="idx" v-show="currentSlide === idx">
-        <img v-if="slide.img" :src="slide.img" class="carousel-img" :alt="slide.alt" />
-        <div class="carousel-caption">
-          <h2>{{ slide.title }}</h2>
-          <p>{{ slide.text }}</p>
-        </div>
-      </div>
-      <div class="carousel-controls">
-        <button v-for="(slide, idx) in carouselSlides" :key="idx" :class="['carousel-dot', {active: currentSlide === idx}]" @click="currentSlide = idx"></button>
+    <!-- Banner institucional de video (estilo nodos) -->
+    <div class="institutional-video-banner">
+      <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
+        <source src="/videos/istockphoto-922769970-640_adpp_is.mp4" type="video/mp4" />
+        Tu navegador no soporta video HTML5.
+      </video>
+      <div class="banner-overlay"></div>
+      <div class="banner-caption">
+        <h2>Gestión de Sectores</h2>
+        <p>Organiza y visualiza las zonas geográficas del sistema.</p>
       </div>
     </div>
-    <div class="page-header">
-      <h1>Gestión de Sectores</h1>
-      <p>Administra los sectores de la ciudad y sus códigos postales</p>
+    <div class="page-header-modern">
+      <div>
+        <h1><i class="fas fa-map-marked-alt"></i> Gestión de Sectores</h1>
+        <p class="subtitle">Administra los sectores de la ciudad y sus códigos postales de forma eficiente.</p>
+      </div>
+      <router-link to="/app/sectors/create" class="btn btn-primary btn-lg">
+        <i class="fas fa-plus"></i> Nuevo Sector
+      </router-link>
     </div>
-    <div class="filters-section">
-      <div class="search-box">
+    <div class="filters-section-modern">
+      <div class="search-box-modern">
+        <i class="fas fa-search search-icon"></i>
         <input 
           v-model="searchTerm" 
           type="text" 
           placeholder="Buscar por nombre, código postal o descripción..."
-          class="search-input"
+          class="search-input-modern"
         />
-        <i class="fas fa-search search-icon"></i>
       </div>
-      <div class="filter-controls">
-        <select v-model="statusFilter" class="filter-select">
-          <option value="">Todos los estados</option>
-          <option value="active">Activo</option>
-          <option value="inactive">Inactivo</option>
-        </select>
-        <button @click="refreshData" class="btn btn-secondary">
-          <i class="fas fa-rotate-right"></i> Actualizar
-        </button>
-      </div>
+      <select v-model="statusFilter" class="filter-select-modern">
+        <option value="">Todos los estados</option>
+        <option value="active">Activo</option>
+        <option value="inactive">Inactivo</option>
+      </select>
+      <button @click="refreshData" class="btn btn-secondary"><i class="fas fa-rotate-right"></i> Actualizar</button>
     </div>
-    <div class="table-container">
+    <div class="table-container-modern">
       <div v-if="loading" class="loading-container">
         <div class="spinner"></div>
         <p>Cargando sectores...</p>
       </div>
-      <div v-else-if="filteredItems.length === 0" class="no-results">
-        <i class="fas fa-search"></i>
+      <div v-else-if="filteredItems.length === 0" class="no-results-modern">
+        <i class="fas fa-map-marker-alt empty-icon"></i>
         <p>No se encontraron sectores con los filtros aplicados</p>
-        <router-link to="/app/sectors/create" class="btn btn-primary">
+        <router-link to="/app/sectors/create" class="btn btn-primary btn-lg">
           <i class="fas fa-plus"></i> Crear primer sector
         </router-link>
       </div>
-      <table v-else class="data-table">
+      <table v-else class="data-table-modern">
         <thead>
           <tr>
             <th>ID</th>
@@ -61,18 +62,18 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in paginatedItems" :key="item.id" class="table-row">
+          <tr v-for="item in paginatedItems" :key="item.id" class="table-row-modern">
             <td>{{ item.id }}</td>
             <td class="codigo-cell"><strong>{{ item.nombreSector }}</strong></td>
-            <td><span class="tipo-badge">{{ item.codigoPostalSector }}</span></td>
+            <td><span class="postal-badge">{{ item.codigoPostalSector }}</span></td>
             <td><div class="text-cell" :title="item.descripcionSector">{{ truncateText(item.descripcionSector, 60) }}</div></td>
             <td>
-              <span :class="['status-badge', item.estado === 'active' ? 'active' : 'inactive']">
+              <span :class="['status-badge-modern', item.estado === 'active' ? 'active' : 'inactive']">
                 {{ item.estado === 'active' ? 'Activo' : 'Inactivo' }}
               </span>
             </td>
             <td class="actions-cell">
-              <div class="action-buttons">
+              <div class="action-buttons-modern">
                 <router-link
                   :to="`/app/sectors/edit/${item.id}`"
                   class="btn btn-warning btn-sm"
@@ -92,7 +93,7 @@
           </tr>
         </tbody>
       </table>
-      <div v-if="totalPages > 1" class="pagination">
+      <div v-if="totalPages > 1" class="pagination-modern">
         <button @click="currentPage--" :disabled="currentPage === 1" class="btn-page">
           <i class="fas fa-chevron-left"></i>
         </button>
@@ -103,10 +104,10 @@
       </div>
     </div>
     <div v-if="showDeleteModal" class="modal-overlay" @click="showDeleteModal = false">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
+      <div class="modal-content-modern" @click.stop>
+        <div class="modal-header-modern">
+          <i class="fas fa-exclamation-triangle warning-icon"></i>
           <h3>¿Eliminar sector?</h3>
-          <button @click="showDeleteModal = false" class="btn-close"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
           <p>¿Estás seguro de que deseas eliminar este sector?</p>
@@ -197,34 +198,12 @@ export default {
       if (text.length <= maxLength) return text
       return text.substring(0, maxLength) + '...'
     }
-    // Carrusel institucional
-    const carouselSlides = [
-      {
-        img: logo,
-        alt: 'Logo IoT Water',
-        title: 'Gestión de Sectores',
-        text: 'Administra los sectores y códigos postales de tu ciudad con IoT Water.'
-      },
-      {
-        img: logo1,
-        alt: 'Logo Alternativo',
-        title: 'Organización y eficiencia',
-        text: 'Optimiza la gestión territorial y sectorial con tecnología.'
-      },
-      {
-        img: null,
-        alt: '',
-        title: '¡Crecimiento para tu comunidad!',
-        text: 'La administración inteligente de sectores impulsa el desarrollo.'
-      }
-    ]
-    const currentSlide = ref(0)
-    let intervalId = null
-    onMounted(() => {
-      intervalId = setInterval(() => {
-        currentSlide.value = (currentSlide.value + 1) % carouselSlides.length
-      }, 5000)
-    })
+    // Elimino las referencias a carouselSlides y currentSlide
+    // onMounted(() => {
+    //   intervalId = setInterval(() => {
+    //     currentSlide.value = (currentSlide.value + 1) % carouselSlides.length
+    //   }, 5000)
+    // })
     return {
       loading,
       searchTerm,
@@ -239,8 +218,8 @@ export default {
       deleteItem,
       confirmDelete,
       truncateText,
-      carouselSlides,
-      currentSlide
+      // carouselSlides,
+      // currentSlide
     }
   }
 }
@@ -604,7 +583,8 @@ export default {
   outline: none;
 }
 
-.institutional-carousel {
+/* Elimino los estilos del carrusel institucional */
+.institutional-video-banner {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto 2.5rem auto;
@@ -613,87 +593,288 @@ export default {
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
-  background: linear-gradient(90deg, #e3f2fd 60%, #f8fafc 100%);
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.carousel-slide {
+.banner-video {
   width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,40,60,0.55) 60%, rgba(0,0,0,0.35) 100%);
+  z-index: 1;
+}
+.banner-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  gap: 2.5rem;
-  padding: 2.2rem 2.5rem;
-  animation: fadeIn 0.7s;
+  padding-left: 2.5rem;
+  z-index: 2;
 }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.carousel-img {
-  height: 110px;
-  width: auto;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(34, 91, 140, 0.10);
-  background: #fff;
-  padding: 0.5rem;
-}
-.carousel-caption {
-  flex: 1;
-  text-align: left;
-}
-.carousel-caption h2 {
+.banner-caption h2 {
   font-size: 2rem;
   font-weight: 700;
-  color: #225b8c;
+  color: #fff;
   margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
-.carousel-caption p {
+.banner-caption p {
   font-size: 1.15rem;
-  color: #3b4a5a;
-  margin-bottom: 0;
-}
-.carousel-controls {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 0.5rem;
-}
-.carousel-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #b0b8c1;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.carousel-dot.active {
-  background: #225b8c;
+  color: #e0e6f0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
+.page-header-modern {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding: 1.2rem 2rem 1.2rem 2rem;
+  background: linear-gradient(90deg, #e3f2fd 60%, #f8fafc 100%);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #225b8c11;
+}
+.page-header-modern h1 {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #225b8c;
+  margin-bottom: 0.3rem;
+}
+.page-header-modern .subtitle {
+  color: #3b4a5a;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+.btn-lg {
+  font-size: 1.1rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: 1.2rem;
+}
+.filters-section-modern {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin: 2rem 0 1.5rem 0;
+  padding: 0 2rem;
+}
+.search-box-modern {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f4f8fb;
+  border-radius: 8px;
+  border: 1px solid #e0e7ef;
+  padding: 0.2rem 1rem;
+}
+.search-input-modern {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  padding: 0.7rem 0.7rem 0.7rem 2.2rem;
+  color: #222;
+  outline: none;
+}
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: #66adf4;
+  font-size: 18px;
+}
+.filter-select-modern {
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #e0e7ef;
+  background: #f4f8fb;
+  font-size: 1rem;
+  color: #222;
+}
+.table-container-modern {
+  background: #f8f9fa;
+  border-radius: 16px;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px #225b8c11;
+  padding: 1.5rem 2rem;
+}
+.data-table-modern {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+  font-size: 15px;
+}
+.data-table-modern th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 700;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid #e9ecef;
+}
+.data-table-modern td {
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px #225b8c11;
+  vertical-align: middle;
+}
+.table-row-modern {
+  transition: box-shadow 0.18s, background 0.18s;
+}
+.table-row-modern:hover {
+  background-color: #e3f2fd33;
+  box-shadow: 0 2px 8px #225b8c22;
+}
+.codigo-cell {
+  font-weight: 600;
+}
+.postal-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+}
+.status-badge-modern {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 5px;
+  text-transform: none;
+}
+.status-badge-modern.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+.status-badge-modern.inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.actions-cell {
+  text-align: center;
+  width: 120px;
+}
+.action-buttons-modern {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+.no-results-modern {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+.no-results-modern .empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #b0b8c1;
+}
+.pagination-modern {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+.btn-page {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.btn-page:disabled {
+  background: #f4f8fb;
+  color: #b0b8c1;
+  cursor: not-allowed;
+}
+.modal-content-modern {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 10px 30px #225b8c33;
+  padding: 0;
+}
+.modal-header-modern {
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.warning-icon {
+  color: #dc3545;
+  font-size: 2.2rem;
+}
+.modal-header-modern h3 {
+  margin: 0;
+  color: #dc3545;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.modal-body {
+  padding: 1.5rem 2rem 0.5rem 2rem;
+}
+.warning-text {
+  color: #dc3545;
+  font-weight: 500;
+  margin-top: 10px;
+}
+.modal-footer {
+  padding: 1.2rem 2rem 1.5rem 2rem;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
 @media (max-width: 768px) {
-  .header {
+  .page-header-modern, .filters-section-modern, .table-container-modern {
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+  }
+  .page-header-modern {
     flex-direction: column;
     gap: 15px;
     align-items: stretch;
   }
-  .filter-controls, .filter-actions {
+  .filters-section-modern {
     flex-direction: column;
+    gap: 0.7rem;
   }
-  .stats-bar {
-    flex-direction: column;
-  }
-  .data-table, .medidores-table {
-    font-size: 14px;
-  }
-  .data-table th, .data-table td, .medidores-table th, .medidores-table td {
+  .data-table-modern th, .data-table-modern td {
     padding: 10px 8px;
   }
-  .action-buttons {
+  .action-buttons-modern {
     flex-direction: column;
     gap: 3px;
   }

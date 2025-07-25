@@ -6,6 +6,18 @@
         <i class="fas fa-plus"></i> Nuevo Gateway
       </router-link>
     </div>
+    <!-- Banner institucional de video (estilo nodos) -->
+    <div class="institutional-video-banner">
+      <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
+        <source src="/videos/istockphoto-1487086951-640_adpp_is.mp4" type="video/mp4" />
+        Tu navegador no soporta video HTML5.
+      </video>
+      <div class="banner-overlay"></div>
+      <div class="banner-caption">
+        <h2>Gateways IoT</h2>
+        <p>Controla y supervisa los dispositivos de comunicación de la red.</p>
+      </div>
+    </div>
     <div class="filters-section">
       <div class="search-box">
         <input
@@ -56,14 +68,14 @@
               </span>
             </td>
             <td class="actions-cell">
-              <div class="action-buttons">
-                <button v-if="gateway.dataUrl" @click="sendData(gateway)" class="btn btn-info btn-sm" title="Enviar datos">
-                  <i class="fas fa-paper-plane"></i>
-                </button>
-                <router-link :to="`/app/gateways/${gateway.id}/edit`" class="btn btn-warning btn-sm" title="Editar">
-                  <i class="fas fa-edit"></i>
+              <div class="action-buttons custom-action-buttons">
+                <router-link :to="`/app/gateways/${gateway.id}`" class="action-btn view" title="Ver">
+                  <i class="fas fa-eye"></i>
                 </router-link>
-                <button @click="() => { gatewayToDelete = gateway; showDeleteModal = true }" class="btn btn-danger btn-sm" title="Eliminar">
+                <router-link :to="`/app/gateways/${gateway.id}/edit`" class="action-btn edit" title="Editar">
+                  <i class="fas fa-pen"></i>
+                </router-link>
+                <button @click="() => { gatewayToDelete = gateway; showDeleteModal = true }" class="action-btn delete" title="Eliminar">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -515,6 +527,14 @@ export default {
 .btn-info:hover {
   background-color: #138496;
 }
+.btn-primary {
+  background-color: #00bcd4;
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: #0097a7;
+  color: #fff;
+}
 .no-results {
   text-align: center;
   padding: 60px 20px;
@@ -630,6 +650,220 @@ export default {
 .send-modal .btn-main:hover {
   background: linear-gradient(90deg, #1d4ed8 60%, #0ea5e9 100%);
   transform: translateY(-2px) scale(1.03);
+}
+.video-section {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.video-description {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #225b8c;
+  margin-bottom: 0.7rem;
+}
+.video-demo {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #225b8c22;
+}
+.institutional-video-banner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.banner-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,40,60,0.55) 60%, rgba(0,0,0,0.35) 100%);
+  z-index: 1;
+}
+.banner-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 2.5rem;
+  z-index: 2;
+}
+.banner-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.banner-caption p {
+  font-size: 1.15rem;
+  color: #e0e6f0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.gateways-modern-table th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 700;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid #e9ecef;
+}
+.gateways-modern-table td {
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px #225b8c11;
+  vertical-align: middle;
+}
+.gateways-modern-row {
+  transition: box-shadow 0.18s, background 0.18s;
+}
+.gateways-modern-row:hover {
+  background-color: #e3f2fd33;
+  box-shadow: 0 2px 8px #225b8c22;
+}
+.gateway-code {
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 1.08rem;
+}
+.status-badge-modern {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 5px;
+  text-transform: none;
+}
+.status-badge-modern.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+.status-badge-modern.maintenance {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.status-badge-modern.inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.action-buttons-modern {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.action-icon-btn {
+  border: none;
+  background: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  cursor: pointer;
+  box-shadow: 0 1px 4px #2563eb11;
+  outline: none;
+}
+.action-icon-btn.send {
+  color: #2563eb;
+  background: #e3f2fd;
+}
+.action-icon-btn.send:hover {
+  background: #2563eb;
+  color: #fff;
+}
+.action-icon-btn.edit {
+  color: #ffc107;
+  background: #fffbe6;
+}
+.action-icon-btn.edit:hover {
+  background: #ffc107;
+  color: #fff;
+}
+.action-icon-btn.delete {
+  color: #dc3545;
+  background: #fdeaea;
+}
+.action-icon-btn.delete:hover {
+  background: #dc3545;
+  color: #fff;
+}
+.btn-sm i {
+  color: #fff !important;
+  font-size: 1.25em;
+  pointer-events: none;
+}
+.custom-action-buttons {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  align-items: center;
+}
+.action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+  border: none;
+  cursor: pointer;
+  transition: box-shadow 0.18s, background 0.18s, color 0.18s;
+  box-shadow: 0 1px 4px #2563eb11;
+  outline: none;
+  padding: 0;
+}
+.action-btn.view {
+  background: #c8f3fa;
+}
+.action-btn.view i {
+  color: #1976d2;
+}
+.action-btn.edit {
+  background: #ffd54f;
+}
+.action-btn.edit i {
+  color: #222;
+}
+.action-btn.delete {
+  background: #f76c6c;
+}
+.action-btn.delete i {
+  color: #fff;
+}
+.action-btn:hover {
+  box-shadow: 0 2px 8px #2563eb22;
+  transform: scale(1.07);
 }
 @media (max-width: 768px) {
   .header {
