@@ -49,7 +49,18 @@ import {
   faPause,
   faChevronLeft,
   faChevronRight,
-  faInbox
+  faInbox,
+  faUserTag,
+  faAlignLeft,
+  faComment,
+  faKey,
+  faShieldAlt,
+  faPowerOff,
+  faRefresh,
+  faUserEdit,
+  faUserShield,
+  faUserPlus,
+  faTag
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -93,7 +104,18 @@ library.add(
   faPause,
   faChevronLeft,
   faChevronRight,
-  faInbox
+  faInbox,
+  faUserTag,
+  faAlignLeft,
+  faComment,
+  faKey,
+  faShieldAlt,
+  faPowerOff,
+  faRefresh,
+  faUserEdit,
+  faUserShield,
+  faUserPlus,
+  faTag
 )
 
 // Crear la aplicación

@@ -140,4 +140,6 @@ export const rolesService = {
       throw error
     }
   }
-} 
+}
+
+export default rolesService; 

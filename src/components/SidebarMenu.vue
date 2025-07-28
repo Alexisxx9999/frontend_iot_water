@@ -181,7 +181,9 @@ export default {
         return
       } else {
         setActiveItem(item.id)
-        emit('toggle-sidebar')
+        if (isMobile.value) {
+          emit('toggle-sidebar')
+        }
       }
     }
 

@@ -66,8 +66,8 @@
               </div>
             </div>
             
-            <!-- Título especial para Personal -->
-            <div v-else-if="$route.path.startsWith('/app/personnel')" class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 rounded-xl shadow-lg p-6 mb-4">
+            <!-- Título especial para Roles -->
+            <div v-else-if="$route.path.startsWith('/app/roles')" class="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 rounded-xl shadow-lg p-6 mb-4">
               <div class="flex items-center gap-4">
                 <div class="bg-gray-800 bg-opacity-20 rounded-full p-3">
                   <svg xmlns='http://www.w3.org/2000/svg' class='h-8 w-8 text-blue-800' fill='currentColor' viewBox='0 0 24 24'>
@@ -75,8 +75,8 @@
                   </svg>
                 </div>
                 <div>
-                  <h1 class='text-3xl font-bold text-blue-800 mb-1'>Administración de Personal</h1>
-                  <p class='text-blue-800 text-lg font-medium'>Gestión de usuarios y equipos</p>
+                  <h1 class='text-3xl font-bold text-blue-800 mb-1'>Gestión de Roles</h1>
+                  <p class='text-blue-800 text-lg font-medium'>Administración de permisos y accesos</p>
                 </div>
               </div>
               <div class='mt-4 flex items-center gap-6 text-blue-800'>
@@ -237,8 +237,7 @@ export default {
         '/app/devices': 'Gestión de Dispositivos',
         '/app/map': 'Mapa de Dispositivos',
         '/app/complaints': 'Denuncias Ciudadanas',
-        '/app/incidents': 'Gestión de Incidentes',
-        '/app/personnel': 'Administración de Personal'
+        '/app/incidents': 'Gestión de Incidentes'
       }
       return routeMap[route.path] || ''
     })
@@ -250,8 +249,7 @@ export default {
         '/app/devices': 'Monitoreo y control de dispositivos IoT',
         '/app/map': 'Visualización geográfica de dispositivos',
         '/app/complaints': 'Gestión de denuncias y reportes ciudadanos',
-        '/app/incidents': 'Seguimiento y resolución de incidentes',
-        '/app/personnel': 'Administración del personal y equipos'
+        '/app/incidents': 'Seguimiento y resolución de incidentes'
       }
       return descriptionMap[route.path] || ''
     })

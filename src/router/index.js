@@ -69,9 +69,9 @@ const routes = [
       { path: 'nodes/create', component: NodeCreatePage },
       { path: 'nodes/update/:id', component: NodeUpdatePage },
       // Roles
-      { path: 'roles', name: 'RoleList', component: () => import('../views/Roles/RoleListPage.vue') },
-      { path: 'roles/create', name: 'RoleCreate', component: () => import('../views/Roles/RoleCreatePage.vue') },
-      { path: 'roles/edit/:id', name: 'RoleEdit', component: () => import('../views/Roles/RoleUpdatePage.vue'), props: true },
+      { path: 'roles', name: 'RoleList', component: () => import('@/views/Roles/RoleListPage.vue') },
+      { path: 'roles/create', name: 'RoleCreate', component: () => import('@/views/Roles/RoleCreatePage.vue') },
+      { path: 'roles/:id/edit', name: 'RoleEdit', component: () => import('@/views/Roles/RoleUpdatePage.vue'), props: true },
       // Home CRUD
       { path: 'home', component: HomeListPage },
       { path: 'home/create', component: HomeCreatePage },
@@ -83,19 +83,23 @@ const routes = [
       { path: 'sectors/edit/:id', component: SectorEditPage },
       // Notifications
       // { path: 'notifications', component: NotificationsPage },
-            // Gateways
-            { path: 'gateways', component: GatewayListPage },
-            { path: 'gateways/create', component: GatewayCreatePage },
-            { path: 'gateways/:id/edit', component: GatewayEditPage },
-            // Devices
-            { path: 'devices', component: () => import('@/views/Devices/DeviceListPage.vue') },
-            { path: 'devices/create', component: () => import('@/views/Devices/DeviceCreatePage.vue') },
-            { path: 'devices/:id', component: () => import('@/views/Devices/DeviceDetailPage.vue') },
-            { path: 'devices/:id/edit', component: () => import('@/views/Devices/DeviceEditPage.vue') },
+      // Gateways
+      { path: 'gateways', component: GatewayListPage },
+      { path: 'gateways/create', component: GatewayCreatePage },
+      { path: 'gateways/:id/edit', component: GatewayEditPage },
+      // Devices
+      { path: 'devices', component: () => import('@/views/Devices/DeviceListPage.vue') },
+      { path: 'devices/create', component: () => import('@/views/Devices/DeviceCreatePage.vue') },
+      { path: 'devices/:id', component: () => import('@/views/Devices/DeviceDetailPage.vue') },
+      { path: 'devices/:id/edit', component: () => import('@/views/Devices/DeviceEditPage.vue') },
       // Lecturas
       { path: 'lecturas', component: LecturaListPage },
       { path: 'lecturas/create', component: LecturaCreatePage },
       { path: 'lecturas/update/:id', component: LecturaUpdatePage },
+      // Personal
+      { path: 'personnel', name: 'PersonnelList', component: () => import('@/views/personnel/PersonnelListPage.vue') },
+      { path: 'personnel/create', name: 'PersonnelCreate', component: () => import('@/views/personnel/PersonnelCreatePage.vue') },
+      { path: 'personnel/:id/edit', name: 'PersonnelEdit', component: () => import('@/views/personnel/PersonnelUpdatePage.vue'), props: true },
     ],
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundPage },
