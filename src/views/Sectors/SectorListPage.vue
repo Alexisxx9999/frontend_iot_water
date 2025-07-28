@@ -1,6 +1,5 @@
 <template>
-  <div class="sector-list-page">
-    <!-- Banner institucional de video (estilo nodos) -->
+  <div class="sector-list">
     <div class="institutional-video-banner">
       <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
         <source src="/videos/istockphoto-922769970-640_adpp_is.mp4" type="video/mp4" />
@@ -9,48 +8,59 @@
       <div class="banner-overlay"></div>
       <div class="banner-caption">
         <h2>Gestión de Sectores</h2>
-        <p>Organiza y visualiza las zonas geográficas del sistema.</p>
+        <p>Organiza y visualiza las zonas geográficas del sistema de agua.</p>
       </div>
     </div>
-    <div class="page-header-modern">
+    
+    <div class="header">
       <div>
-        <h1><i class="fas fa-map-marked-alt"></i> Gestión de Sectores</h1>
-        <p class="subtitle">Administra los sectores de la ciudad y sus códigos postales de forma eficiente.</p>
+        <h1><font-awesome-icon :icon="['fas', 'map-marked-alt']" /> Gestión de Sectores</h1>
+        <p>Administra los sectores de la ciudad y sus códigos postales de forma eficiente.</p>
       </div>
-      <router-link to="/app/sectors/create" class="btn btn-primary btn-lg">
-        <i class="fas fa-plus"></i> Nuevo Sector
+      <router-link to="/app/sectors/create" class="btn btn-primary">
+        <font-awesome-icon :icon="['fas', 'plus']" /> Nuevo Sector
       </router-link>
     </div>
-    <div class="filters-section-modern">
-      <div class="search-box-modern">
-        <i class="fas fa-search search-icon"></i>
+    
+    <div class="filters-section">
+      <div class="search-box">
+        <font-awesome-icon :icon="['fas', 'search']" class="search-icon" />
         <input 
-          v-model="searchTerm" 
+          v-model="filtros.busqueda" 
           type="text" 
           placeholder="Buscar por nombre, código postal o descripción..."
-          class="search-input-modern"
+          class="search-input"
         />
       </div>
-      <select v-model="statusFilter" class="filter-select-modern">
-        <option value="">Todos los estados</option>
-        <option value="active">Activo</option>
-        <option value="inactive">Inactivo</option>
-      </select>
-      <button @click="refreshData" class="btn btn-secondary"><i class="fas fa-rotate-right"></i> Actualizar</button>
+      <div class="filter-controls">
+        <select v-model="filtros.estado" class="filter-select">
+          <option value="">Todos los estados</option>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+        <button @click="limpiarFiltros" class="btn btn-secondary">
+          <font-awesome-icon :icon="['fas', 'times']" /> Limpiar
+        </button>
+      </div>
     </div>
-    <div class="table-container-modern">
-      <div v-if="loading" class="loading-container">
-        <div class="spinner"></div>
-        <p>Cargando sectores...</p>
+    
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-label">Total Sectores</div>
+        <div class="stat-value">{{ sectoresFiltrados.length }}</div>
       </div>
-      <div v-else-if="filteredItems.length === 0" class="no-results-modern">
-        <i class="fas fa-map-marker-alt empty-icon"></i>
-        <p>No se encontraron sectores con los filtros aplicados</p>
-        <router-link to="/app/sectors/create" class="btn btn-primary btn-lg">
-          <i class="fas fa-plus"></i> Crear primer sector
-        </router-link>
+      <div class="stat-item">
+        <div class="stat-label">Activos</div>
+        <div class="stat-value">{{ sectoresActivos }}</div>
       </div>
-      <table v-else class="data-table-modern">
+      <div class="stat-item">
+        <div class="stat-label">Inactivos</div>
+        <div class="stat-value">{{ sectoresInactivos }}</div>
+      </div>
+    </div>
+    
+    <div class="table-container">
+      <table class="sectors-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -62,60 +72,73 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in paginatedItems" :key="item.id" class="table-row-modern">
-            <td>{{ item.id }}</td>
-            <td class="codigo-cell"><strong>{{ item.nombreSector }}</strong></td>
-            <td><span class="postal-badge">{{ item.codigoPostalSector }}</span></td>
-            <td><div class="text-cell" :title="item.descripcionSector">{{ truncateText(item.descripcionSector, 60) }}</div></td>
+          <tr v-for="sector in sectoresFiltrados" :key="sector.id" class="sector-row">
+            <td>{{ sector.id }}</td>
+            <td class="sector-cell">
+              <div class="sector-name">{{ sector.nombreSector }}</div>
+            </td>
             <td>
-              <span :class="['status-badge-modern', item.estado === 'active' ? 'active' : 'inactive']">
-                {{ item.estado === 'active' ? 'Activo' : 'Inactivo' }}
+              <span class="postal-badge">{{ sector.codigoPostalSector }}</span>
+            </td>
+            <td>
+              <div class="sector-description" :title="sector.descripcionSector">
+                {{ truncateText(sector.descripcionSector, 60) }}
+              </div>
+            </td>
+            <td>
+              <span :class="['status-badge', getEstadoText(sector.estado).class]">
+                {{ getEstadoText(sector.estado).text }}
               </span>
             </td>
             <td class="actions-cell">
-              <div class="action-buttons-modern">
+              <div class="action-buttons">
                 <router-link
-                  :to="`/app/sectors/edit/${item.id}`"
+                  :to="`/app/sectors/edit/${sector.id}`"
                   class="btn btn-warning btn-sm"
                   title="Editar sector"
                 >
-                  <i class="fas fa-edit"></i>
+                  <font-awesome-icon :icon="['fas', 'edit']" />
                 </router-link>
                 <button
-                  @click="deleteItem(item.id)"
+                  @click="openDeleteModal(sector)"
                   class="btn btn-danger btn-sm"
-                  :title="'Eliminar sector'"
+                  title="Eliminar sector"
                 >
-                  <i class="fas fa-trash"></i>
+                  <font-awesome-icon :icon="['fas', 'trash']" />
                 </button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
-      <div v-if="totalPages > 1" class="pagination-modern">
-        <button @click="currentPage--" :disabled="currentPage === 1" class="btn-page">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <span class="page-info">{{ currentPage }} de {{ totalPages }}</span>
-        <button @click="currentPage++" :disabled="currentPage === totalPages" class="btn-page">
-          <i class="fas fa-chevron-right"></i>
-        </button>
+      
+      <div v-if="sectoresFiltrados.length === 0" class="no-results">
+        <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
+        <p>No se encontraron sectores con los filtros aplicados</p>
+        <router-link to="/app/sectors/create" class="btn btn-primary">
+          <font-awesome-icon :icon="['fas', 'plus']" /> Crear primer sector
+        </router-link>
       </div>
     </div>
-    <div v-if="showDeleteModal" class="modal-overlay" @click="showDeleteModal = false">
-      <div class="modal-content-modern" @click.stop>
-        <div class="modal-header-modern">
-          <i class="fas fa-exclamation-triangle warning-icon"></i>
-          <h3>¿Eliminar sector?</h3>
+    
+    <!-- Modal de confirmación de eliminación -->
+    <div v-if="mostrarModal" class="modal-overlay" @click="closeDeleteModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>Confirmar Eliminación</h3>
+          <button @click="closeDeleteModal" class="btn-close">
+            <font-awesome-icon :icon="['fas', 'times']" />
+          </button>
         </div>
         <div class="modal-body">
-          <p>¿Estás seguro de que deseas eliminar este sector?</p>
-          <p class="warning-text">Esta acción no se puede deshacer.</p>
+          <p class="warning-text">
+            ¿Estás seguro de que deseas eliminar el sector <strong>{{ sectorAEliminar?.nombreSector }}</strong>?
+          </p>
+          <p>Esta acción no se puede deshacer.</p>
         </div>
         <div class="modal-footer">
-          <button @click="showDeleteModal = false" class="btn btn-secondary">Cancelar</button>
-          <button @click="confirmDelete" class="btn btn-danger">Eliminar</button>
+          <button @click="closeDeleteModal" class="btn btn-secondary">Cancelar</button>
+          <button @click="confirmarEliminacion" class="btn btn-danger">Eliminar</button>
         </div>
       </div>
     </div>
@@ -124,121 +147,142 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { useSectorsStore } from '@/stores/sectors'
-import { showToast } from '@/composables/useToast'
-import logo from '@/assets/images/logo.png'
-import logo1 from '@/assets/images/logo1.png'
 
 export default {
   name: 'SectorListPage',
   setup() {
     const sectorsStore = useSectorsStore()
+    
     // Estado reactivo
-    const loading = ref(false)
-    const searchTerm = ref('')
-    const statusFilter = ref('')
-    const currentPage = ref(1)
-    const itemsPerPage = ref(10)
-    const showDeleteModal = ref(false)
-    const itemToDelete = ref(null)
+    const filtros = ref({
+      busqueda: '',
+      estado: ''
+    })
+    
+    const mostrarModal = ref(false)
+    const sectorAEliminar = ref(null)
+    
     // Computed properties
-    const filteredItems = computed(() => {
+    const sectoresFiltrados = computed(() => {
       let filtered = sectorsStore.items
-      if (searchTerm.value) {
-        const term = searchTerm.value.toLowerCase()
-        filtered = filtered.filter(item => 
-          item.nombreSector.toLowerCase().includes(term) ||
-          item.codigoPostalSector.toLowerCase().includes(term) ||
-          item.descripcionSector.toLowerCase().includes(term)
+      
+      if (filtros.value.busqueda) {
+        const term = filtros.value.busqueda.toLowerCase()
+        filtered = filtered.filter(sector => 
+          sector.nombreSector.toLowerCase().includes(term) ||
+          sector.codigoPostalSector.toLowerCase().includes(term) ||
+          sector.descripcionSector.toLowerCase().includes(term)
         )
       }
-      if (statusFilter.value) {
-        filtered = filtered.filter(item => item.estado === statusFilter.value)
+      
+      if (filtros.value.estado) {
+        filtered = filtered.filter(sector => sector.estado === filtros.value.estado)
       }
+      
       return filtered
     })
-    const totalPages = computed(() => Math.ceil(filteredItems.value.length / itemsPerPage.value))
-    const paginatedItems = computed(() => {
-      const start = (currentPage.value - 1) * itemsPerPage.value
-      const end = start + itemsPerPage.value
-      return filteredItems.value.slice(start, end)
-    })
+    
+    const sectoresActivos = computed(() => 
+      sectorsStore.items.filter(sector => sector.estado === 'activo').length
+    )
+    
+    const sectoresInactivos = computed(() => 
+      sectorsStore.items.filter(sector => sector.estado === 'inactivo').length
+    )
+    
     // Métodos
     const loadData = async () => {
-      loading.value = true
       try {
         await sectorsStore.fetchItems()
       } catch (error) {
-        showToast('Error al cargar los sectores', 'error')
         console.error('Error cargando datos:', error)
-      } finally {
-        loading.value = false
       }
     }
-    const refreshData = () => {
-      currentPage.value = 1
-      loadData()
+    const limpiarFiltros = () => {
+      filtros.value.busqueda = ''
+      filtros.value.estado = ''
     }
-    const deleteItem = (id) => {
-      itemToDelete.value = id
-      showDeleteModal.value = true
+    
+    const getEstadoText = (estado) => {
+      switch (estado) {
+        case 'activo':
+          return { text: 'Activo', class: 'activo' }
+        case 'inactivo':
+          return { text: 'Inactivo', class: 'inactivo' }
+        default:
+          return { text: 'Desconocido', class: 'inactivo' }
+      }
     }
-    const confirmDelete = async () => {
-      if (!itemToDelete.value) return
+    
+    const openDeleteModal = (sector) => {
+      sectorAEliminar.value = sector
+      mostrarModal.value = true
+    }
+    
+    const closeDeleteModal = () => {
+      mostrarModal.value = false
+      sectorAEliminar.value = null
+    }
+    
+    const confirmarEliminacion = async () => {
+      if (!sectorAEliminar.value) return
+      
       try {
-        await sectorsStore.deleteItem(itemToDelete.value)
+        await sectorsStore.deleteItem(sectorAEliminar.value.id)
         window.showSimpleToast('Sector eliminado correctamente', 'success')
-        showDeleteModal.value = false
-        itemToDelete.value = null
+        closeDeleteModal()
       } catch (error) {
         window.showSimpleToast('Error al eliminar el sector', 'error')
         console.error('Error eliminando sector:', error)
       }
     }
+    
     const truncateText = (text, maxLength) => {
-      if (text.length <= maxLength) return text
+      if (!text || text.length <= maxLength) return text
       return text.substring(0, maxLength) + '...'
     }
-    // Elimino las referencias a carouselSlides y currentSlide
-    // onMounted(() => {
-    //   intervalId = setInterval(() => {
-    //     currentSlide.value = (currentSlide.value + 1) % carouselSlides.length
-    //   }, 5000)
-    // })
+    
+    onMounted(() => {
+      loadData()
+    })
+    
     return {
-      loading,
-      searchTerm,
-      statusFilter,
-      currentPage,
-      showDeleteModal,
-      filteredItems,
-      totalPages,
-      paginatedItems,
+      filtros,
+      mostrarModal,
+      sectorAEliminar,
+      sectoresFiltrados,
+      sectoresActivos,
+      sectoresInactivos,
       loadData,
-      refreshData,
-      deleteItem,
-      confirmDelete,
-      truncateText,
-      // carouselSlides,
-      // currentSlide
+      limpiarFiltros,
+      getEstadoText,
+      openDeleteModal,
+      closeDeleteModal,
+      confirmarEliminacion,
+      truncateText
     }
   }
 }
 </script>
 <style scoped>
-.medidor-list {
+.sector-list {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
   padding: 2rem;
   margin: 2rem auto;
-  max-width: 1200px;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
 }
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
 }
+
 .header h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -247,44 +291,72 @@ export default {
   align-items: center;
   gap: 10px;
 }
+
+.header p {
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
 .filters-section {
   display: flex;
   align-items: center;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 .search-box {
   position: relative;
   flex: 1;
+  min-width: 300px;
 }
+
 .search-input {
   width: 100%;
-  padding: 10px 40px 10px 16px;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #e0e7ef;
   border-radius: 8px;
-  border: 1px solid #e0e7ef;
   font-size: 1rem;
-  background: #f4f8fb;
+  background: #fff;
   color: #222;
+  transition: all 0.3s ease;
 }
+
+.search-input:focus {
+  outline: none;
+  border-color: #66adf4;
+  box-shadow: 0 0 0 3px rgba(102, 173, 244, 0.1);
+}
+
 .search-icon {
   position: absolute;
-  right: 16px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #66adf4;
-  font-size: 18px;
+  font-size: 16px;
 }
-.filter-controls, .filter-actions {
+
+.filter-controls {
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
-.filter-select, .custom-select {
-  padding: 8px 12px;
+
+.filter-select {
+  padding: 12px 16px;
+  border: 2px solid #e0e7ef;
   border-radius: 8px;
-  border: 1px solid #e0e7ef;
-  background: #f4f8fb;
+  background: #fff;
   font-size: 1rem;
   color: #222;
+  min-width: 150px;
+  transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #66adf4;
+  box-shadow: 0 0 0 3px rgba(102, 173, 244, 0.1);
 }
 .stats-bar {
   display: flex;
@@ -323,12 +395,13 @@ export default {
   overflow-x: auto;
   box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
 }
-.data-table, .medidores-table {
+.sectors-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 15px;
 }
-.data-table th, .medidores-table th {
+
+.sectors-table th {
   background: #e3f2fd;
   color: #1976d2;
   font-weight: 700;
@@ -336,16 +409,29 @@ export default {
   text-align: left;
   border-bottom: 2px solid #e9ecef;
 }
-.data-table td, .medidores-table td {
+
+.sectors-table td {
   padding: 15px;
   border-bottom: 1px solid #e9ecef;
   vertical-align: middle;
 }
-.table-row:hover, .medidor-row:hover {
+
+.sector-row:hover {
   background-color: #f8f9fa;
 }
-.codigo-cell, .name-cell strong {
+
+.sector-cell {
   font-weight: 600;
+}
+
+.sector-name {
+  font-weight: 600;
+  color: #225b8c;
+}
+
+.sector-description {
+  color: #6b7280;
+  max-width: 300px;
 }
 .consumo-cell {
   text-align: center;
@@ -748,27 +834,29 @@ export default {
 .postal-badge {
   background: #e3f2fd;
   color: #1976d2;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
-  font-family: inherit;
-}
-.status-badge-modern {
-  padding: 5px 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
   display: inline-block;
-  margin-bottom: 5px;
-  text-transform: none;
 }
-.status-badge-modern.active {
-  background-color: #d4edda;
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.activo {
+  background: #d4edda;
   color: #155724;
 }
-.status-badge-modern.inactive {
-  background-color: #f8d7da;
+
+.status-badge.inactivo {
+  background: #f8d7da;
   color: #721c24;
 }
 .actions-cell {
@@ -857,26 +945,112 @@ export default {
   gap: 10px;
   justify-content: flex-end;
 }
+.institutional-video-banner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,40,60,0.55) 60%, rgba(0,0,0,0.35) 100%);
+  z-index: 1;
+}
+
+.banner-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 2.5rem;
+  z-index: 2;
+}
+
+.banner-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.banner-caption p {
+  font-size: 1.15rem;
+  color: #e0e6f0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
 @media (max-width: 768px) {
-  .page-header-modern, .filters-section-modern, .table-container-modern {
-    padding-left: 0.7rem;
-    padding-right: 0.7rem;
-  }
-  .page-header-modern {
+  .header {
     flex-direction: column;
     gap: 15px;
     align-items: stretch;
   }
-  .filters-section-modern {
+  
+  .filters-section {
     flex-direction: column;
-    gap: 0.7rem;
+    align-items: stretch;
   }
-  .data-table-modern th, .data-table-modern td {
+  
+  .search-box {
+    min-width: auto;
+  }
+  
+  .stats-bar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .sectors-table {
+    font-size: 14px;
+  }
+  
+  .sectors-table th,
+  .sectors-table td {
     padding: 10px 8px;
   }
-  .action-buttons-modern {
-    flex-direction: column;
-    gap: 3px;
+  
+  .banner-caption {
+    padding-left: 1.5rem;
+  }
+  
+  .banner-caption h2 {
+    font-size: 1.5rem;
+  }
+  
+  .banner-caption p {
+    font-size: 1rem;
   }
 }
 </style>
