@@ -1,217 +1,202 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Header -->
-      <div class="mb-8">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">Editar Gateway</h1>
-            <p class="mt-2 text-sm text-gray-600">
-              Modificar información del gateway {{ gateway?.code }}
-            </p>
-          </div>
-          <router-link
-            to="/app/gateways"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Volver al listado
+  <div class="gateway-edit">
+    <div class="institutional-video-banner">
+      <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
+        <source src="/videos/istockphoto-1487086951-640_adpp_is.mp4" type="video/mp4" />
+        Tu navegador no soporta video HTML5.
+      </video>
+      <div class="banner-overlay"></div>
+      <div class="banner-caption">
+        <h2>Editar Gateway</h2>
+        <p>Modifica la información del dispositivo de comunicación IoT.</p>
+      </div>
+    </div>
+    
+    <div class="header">
+      <h1><font-awesome-icon :icon="['fas', 'edit']" /> Editar Gateway</h1>
+      <router-link to="/app/gateways" class="btn btn-secondary">
+        <font-awesome-icon :icon="['fas', 'arrow-left']" /> Volver
+      </router-link>
+    </div>
+    
+    <!-- Loading -->
+    <div v-if="loading" class="content">
+      <div class="form-container">
+        <div class="loading-container">
+          <font-awesome-icon :icon="['fas', 'spinner']" class="loading-spinner" />
+          <span class="loading-text">Cargando gateway...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div v-else-if="error" class="content">
+      <div class="form-container">
+        <div class="error-container">
+          <font-awesome-icon :icon="['fas', 'exclamation-triangle']" class="error-icon" />
+          <h3 class="error-title">Error al cargar el gateway</h3>
+          <p class="error-message">{{ error }}</p>
+          <router-link to="/app/gateways" class="btn btn-primary">
+            <font-awesome-icon :icon="['fas', 'arrow-left']" /> Volver al listado
           </router-link>
         </div>
       </div>
-
-      <!-- Loading -->
-      <div v-if="loading" class="bg-white shadow rounded-lg p-8">
-        <div class="flex items-center justify-center">
-          <svg class="animate-spin h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span class="ml-3 text-gray-600">Cargando gateway...</span>
-        </div>
-      </div>
-
-      <!-- Error -->
-      <div v-else-if="error" class="bg-white shadow rounded-lg p-8">
-        <div class="text-center">
-          <svg class="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-          </svg>
-          <h3 class="mt-4 text-lg font-medium text-gray-900">Error al cargar el gateway</h3>
-          <p class="mt-2 text-sm text-gray-600">{{ error }}</p>
-          <div class="mt-6">
-            <router-link
-              to="/app/gateways"
-              class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-            >
-              Volver al listado
-            </router-link>
+    </div>
+    
+    <!-- Formulario -->
+    <div v-else class="content">
+      <div class="form-container">
+        <form @submit.prevent="handleSubmit" class="gateway-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="code" class="form-label">
+                <font-awesome-icon :icon="['fas', 'tag']" /> Código del Gateway *
+              </label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'network-wired']" /></span>
+                <input 
+                  id="code" 
+                  v-model="form.code" 
+                  type="text" 
+                  class="form-input" 
+                  placeholder="Ej: GW-001, GW-002, GW-003" 
+                  required 
+                />
+              </div>
+              <p v-if="errors.code" class="form-error">{{ errors.code }}</p>
+            </div>
+            
+            <div class="form-group">
+              <label for="state" class="form-label">
+                <font-awesome-icon :icon="['fas', 'toggle-on']" /> Estado *
+              </label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'power-off']" /></span>
+                <select id="state" v-model="form.state" class="form-input" required>
+                  <option value="activo">Activo</option>
+                  <option value="inactivo">Inactivo</option>
+                  <option value="mantenimiento">Mantenimiento</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Formulario -->
-      <div v-else class="bg-white shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-medium text-gray-900">Información del Gateway</h3>
-        </div>
-        
-        <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
-          <!-- Código -->
-          <div>
-            <label for="code" class="block text-sm font-medium text-gray-700">
-              Código <span class="text-red-500">*</span>
+          
+          <div class="form-group">
+            <label for="address" class="form-label">
+              <font-awesome-icon :icon="['fas', 'map-marker-alt']" /> Dirección *
             </label>
-            <input
-              id="code"
-              v-model="form.code"
-              type="text"
-              required
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              :class="{ 'border-red-300': errors.code }"
-              placeholder="GW-001"
-            />
-            <p v-if="errors.code" class="mt-1 text-sm text-red-600">{{ errors.code }}</p>
+            <div class="input-icon-group">
+              <span class="input-icon"><font-awesome-icon :icon="['fas', 'location-dot']" /></span>
+              <input 
+                id="address" 
+                v-model="form.address" 
+                type="text" 
+                class="form-input" 
+                placeholder="Ej: Av. Principal 123, Quito, Ecuador"
+                required
+              />
+            </div>
+            <p v-if="errors.address" class="form-error">{{ errors.address }}</p>
           </div>
-
-          <!-- Dirección no exacta -->
-          <div>
-            <label for="address" class="block text-sm font-medium text-gray-700">
-              Dirección no exacta <span class="text-red-500">*</span>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="latitude" class="form-label">
+                <font-awesome-icon :icon="['fas', 'globe']" /> Latitud *
+              </label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'map']" /></span>
+                <input 
+                  id="latitude" 
+                  v-model="form.latitude" 
+                  type="number" 
+                  step="any"
+                  class="form-input" 
+                  placeholder="Ej: -0.1807"
+                  required
+                />
+              </div>
+              <p v-if="errors.latitude" class="form-error">{{ errors.latitude }}</p>
+            </div>
+            
+            <div class="form-group">
+              <label for="longitude" class="form-label">
+                <font-awesome-icon :icon="['fas', 'globe']" /> Longitud *
+              </label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'map']" /></span>
+                <input 
+                  id="longitude" 
+                  v-model="form.longitude" 
+                  type="number" 
+                  step="any"
+                  class="form-input" 
+                  placeholder="Ej: -78.4678"
+                  required
+                />
+              </div>
+              <p v-if="errors.longitude" class="form-error">{{ errors.longitude }}</p>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="altitude" class="form-label">
+                <font-awesome-icon :icon="['fas', 'mountain']" /> Altitud (msnm)
+              </label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'arrow-up']" /></span>
+                <input 
+                  id="altitude" 
+                  v-model="form.altitude" 
+                  type="number" 
+                  step="any"
+                  class="form-input" 
+                  placeholder="Ej: 2850"
+                />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="installationDate" class="form-label">
+                <font-awesome-icon :icon="['fas', 'calendar']" /> Fecha de Instalación *
+              </label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'calendar-day']" /></span>
+                <input 
+                  id="installationDate" 
+                  v-model="form.installationDate" 
+                  type="date" 
+                  class="form-input" 
+                  required
+                />
+              </div>
+              <p v-if="errors.installationDate" class="form-error">{{ errors.installationDate }}</p>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="description" class="form-label">
+              <font-awesome-icon :icon="['fas', 'align-left']" /> Descripción
             </label>
-            <input
-              id="address"
-              v-model="form.address"
-              type="text"
-              required
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              :class="{ 'border-red-300': errors.address }"
-              placeholder="Av. Principal 123, Quito"
-            />
-            <p v-if="errors.address" class="mt-1 text-sm text-red-600">{{ errors.address }}</p>
+            <div class="input-icon-group">
+              <span class="input-icon"><font-awesome-icon :icon="['fas', 'comment']" /></span>
+              <textarea 
+                id="description" 
+                v-model="form.description" 
+                class="form-input" 
+                placeholder="Describe las características y ubicación del gateway"
+                rows="3"
+              ></textarea>
+            </div>
           </div>
-
-          <!-- Latitud -->
-          <div>
-            <label for="latitude" class="block text-sm font-medium text-gray-700">
-              Latitud <span class="text-red-500">*</span>
-            </label>
-            <input
-              id="latitude"
-              v-model="form.latitude"
-              type="number"
-              step="any"
-              required
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              :class="{ 'border-red-300': errors.latitude }"
-              placeholder="Ej: -0.1807"
-            />
-            <p v-if="errors.latitude" class="mt-1 text-sm text-red-600">{{ errors.latitude }}</p>
-          </div>
-
-          <!-- Longitud -->
-          <div>
-            <label for="longitude" class="block text-sm font-medium text-gray-700">
-              Longitud <span class="text-red-500">*</span>
-            </label>
-            <input
-              id="longitude"
-              v-model="form.longitude"
-              type="number"
-              step="any"
-              required
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              :class="{ 'border-red-300': errors.longitude }"
-              placeholder="Ej: -78.4678"
-            />
-            <p v-if="errors.longitude" class="mt-1 text-sm text-red-600">{{ errors.longitude }}</p>
-          </div>
-
-          <!-- Altitud -->
-          <div>
-            <label for="altitude" class="block text-sm font-medium text-gray-700">
-              Altitud (msnm)
-            </label>
-            <input
-              id="altitude"
-              v-model="form.altitude"
-              type="number"
-              step="any"
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Ej: 2850"
-            />
-          </div>
-
-          <!-- Fecha de instalación -->
-          <div>
-            <label for="installationDate" class="block text-sm font-medium text-gray-700">
-              Fecha de instalación <span class="text-red-500">*</span>
-            </label>
-            <input
-              id="installationDate"
-              v-model="form.installationDate"
-              type="date"
-              required
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              :class="{ 'border-red-300': errors.installationDate }"
-            />
-            <p v-if="errors.installationDate" class="mt-1 text-sm text-red-600">{{ errors.installationDate }}</p>
-          </div>
-
-          <!-- Estado -->
-          <div>
-            <label for="status" class="block text-sm font-medium text-gray-700">
-              Estado <span class="text-red-500">*</span>
-            </label>
-            <select
-              id="status"
-              v-model="form.status"
-              required
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              :class="{ 'border-red-300': errors.status }"
-            >
-              <option value="">Seleccionar estado</option>
-              <option value="active">Activo</option>
-              <option value="inactive">Inactivo</option>
-              <option value="maintenance">Mantenimiento</option>
-            </select>
-            <p v-if="errors.status" class="mt-1 text-sm text-red-600">{{ errors.status }}</p>
-          </div>
-
-          <!-- Descripción -->
-          <div>
-            <label for="description" class="block text-sm font-medium text-gray-700">
-              Descripción
-            </label>
-            <textarea
-              id="description"
-              v-model="form.description"
-              rows="3"
-              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Descripción opcional del gateway"
-            ></textarea>
-          </div>
-
-          <!-- Botones -->
-          <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-            <router-link
-              to="/app/gateways"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Cancelar
-            </router-link>
-            <button
-              type="submit"
-              :disabled="isSubmitting"
-              class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg v-if="isSubmitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              {{ isSubmitting ? 'Guardando...' : 'Guardar Cambios' }}
+          
+          <div class="form-actions">
+            <button type="button" @click="goBack" class="btn btn-cancel">
+              <font-awesome-icon :icon="['fas', 'times']" /> Cancelar
+            </button>
+            <button type="submit" class="btn btn-submit" :disabled="isSubmitting">
+              <font-awesome-icon :icon="['fas', 'save']" /> {{ isSubmitting ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
           </div>
         </form>
@@ -224,7 +209,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from '@/composables/useToast'
-import { useGatewayService } from '@/services/gateways.service'
+import { useGatewaysStore } from '@/stores/gateways'
 
 export default {
   name: 'GatewayEditPage',
@@ -232,14 +217,13 @@ export default {
     const router = useRouter()
     const route = useRoute()
     const { showToast } = useToast()
-    const gatewayService = useGatewayService()
-
+    const gatewaysStore = useGatewaysStore()
+    
     const loading = ref(true)
     const error = ref(null)
-    const gateway = ref(null)
     const isSubmitting = ref(false)
     const errors = reactive({})
-
+    
     const form = reactive({
       code: '',
       address: '',
@@ -247,46 +231,10 @@ export default {
       longitude: '',
       altitude: '',
       installationDate: '',
-      status: '',
+      state: 'activo',
       description: '',
       dataUrl: ''
     })
-
-    const loadGateway = async () => {
-      try {
-        loading.value = true
-        error.value = null
-        // Buscar primero en el servicio mock
-        let foundGateway = null
-        try {
-          foundGateway = await gatewayService.list().then(list => list.find(g => g.id == route.params.id))
-        } catch {}
-        // Si no se encuentra, buscar en window.__GATEWAYS__
-        if (!foundGateway && typeof window !== 'undefined' && window.__GATEWAYS__) {
-          foundGateway = window.__GATEWAYS__.find(g => g.id == route.params.id)
-        }
-        if (!foundGateway) {
-          error.value = 'No se encontró el gateway solicitado. Puede que haya sido eliminado o que los datos estén desincronizados.'
-          return
-        }
-        gateway.value = foundGateway
-        // Llenar el formulario
-        form.code = foundGateway.code
-        form.address = foundGateway.address
-        form.latitude = foundGateway.latitude
-        form.longitude = foundGateway.longitude
-        form.altitude = foundGateway.altitude
-        form.installationDate = foundGateway.installationDate
-        form.status = foundGateway.status || ''
-        form.description = foundGateway.description || ''
-        form.dataUrl = foundGateway.dataUrl || ''
-      } catch (err) {
-        error.value = 'No se pudo cargar la información del gateway'
-        console.error('Error loading gateway:', err)
-      } finally {
-        loading.value = false
-      }
-    }
 
     const validateForm = () => {
       errors.code = ''
@@ -294,39 +242,89 @@ export default {
       errors.latitude = ''
       errors.longitude = ''
       errors.installationDate = ''
-      // errors.status = '' // Eliminar validación de estado obligatorio
+      
       if (!form.code.trim()) {
         errors.code = 'El código es requerido'
       }
+      
       if (!form.address.trim()) {
         errors.address = 'La dirección es requerida'
       }
+
       if (!form.latitude) {
         errors.latitude = 'La latitud es requerida'
       }
+
       if (!form.longitude) {
         errors.longitude = 'La longitud es requerida'
       }
+
       if (!form.installationDate) {
         errors.installationDate = 'La fecha de instalación es requerida'
       }
-      // Estado ya no es obligatorio
+      
       return !errors.code && !errors.address && !errors.latitude && !errors.longitude && !errors.installationDate
+    }
+
+    const loadGateway = async () => {
+      try {
+        loading.value = true
+        const gatewayId = parseInt(route.params.id)
+        const gateway = await gatewaysStore.getItem(gatewayId)
+        
+        if (gateway) {
+          Object.assign(form, {
+            code: gateway.code || '',
+            address: gateway.address || '',
+            latitude: gateway.latitude || '',
+            longitude: gateway.longitude || '',
+            altitude: gateway.altitude || '',
+            installationDate: gateway.installationDate || '',
+            state: gateway.state || 'activo',
+            description: gateway.description || '',
+            dataUrl: gateway.dataUrl || ''
+          })
+        } else {
+          error.value = 'Gateway no encontrado'
+        }
+      } catch (err) {
+        error.value = 'Error al cargar el gateway'
+        console.error('Error loading gateway:', err)
+      } finally {
+        loading.value = false
+      }
     }
 
     const handleSubmit = async () => {
       if (!validateForm()) return
+      
       isSubmitting.value = true
+      
       try {
-        await gatewayService.update(gateway.value.id, { ...form })
-        window.showSimpleToast('Gateway editado correctamente', 'success')
+        const gatewayId = parseInt(route.params.id)
+        const updatedGateway = { ...form, id: gatewayId }
+        await gatewaysStore.updateItem(gatewayId, updatedGateway)
+        
+        // Actualizar el array global para el mock
+        if (window && window.__GATEWAYS__) {
+          const index = window.__GATEWAYS__.findIndex(g => g.id === gatewayId)
+          if (index !== -1) {
+            window.__GATEWAYS__[index] = updatedGateway
+          }
+        }
+        
+        window.showSimpleToast('Gateway actualizado correctamente', 'success')
         router.push('/app/gateways')
-      } catch (error) {
-        window.showSimpleToast('Error al editar el gateway', 'error')
-        router.push('/app/gateways')
+      } catch (err) {
+        window.showSimpleToast('Error al actualizar el gateway', 'error')
+        console.error('Error updating gateway:', err)
       } finally {
         isSubmitting.value = false
       }
+    }
+
+    const goBack = () => {
+      router.push('/app/gateways')
     }
 
     onMounted(() => {
@@ -334,14 +332,349 @@ export default {
     })
 
     return {
-      gateway,
-      loading,
-      error,
       form,
       errors,
+      loading,
+      error,
       isSubmitting,
-      handleSubmit
+      handleSubmit,
+      goBack
     }
   }
 }
-</script> 
+</script>
+
+<style scoped>
+.gateway-edit {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #225b8c;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+}
+
+.form-container {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  font-size: 2rem;
+  color: #66adf4;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #dc3545;
+}
+
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.error-message {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.gateway-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #225b8c;
+  font-size: 1rem;
+}
+
+.input-icon-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #66adf4;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #e0e7ef;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  color: #222;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #66adf4;
+  box-shadow: 0 0 0 3px rgba(102, 173, 244, 0.1);
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 80px;
+  padding-left: 40px;
+}
+
+.form-error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e7ef;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 2px solid #d1d5db;
+}
+
+.btn-cancel:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #495057;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+}
+
+.institutional-video-banner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,40,60,0.55) 60%, rgba(0,0,0,0.35) 100%);
+  z-index: 1;
+}
+
+.banner-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 2.5rem;
+  z-index: 2;
+}
+
+.banner-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.banner-caption p {
+  font-size: 1.15rem;
+  color: #e0e6f0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-container {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .banner-caption {
+    padding-left: 1.5rem;
+  }
+  
+  .banner-caption h2 {
+    font-size: 1.5rem;
+  }
+  
+  .banner-caption p {
+    font-size: 1rem;
+  }
+}
+</style> 
