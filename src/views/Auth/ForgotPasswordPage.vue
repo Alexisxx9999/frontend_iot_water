@@ -65,13 +65,13 @@ export default {
     font-weight: var(--font-weight-bold, 600);
     color: var(--primary-color);
     margin-bottom: 0.5rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
   }
 
   .forgot-subtitle {
     color: var(--text-secondary);
     margin-bottom: 2rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
   }
 }
 
@@ -85,13 +85,13 @@ export default {
       margin-bottom: 0.5rem;
       font-weight: var(--font-weight-medium, 500);
       color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
 
     input {
       @extend .input;
       width: 100%;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
   }
 }
@@ -102,7 +102,7 @@ export default {
   width: 100%;
   font-size: 1rem;
   font-weight: var(--font-weight-semibold, 600);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .forgot-links {
@@ -112,7 +112,7 @@ export default {
     color: var(--primary-color);
     text-decoration: none;
     font-size: 0.9rem;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     &:hover {
       text-decoration: underline;
     }

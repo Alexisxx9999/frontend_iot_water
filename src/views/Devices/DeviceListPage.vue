@@ -157,7 +157,7 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .filters-section {
   display: flex;
@@ -177,7 +177,7 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   font-size: 1rem;
   background: var(--bg-tertiary);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .search-icon {
   position: absolute;
@@ -198,7 +198,7 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   background: var(--bg-tertiary);
   font-size: 1rem;
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .stats-bar {
   display: flex;
@@ -244,7 +244,7 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   width: 100%;
   border-collapse: collapse;
   font-size: 15px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .medidores-table th {
   background: #e3f2fd;

@@ -64,7 +64,7 @@ html {
 }
 
 body {
-  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   line-height: 1.6;
@@ -339,7 +339,7 @@ body {
 
 // Jerarquía tipográfica global elegante y sobria
 .heading-1 {
-  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 2.4rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -348,7 +348,7 @@ body {
   margin-bottom: 1.2rem;
 }
 .heading-2 {
-  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.8rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -357,27 +357,27 @@ body {
   margin-bottom: 1rem;
 }
 .heading-3 {
-  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.35rem;
   font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 0.7rem;
 }
 .subtitle {
-  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
 }
 .text-body {
-  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 1rem;
   font-weight: 400;
   color: var(--text-primary);
 }
 .text-muted {
-  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.97rem;
   color: var(--text-muted);
 }

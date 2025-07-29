@@ -160,7 +160,7 @@ export default {
   font-weight: var(--font-weight-bold, 700);
   color: var(--text-primary);
   margin-bottom: 1.5rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .auth-form {
   display: flex;
@@ -191,7 +191,7 @@ export default {
     font-size: 1rem;
     flex: 1;
     color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     &::placeholder {
       color: var(--text-muted);
     }
@@ -233,7 +233,7 @@ export default {
   margin-bottom: 1rem;
   letter-spacing: 1px;
   color: var(--primary-color);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .welcome-desc {
   font-size: 1.13rem;

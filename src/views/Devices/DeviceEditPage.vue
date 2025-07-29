@@ -197,8 +197,8 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background: var(--bg-primary);
-  font-family: 'Inter', sans-serif;
+  background: #f4f8fb; /* fondo claro y sobrio */
+  font-family: 'Montserrat', sans-serif;
 }
 
 .header {
@@ -216,7 +216,7 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
   gap: 15px;
   font-size: 2rem;
   font-weight: var(--font-weight-bold, 700);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .header-actions {

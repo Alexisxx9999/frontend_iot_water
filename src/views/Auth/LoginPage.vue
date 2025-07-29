@@ -85,13 +85,14 @@ export default {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
+  background: #f4f8fb; /* fondo claro y sobrio */
 }
 .login-left-panel {
   flex: 1 1 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-secondary);
+  background: #f4f8fb; /* fondo claro y sobrio */
   z-index: 2;
   min-height: 100vh;
 }
@@ -116,12 +117,7 @@ export default {
   transition: filter 0.4s;
 }
 .login-bg-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(120deg, rgba(20,40,60,0.78) 70%, rgba(0,0,0,0.55) 100%);
+  background: linear-gradient(120deg, rgba(255,255,255,0.85) 70%, rgba(230,245,255,0.85) 100%); /* degradado claro */
   z-index: 1;
 }
 .auth-card {
@@ -150,7 +146,7 @@ export default {
   font-weight: var(--font-weight-bold, 700);
   color: #225b8c;
   margin-bottom: 1.5rem;
-  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   text-align: center;
   letter-spacing: -0.5px;
 }
@@ -186,7 +182,7 @@ export default {
     font-size: 1.08rem;
     flex: 1;
     color: #23272f;
-    font-family: 'Montserrat', 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     &::placeholder {
       color: #b0b8c1;
     }
@@ -235,8 +231,8 @@ export default {
 }
 .auth-right {
   flex: 1 1 420px;
-  background: rgba(0,0,0,0.35);
-  color: #fff;
+  background: rgba(255,255,255,0.10); /* fondo translúcido */
+  color: #225b8c;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -244,7 +240,7 @@ export default {
   padding: 3rem 2.5rem;
   text-align: center;
   border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  box-shadow: none;
   z-index: 2;
 }
 .auth-logo {
@@ -254,19 +250,12 @@ export default {
   filter: drop-shadow(0 2px 8px var(--primary-color, rgba(34, 91, 140, 0.15)));
 }
 .welcome-title {
-  font-size: 1.8rem;
-  font-weight: var(--font-weight-bold, 700);
-  margin-bottom: 1rem;
-  letter-spacing: 1px;
-  color: #fff;
-  font-family: 'Montserrat', 'Inter', sans-serif;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  color: #225b8c;
+  text-shadow: 0 2px 8px rgba(255,255,255,0.7);
 }
 .welcome-desc {
-  font-size: 1.13rem;
-  margin-bottom: 2.2rem;
-  color: #e0e6f0;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  color: #3b4a5a;
+  text-shadow: 0 2px 8px rgba(255,255,255,0.5);
 }
 .signup-btn {
   background: #fff;

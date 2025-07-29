@@ -159,7 +159,7 @@ const getMensajeMantenimiento = estado => getEstadoDescription(estado)
   margin: 0 auto;
   padding: 20px;
   background: var(--bg-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .header {
@@ -177,7 +177,7 @@ const getMensajeMantenimiento = estado => getEstadoDescription(estado)
   gap: 15px;
   font-size: 2rem;
   font-weight: var(--font-weight-bold, 700);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .content {

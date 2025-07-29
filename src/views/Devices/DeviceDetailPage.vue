@@ -229,8 +229,8 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background: var(--bg-primary);
-  font-family: 'Inter', sans-serif;
+  background: #f8fafc; /* Cambiado a un color claro */
+  font-family: 'Montserrat', sans-serif;
 }
 
 .header {
@@ -248,7 +248,7 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
   gap: 15px;
   font-size: 2rem;
   font-weight: var(--font-weight-bold, 700);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .header-actions {
@@ -265,7 +265,7 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
 }
 
 .medidor-card {
-  background: white;
+  background: #fff; /* Asegura fondo blanco para la tarjeta */
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   padding: 30px;
@@ -483,7 +483,7 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
 
 /* Acciones rápidas */
 .quick-actions {
-  background: white;
+  background: #fff; /* Fondo claro para acciones rápidas */
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   padding: 25px;
