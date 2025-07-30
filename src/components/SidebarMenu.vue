@@ -33,24 +33,18 @@
         <router-link 
           v-if="!item.children || item.children.length === 0" 
           :to="item.route" 
-          class="group flex items-center px-3 py-2.5 text-[15px] font-medium rounded-lg transition-all duration-200"
-          :class="isActiveItem(item) 
-            ? 'bg-gray-100 text-[#23272f] border-r-4 border-gray-300' 
-            : 'text-[#23272f] hover:bg-gray-50 hover:text-[#23272f]'"
+          class="group flex items-center px-3 py-3 text-[15px] font-medium rounded-lg transition-all duration-200 bg-gray-100 text-[#23272f] border-r-4 border-gray-300"
           @click="handleMenuClick(item)"
         >
           <component 
             :is="getMenuIcon(item.icon)" 
-            class="w-5 h-5 flex-shrink-0 icon-center"
-            :class="[isActiveItem(item) ? 'text-[#23272f]' : 'text-[#8b95a5] group-hover:text-[#23272f]', isCollapsed ? 'mx-auto' : 'mr-3']"
+            class="w-5 h-5 flex-shrink-0 icon-center text-[#23272f]"
+            :class="[isCollapsed ? 'mx-auto' : 'mr-3']"
           />
-          <span v-if="!isCollapsed" class="truncate">{{ item.title }}</span>
+          <span v-if="!isCollapsed" class="truncate text-[#23272f]">{{ item.title }}</span>
           <span 
             v-if="item.badge && !isCollapsed" 
-            class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-            :class="isActiveItem(item) 
-              ? 'bg-gray-200 text-[#23272f]' 
-              : 'bg-gray-100 text-[#23272f]'"
+            class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-[#23272f]"
           >
             {{ item.badge }}
           </span>
@@ -60,18 +54,15 @@
         <div v-else>
           <button
             @click="handleParentMenuClick(item)"
-            class="group w-full flex items-center justify-between px-3 py-2.5 text-[15px] font-medium rounded-lg transition-all duration-200"
-            :class="isActiveItem(item) 
-              ? 'bg-gray-100 text-[#23272f]' 
-              : 'text-[#23272f] hover:bg-gray-50 hover:text-[#23272f]'"
+            class="group w-full flex items-center justify-between px-3 py-3 text-[15px] font-medium rounded-lg transition-all duration-200 bg-gray-100 text-[#23272f] border-r-4 border-gray-300"
           >
             <div class="flex items-center w-full">
               <component 
                 :is="getMenuIcon(item.icon)" 
-                class="w-5 h-5 flex-shrink-0 icon-center"
-                :class="[isActiveItem(item) ? 'text-[#23272f]' : 'text-[#8b95a5] group-hover:text-[#23272f]', isCollapsed ? 'mx-auto' : 'mr-3']"
+                class="w-5 h-5 flex-shrink-0 icon-center text-[#23272f]"
+                :class="[isCollapsed ? 'mx-auto' : 'mr-3']"
               />
-              <span v-if="!isCollapsed" class="truncate">{{ item.title }}</span>
+              <span v-if="!isCollapsed" class="truncate text-[#23272f]">{{ item.title }}</span>
             </div>
             <ChevronDownIcon 
               v-if="!isCollapsed"
@@ -90,15 +81,10 @@
               v-for="child in item.children"
               :key="child.id"
               :to="child.route"
-              class="group flex items-center px-5 py-2 text-[15px] rounded-lg transition-all duration-200 ml-2"
-              :class="isCurrentRoute(child.route) 
-                ? 'bg-gray-50 text-[#23272f]' 
-                : 'text-[#23272f] hover:bg-gray-50 hover:text-[#23272f]'"
+              class="group flex items-center px-5 py-2 text-[15px] rounded-lg transition-all duration-200 ml-2 bg-gray-50 text-[#23272f]"
             >
-              <div class="w-1.5 h-1.5 rounded-full mr-3"
-                :class="isCurrentRoute(child.route) ? 'bg-[#23272f]' : 'bg-gray-300 group-hover:bg-[#23272f]'"
-              ></div>
-              <span class="truncate">{{ child.title }}</span>
+              <div class="w-1.5 h-1.5 rounded-full mr-3 bg-[#23272f]"></div>
+              <span class="truncate text-[#23272f]">{{ child.title }}</span>
             </router-link>
           </div>
         </div>
@@ -244,9 +230,10 @@ export default {
         devices: DevicePhoneMobileIcon,
         map: MapIcon,
         report: DocumentTextIcon,
+        reports: DocumentTextIcon, // Para "Quienes Somos"
         warning: ExclamationTriangleIcon,
         person: UserGroupIcon,
-        network: ServerStackIcon // Para Gateways
+        network: ServerStackIcon // Para Gateways y Nodos
       }
       return iconMap[iconName] || HomeIcon
     }

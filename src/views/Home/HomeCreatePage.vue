@@ -1,172 +1,151 @@
 <template>
-  <div class="home-create-page">
-    <div class="page-header">
-      <div class="header-content">
-        <router-link to="/app/home" class="back-link">
-          <i class="fas fa-arrow-left"></i> Volver al listado
-        </router-link>
-        <h1>Crear Nuevo Registro</h1>
-        <p>Completa la información para crear un nuevo registro</p>
+  <div class="home-create">
+    <div class="institutional-video-banner">
+      <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
+        <source src="/videos/istockphoto-922769970-640_adpp_is.mp4" type="video/mp4" />
+        Tu navegador no soporta video HTML5.
+      </video>
+      <div class="banner-overlay"></div>
+      <div class="banner-caption">
+        <h2>Crear Nuevo Registro</h2>
+        <p>Completa la información para crear un nuevo registro institucional.</p>
       </div>
     </div>
-
-    <div class="form-container">
-      <form @submit.prevent="handleSubmit" class="create-form">
-        <div class="form-section">
-          <h3>Información Básica</h3>
+    <div class="header">
+      <h1><i class="fas fa-plus"></i> Crear Nuevo Registro</h1>
+      <router-link to="/app/home" class="btn btn-secondary">
+        <font-awesome-icon :icon="['fas', 'arrow-left']" /> Volver
+      </router-link>
+    </div>
+    <div class="content">
+      <div class="form-container">
+        <form @submit.prevent="handleSubmit" class="home-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre de la Empresa *</label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'building']" /></span>
+                <input
+                  id="nombre"
+                  v-model="form.nombre"
+                  type="text"
+                  :class="['form-input', { 'error': errors.nombre }]"
+                  placeholder="Ingresa el nombre de la empresa"
+                  @blur="validateField('nombre')"
+                />
+              </div>
+              <span v-if="errors.nombre" class="error-message">
+                {{ errors.nombre }}
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="email">Correo Electrónico *</label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'envelope']" /></span>
+                <input
+                  id="email"
+                  v-model="form.email"
+                  type="email"
+                  :class="['form-input', { 'error': errors.email }]"
+                  placeholder="ejemplo@empresa.com"
+                  @blur="validateField('email')"
+                />
+              </div>
+              <span v-if="errors.email" class="error-message">
+                {{ errors.email }}
+              </span>
+            </div>
+          </div>
           
           <div class="form-group">
-            <label for="nombre">Nombre de la Empresa *</label>
-            <input
-              id="nombre"
-              v-model="form.nombre"
-              type="text"
-              :class="['form-input', { 'error': errors.nombre }]"
-              placeholder="Ingresa el nombre de la empresa"
-              @blur="validateField('nombre')"
-            />
-            <span v-if="errors.nombre" class="error-message">
-              {{ errors.nombre }}
-            </span>
-          </div>
-
-          <div class="form-group">
-            <label for="email">Correo Electrónico *</label>
-            <input
-              id="email"
-              v-model="form.email"
-              type="email"
-              :class="['form-input', { 'error': errors.email }]"
-              placeholder="ejemplo@empresa.com"
-              @blur="validateField('email')"
-            />
-            <span v-if="errors.email" class="error-message">
-              {{ errors.email }}
-            </span>
-          </div>
-
-          <div class="form-group">
             <label for="celular">Número de Celular *</label>
-            <input
-              id="celular"
-              v-model="form.celular"
-              type="tel"
-              :class="['form-input', { 'error': errors.celular }]"
-              placeholder="0999999999"
-              maxlength="10"
-              @blur="validateField('celular')"
-            />
+            <div class="input-icon-group">
+              <span class="input-icon"><font-awesome-icon :icon="['fas', 'phone']" /></span>
+              <input
+                id="celular"
+                v-model="form.celular"
+                type="tel"
+                :class="['form-input', { 'error': errors.celular }]"
+                placeholder="0999999999"
+                maxlength="10"
+                @blur="validateField('celular')"
+              />
+            </div>
             <span v-if="errors.celular" class="error-message">
               {{ errors.celular }}
             </span>
           </div>
-        </div>
-
-        <div class="form-section">
-          <h3>Misión y Visión</h3>
           
           <div class="form-group">
             <label for="mision">Misión *</label>
-            <textarea
-              id="mision"
-              v-model="form.mision"
-              :class="['form-textarea', { 'error': errors.mision }]"
-              placeholder="Describe la misión de la empresa"
-              rows="4"
-              @blur="validateField('mision')"
-            ></textarea>
+            <div class="input-icon-group">
+              <span class="input-icon"><font-awesome-icon :icon="['fas', 'bullseye']" /></span>
+              <textarea
+                id="mision"
+                v-model="form.mision"
+                :class="['form-input', { 'error': errors.mision }]"
+                placeholder="Describe la misión de la empresa"
+                rows="3"
+                @blur="validateField('mision')"
+              ></textarea>
+            </div>
             <span v-if="errors.mision" class="error-message">
               {{ errors.mision }}
             </span>
           </div>
-
+          
           <div class="form-group">
             <label for="vision">Visión *</label>
-            <textarea
-              id="vision"
-              v-model="form.vision"
-              :class="['form-textarea', { 'error': errors.vision }]"
-              placeholder="Describe la visión de la empresa"
-              rows="4"
-              @blur="validateField('vision')"
-            ></textarea>
+            <div class="input-icon-group">
+              <span class="input-icon"><font-awesome-icon :icon="['fas', 'eye']" /></span>
+              <textarea
+                id="vision"
+                v-model="form.vision"
+                :class="['form-input', { 'error': errors.vision }]"
+                placeholder="Describe la visión de la empresa"
+                rows="3"
+                @blur="validateField('vision')"
+              ></textarea>
+            </div>
             <span v-if="errors.vision" class="error-message">
               {{ errors.vision }}
             </span>
           </div>
-        </div>
-
-        <div class="form-section">
-          <h3>Configuración</h3>
           
           <div class="form-group">
             <label for="estado">Estado *</label>
-            <select
-              id="estado"
-              v-model="form.estado"
-              :class="['form-select', { 'error': errors.estado }]"
-              @blur="validateField('estado')"
-            >
-              <option value="">Selecciona un estado</option>
-              <option value="active">Activo</option>
-              <option value="inactive">Inactivo</option>
-            </select>
+            <div class="input-icon-group">
+              <span class="input-icon"><font-awesome-icon :icon="['fas', 'toggle-on']" /></span>
+              <select
+                id="estado"
+                v-model="form.estado"
+                :class="['form-input', { 'error': errors.estado }]"
+                @blur="validateField('estado')"
+              >
+                <option value="">Selecciona un estado</option>
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+              </select>
+            </div>
             <span v-if="errors.estado" class="error-message">
               {{ errors.estado }}
             </span>
           </div>
-        </div>
 
-        <div class="form-actions">
-          <router-link to="/app/home" class="btn btn-secondary">
-            <i class="fas fa-times"></i> Cancelar
-          </router-link>
-          
-          <button 
-            type="submit" 
-            class="btn btn-primary"
-            :disabled="loading || !isFormValid"
-          >
-            <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-            <i v-else class="fas fa-save"></i>
-            {{ loading ? 'Creando...' : 'Crear Registro' }}
-          </button>
-        </div>
-      </form>
-
-      <!-- Vista previa en tiempo real -->
-      <div class="preview-section">
-        <h3>Vista Previa</h3>
-        <div class="preview-card">
-          <div class="preview-header">
-            <h4>{{ form.nombre || 'Nombre de la Empresa' }}</h4>
-            <span :class="['status-badge', form.estado]">
-              {{ form.estado === 'active' ? 'Activo' : form.estado === 'inactive' ? 'Inactivo' : 'Sin estado' }}
-            </span>
+          <div class="form-actions">
+            <button type="button" @click="$router.push('/app/home')" class="btn btn-cancel">
+              <font-awesome-icon :icon="['fas', 'times']" /> Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="btn btn-submit"
+              :disabled="loading || !isFormValid"
+            >
+              <font-awesome-icon :icon="['fas', 'save']" />
+              {{ loading ? 'Creando...' : 'Crear Registro' }}
+            </button>
           </div>
-          
-          <div class="preview-content">
-            <div class="preview-item">
-              <strong>Email:</strong>
-              <span>{{ form.email || 'No especificado' }}</span>
-            </div>
-            
-            <div class="preview-item">
-              <strong>Celular:</strong>
-              <span>{{ form.celular || 'No especificado' }}</span>
-            </div>
-            
-            <div class="preview-item">
-              <strong>Misión:</strong>
-              <p>{{ form.mision || 'No especificada' }}</p>
-            </div>
-            
-            <div class="preview-item">
-              <strong>Visión:</strong>
-              <p>{{ form.vision || 'No especificada' }}</p>
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -334,110 +313,198 @@ export default {
 </script>
 
 <style scoped>
-.home-create-page {
+.home-create {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  margin: 2rem auto;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
 }
 
-.page-header {
+.institutional-video-banner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,40,60,0.55) 60%, rgba(0,0,0,0.35) 100%);
+  z-index: 1;
+}
+
+.banner-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 2.5rem;
+  z-index: 2;
+}
+
+.banner-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.banner-caption p {
+  font-size: 1.15rem;
+  color: #e0e6f0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 2rem;
 }
 
-.header-content {
-  text-align: center;
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #225b8c;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.back-link {
+.header .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #3498db;
   text-decoration: none;
-  font-weight: 500;
-  margin-bottom: 1rem;
-  transition: color 0.3s ease;
 }
 
-.back-link:hover {
-  color: #2980b9;
+.header .btn-secondary {
+  background: #95a5a6;
+  color: white;
 }
 
-.page-header h1 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-size: 2.5rem;
+.header .btn-secondary:hover {
+  background: #7f8c8d;
 }
 
-.page-header p {
-  color: #7f8c8d;
-  font-size: 1.1rem;
+.content {
+  display: flex;
+  justify-content: center;
 }
 
 .form-container {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 2rem;
-  align-items: start;
-}
-
-.create-form {
-  background: white;
+  background: #f8f9fa;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
 }
 
-.form-section {
-  margin-bottom: 2rem;
+.home-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.form-section h3 {
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e1e8ed;
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: #225b8c;
+  font-size: 1rem;
+}
+
+.input-icon-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #66adf4;
+  font-size: 16px;
+  z-index: 1;
 }
 
 .form-input,
 .form-textarea,
 .form-select {
   width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e1e8ed;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #e0e7ef;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
-  font-family: inherit;
+  background: #fff;
+  color: #222;
+  transition: all 0.3s ease;
 }
 
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: #66adf4;
+  box-shadow: 0 0 0 3px rgba(102, 173, 244, 0.1);
 }
 
 .form-input.error,
 .form-textarea.error,
 .form-select.error {
-  border-color: #e74c3c;
+  border-color: #dc3545;
 }
 
 .form-textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
+  padding-left: 40px;
 }
 
 .error-message {
@@ -451,124 +518,57 @@ export default {
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
-  padding-top: 2rem;
-  border-top: 1px solid #e1e8ed;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e7ef;
 }
 
 .btn {
-  padding: 0.75rem 1.5rem;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+  transition: all 0.3s ease;
 }
 
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.btn-cancel {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 2px solid #d1d5db;
 }
 
-.btn-primary {
-  background: #3498db;
+.btn-cancel:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: #2980b9;
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
 }
 
 .btn-secondary {
-  background: #95a5a6;
+  background-color: #6c757d;
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #7f8c8d;
+  background-color: #495057;
 }
 
-/* Vista previa */
-.preview-section {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  position: sticky;
-  top: 2rem;
-}
 
-.preview-section h3 {
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.preview-card {
-  border: 2px solid #e1e8ed;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.preview-header {
-  background: #f8f9fa;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e1e8ed;
-}
-
-.preview-header h4 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 1.1rem;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.status-badge.active {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status-badge.inactive {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.preview-content {
-  padding: 1rem;
-}
-
-.preview-item {
-  margin-bottom: 1rem;
-}
-
-.preview-item:last-child {
-  margin-bottom: 0;
-}
-
-.preview-item strong {
-  display: block;
-  color: #2c3e50;
-  margin-bottom: 0.25rem;
-}
-
-.preview-item span,
-.preview-item p {
-  color: #7f8c8d;
-  margin: 0;
-  line-height: 1.5;
-}
 
 /* Mensajes */
 .message {
@@ -605,32 +605,36 @@ export default {
   }
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .form-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .preview-section {
-    position: static;
-  }
-}
-
 @media (max-width: 768px) {
-  .home-create-page {
-    padding: 1rem;
-  }
-  
-  .create-form {
-    padding: 1.5rem;
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
   }
   
   .form-actions {
     flex-direction: column;
   }
   
-  .btn {
-    justify-content: center;
+  .form-container {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .banner-caption {
+    padding-left: 1.5rem;
+  }
+  
+  .banner-caption h2 {
+    font-size: 1.5rem;
+  }
+  
+  .banner-caption p {
+    font-size: 1rem;
   }
 }
 </style> 

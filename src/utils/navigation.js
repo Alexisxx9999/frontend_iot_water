@@ -14,8 +14,9 @@ export const sidebarMenuItems = [
   // Eliminados: map, complaints, incidents
   // Aquí reemplazo 'Personal' por 'Nodos'
   {
+    id: 'nodes',
     title: 'Nodos',
-    icon: 'mdi-access-point-network', // Cambia el icono si usas otro set
+    icon: 'network',
     route: '/app/nodes',
     badge: null
   },

@@ -14,7 +14,7 @@
     <div class="header">
       <h1><i class="fas fa-network-wired"></i> Lista de Nodos</h1>
       <router-link to="/app/nodes/create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Nuevo Nodo
+        <font-awesome-icon :icon="['fas', 'plus']" /> Nuevo Nodo
       </router-link>
     </div>
     <LoadingSpinner v-if="loading" message="Cargando nodos..." />
@@ -43,7 +43,9 @@
             <option value="activo">Activo</option>
             <option value="inactivo">Inactivo</option>
           </select>
-          <button @click="limpiarFiltros" class="btn btn-secondary"><i class="fas fa-times"></i> Limpiar</button>
+          <button @click="limpiarFiltros" class="btn btn-secondary">
+            <font-awesome-icon :icon="['fas', 'times']" /> Limpiar
+          </button>
         </div>
       </div>
       <div class="stats-bar">
@@ -79,10 +81,18 @@
               </td>
               <td class="actions-cell">
                 <div class="action-buttons">
-                  <router-link :to="`/app/nodes/update/${nodo.id}`" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></router-link>
-                  <button @click="openDeleteModal(nodo)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                  <button v-if="nodo.activo" @click="deactivateNode(nodo.id)" class="btn btn-secondary btn-sm"><i class="fas fa-pause"></i></button>
-                  <button v-else @click="activateNode(nodo.id)" class="btn btn-success btn-sm"><i class="fas fa-play"></i></button>
+                  <router-link :to="`/app/nodes/update/${nodo.id}`" class="btn btn-warning btn-sm" title="Editar nodo">
+                    <font-awesome-icon :icon="['fas', 'edit']" />
+                  </router-link>
+                  <button @click="openDeleteModal(nodo)" class="btn btn-danger btn-sm" title="Eliminar nodo">
+                    <font-awesome-icon :icon="['fas', 'trash']" />
+                  </button>
+                  <button v-if="nodo.activo" @click="deactivateNode(nodo.id)" class="btn btn-secondary btn-sm" title="Desactivar nodo">
+                    <font-awesome-icon :icon="['fas', 'pause']" />
+                  </button>
+                  <button v-else @click="activateNode(nodo.id)" class="btn btn-success btn-sm" title="Activar nodo">
+                    <font-awesome-icon :icon="['fas', 'play']" />
+                  </button>
                 </div>
               </td>
             </tr>
@@ -376,45 +386,23 @@ onMounted(() => {
   color: #2c3e50;
 }
 .actions-cell {
-  text-align: center;
+  text-align: left;
+  padding-left: 20px;
 }
 .action-buttons {
   display: flex;
   gap: 5px;
-  justify-content: center;
+  justify-content: flex-start;
 }
+
+
 .btn-sm {
   padding: 6px 10px;
   font-size: 12px;
 }
-.btn-warning {
-  background-color: #ffc107;
-  color: #212529;
-}
-.btn-warning:hover {
-  background-color: #e0a800;
-}
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-.btn-danger:hover {
-  background-color: #c82333;
-}
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-.btn-secondary:hover {
-  background-color: #495057;
-}
-.btn-success {
-  background-color: #28a745;
-  color: white;
-}
-.btn-success:hover {
-  background-color: #218838;
-}
+
+
+
 .no-results {
   text-align: center;
   padding: 60px 20px;

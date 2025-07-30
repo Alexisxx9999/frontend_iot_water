@@ -1,5 +1,5 @@
 <template>
-  <div class="medidor-list">
+  <div class="device-list">
     <div class="institutional-video-banner">
       <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
         <source src="/videos/istockphoto-1727476237-640_adpp_is.mp4" type="video/mp4" />
@@ -12,12 +12,12 @@
       </div>
     </div>
     <div class="header">
-      <h1 class="heading-1"><font-awesome-icon icon="list" /> Lista de Medidores</h1>
+      <h1><i class="fas fa-tablet-alt"></i> Lista de Dispositivos</h1>
       <router-link to="/app/devices/create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Nuevo Medidor
+        <font-awesome-icon :icon="['fas', 'plus']" /> Nuevo Dispositivo
       </router-link>
     </div>
-    <LoadingSpinner v-if="loading" message="Cargando medidores..." />
+    <LoadingSpinner v-if="loading" message="Cargando dispositivos..." />
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
     </div>
@@ -43,31 +43,33 @@
             <option value="consumoActual">Ordenar por Consumo</option>
             <option value="fechaLectura">Ordenar por Fecha</option>
           </select>
-          <button @click="limpiarFiltros" class="btn btn-secondary"><i class="fas fa-times"></i> Limpiar</button>
+          <button @click="limpiarFiltros" class="btn btn-secondary">
+            <font-awesome-icon :icon="['fas', 'times']" /> Limpiar
+          </button>
         </div>
       </div>
       <div class="stats-bar">
-        <div class="stat-item"><span class="text-body">Total:</span><span class="stat-value">{{ medidoresFiltrados.length }}</span></div>
+        <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value">{{ medidoresFiltrados.length }}</span></div>
         <div class="stat-item"><span class="stat-label">Activos:</span><span class="stat-value active">{{ medidoresActivos }}</span></div>
         <div class="stat-item"><span class="stat-label">Mantenimiento:</span><span class="stat-value maintenance">{{ medidoresMantenimiento }}</span></div>
         <div class="stat-item"><span class="stat-label">Inactivos:</span><span class="stat-value inactive">{{ medidoresInactivos }}</span></div>
       </div>
       <div class="table-container">
-        <table class="medidores-table">
+        <table class="devices-table">
           <thead>
             <tr>
-              <th class="subtitle">Código</th>
-              <th class="subtitle">Tipo</th>
-              <th class="subtitle">Consumo Actual (m³)</th>
-              <th class="subtitle">Estado</th>
-              <th class="subtitle">Marca</th>
-              <th class="subtitle">Modelo</th>
-              <th class="subtitle">Última Lectura</th>
-              <th class="subtitle">Acciones</th>
+              <th>Código</th>
+              <th>Tipo</th>
+              <th>Consumo Actual (m³)</th>
+              <th>Estado</th>
+              <th>Marca</th>
+              <th>Modelo</th>
+              <th>Última Lectura</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="medidor in medidoresOrdenados" :key="medidor.id" class="medidor-row">
+            <tr v-for="medidor in medidoresOrdenados" :key="medidor.id" class="device-row">
               <td class="codigo-cell"><strong>{{ medidor.codigo }}</strong></td>
               <td><span class="tipo-badge">{{ getTipoText(medidor.tipo) }}</span></td>
               <td class="consumo-cell"><span class="consumo-value">{{ medidor.consumoActual.toFixed(2) }}</span></td>
@@ -80,24 +82,44 @@
               <td>{{ formatDate(medidor.fechaLectura) }}</td>
               <td class="actions-cell">
                 <div class="action-buttons">
-                  <router-link :to="`/app/devices/${medidor.id}`" class="btn btn-info btn-sm">
-                    <font-awesome-icon icon="eye" />
+                  <router-link :to="`/app/devices/${medidor.id}`" class="btn btn-info btn-sm" title="Ver dispositivo">
+                    <font-awesome-icon :icon="['fas', 'eye']" />
                   </router-link>
-                  <router-link :to="`/app/devices/${medidor.id}/edit`" class="btn btn-warning btn-sm"><font-awesome-icon icon="edit" /></router-link>
-                  <button @click="confirmarEliminar(medidor)" class="btn btn-danger btn-sm"><font-awesome-icon icon="trash" /></button>
+                  <router-link :to="`/app/devices/${medidor.id}/edit`" class="btn btn-warning btn-sm" title="Editar dispositivo">
+                    <font-awesome-icon :icon="['fas', 'edit']" />
+                  </router-link>
+                  <button @click="confirmarEliminar(medidor)" class="btn btn-danger btn-sm" title="Eliminar dispositivo">
+                    <font-awesome-icon :icon="['fas', 'trash']" />
+                  </button>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
-        <div v-if="medidoresFiltrados.length === 0" class="no-results"><i class="fas fa-search"></i><p>No se encontraron medidores con los filtros aplicados</p><button @click="limpiarFiltros" class="btn btn-primary">Limpiar filtros</button></div>
+        <div v-if="medidoresFiltrados.length === 0" class="no-results">
+          <i class="fas fa-search"></i>
+          <p>No se encontraron dispositivos con los filtros aplicados</p>
+          <button @click="limpiarFiltros" class="btn btn-primary">
+            <font-awesome-icon :icon="['fas', 'refresh']" /> Limpiar filtros
+          </button>
+        </div>
       </div>
     </div>
     <div v-if="showDeleteModal" class="modal-overlay" @click="cancelarEliminar">
       <div class="modal-content" @click.stop>
-        <div class="modal-header"><h3><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h3></div>
-        <div class="modal-body"><p>¿Estás seguro de que quieres eliminar el medidor <strong>{{ medidorAEliminar?.codigo }}</strong>?</p><p class="warning-text">Esta acción no se puede deshacer.</p></div>
-        <div class="modal-footer"><button @click="cancelarEliminar" class="btn btn-secondary">Cancelar</button><button @click="eliminarMedidor" class="btn btn-danger"><i class="fas fa-trash"></i> Eliminar</button></div>
+        <div class="modal-header">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h3>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que quieres eliminar el dispositivo <strong>{{ medidorAEliminar?.codigo }}</strong>?</p>
+          <p class="warning-text">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+          <button @click="cancelarEliminar" class="btn btn-secondary">Cancelar</button>
+          <button @click="eliminarMedidor" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -136,13 +158,15 @@ function cancelarEliminar() { showDeleteModal.value = false; medidorAEliminar.va
 async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { await medidorService.deleteMedidor(medidorAEliminar.value.id); medidores.value = medidores.value.filter(m => m.id !== medidorAEliminar.value.id); showDeleteModal.value = false; medidorAEliminar.value = null } catch (err) { error.value = 'Error al eliminar el medidor: ' + err.message } }
 </script>
 <style scoped>
-.medidor-list {
+.device-list {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
   padding: 2rem;
   margin: 2rem auto;
-  max-width: 1200px;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
 }
 .header {
   display: flex;
@@ -152,12 +176,11 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
 }
 .header h1 {
   font-size: 2rem;
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--primary-color);
+  font-weight: 700;
+  color: #225b8c;
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Montserrat', sans-serif;
 }
 .filters-section {
   display: flex;
@@ -173,18 +196,17 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   width: 100%;
   padding: 10px 40px 10px 16px;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e0e7ef;
   font-size: 1rem;
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  font-family: 'Montserrat', sans-serif;
+  background: #f4f8fb;
+  color: #222;
 }
 .search-icon {
   position: absolute;
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--primary-color);
+  color: #66adf4;
   font-size: 18px;
 }
 .filter-controls {
@@ -194,19 +216,15 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
 .filter-select {
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-tertiary);
+  border: 1px solid #e0e7ef;
+  background: #f4f8fb;
   font-size: 1rem;
-  color: var(--text-primary);
-  font-family: 'Montserrat', sans-serif;
+  color: #222;
 }
 .stats-bar {
   display: flex;
   gap: 2rem;
   margin-bottom: 1.5rem;
-  background: #f4f8fb;
-  border-radius: 10px;
-  padding: 12px 0;
 }
 .stat-item {
   background: #f4f8fb;
@@ -240,13 +258,12 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   overflow-x: auto;
   box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
 }
-.medidores-table {
+.devices-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 15px;
-  font-family: 'Montserrat', sans-serif;
 }
-.medidores-table th {
+.devices-table th {
   background: #e3f2fd;
   color: #1976d2;
   font-weight: 700;
@@ -254,12 +271,12 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   text-align: left;
   border-bottom: 2px solid #e9ecef;
 }
-.medidores-table td {
+.devices-table td {
   padding: 15px;
   border-bottom: 1px solid #e9ecef;
   vertical-align: middle;
 }
-.medidor-row:hover {
+.device-row:hover {
   background-color: #f8f9fa;
 }
 .codigo-cell {
@@ -313,50 +330,108 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   gap: 5px;
   justify-content: center;
 }
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #495057;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
+
 .btn-sm {
   padding: 6px 10px;
   font-size: 12px;
 }
 /* Botones personalizados para DeviceListPage */
 .btn-warning {
-  background: #ffc107;
-  color: #212529;
-  border: none;
+  background: #ffc107 !important;
+  color: #212529 !important;
+  border: none !important;
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 .btn-warning:hover {
-  background: #e0a800;
+  background: #e0a800 !important;
 }
 .btn-danger {
-  background: #dc3545;
-  color: #fff;
-  border: none;
+  background: #dc3545 !important;
+  color: white !important;
+  border: none !important;
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 .btn-danger:hover {
-  background: #c82333;
+  background: #c82333 !important;
 }
 .btn-info {
-  background: #b2ebf2 !important;
-  color: #1976d2 !important;
-  border: none;
+  background: #17a2b8 !important;
+  color: white !important;
+  border: none !important;
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 .btn-info:hover {
-  background: #81d4fa !important;
-  color: #0d47a1 !important;
+  background: #138496 !important;
 }
 .no-results {
   text-align: center;
@@ -481,11 +556,11 @@ async function eliminarMedidor() { if (!medidorAEliminar.value) return; try { aw
   .stats-bar {
     flex-direction: column;
   }
-  .medidores-table {
+  .devices-table {
     font-size: 14px;
   }
-  .medidores-table th,
-  .medidores-table td {
+  .devices-table th,
+  .devices-table td {
     padding: 10px 8px;
   }
   .action-buttons {

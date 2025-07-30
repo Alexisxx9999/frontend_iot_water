@@ -1,10 +1,21 @@
 <template>
   <div class="node-update">
+    <div class="institutional-video-banner">
+      <video class="banner-video" autoplay loop muted playsinline poster="/src/assets/images/logo.png">
+        <source src="/videos/istockphoto-588380228-640_adpp_is.mp4" type="video/mp4" />
+        Tu navegador no soporta video HTML5.
+      </video>
+      <div class="banner-overlay"></div>
+      <div class="banner-caption">
+        <h2>Actualizar Nodo</h2>
+        <p>Modifica la información del nodo seleccionado.</p>
+      </div>
+    </div>
     <div class="header">
-      <router-link to="/app/nodes" class="btn-back">
-        ← Volver a la lista
+      <h1><i class="fas fa-edit"></i> Actualizar Nodo</h1>
+      <router-link to="/app/nodes" class="btn btn-secondary">
+        <font-awesome-icon :icon="['fas', 'arrow-left']" /> Volver
       </router-link>
-      <h1>Actualizar Nodo</h1>
     </div>
 
     <div v-if="loading" class="loading">
@@ -15,90 +26,104 @@
     <div v-else-if="!node" class="error">
       <h3>Nodo no encontrado</h3>
       <p>El nodo que buscas no existe o ha sido eliminado.</p>
-      <router-link to="/app/nodes" class="btn-back">
+      <router-link to="/app/nodes" class="btn btn-secondary">
         Volver a la lista
       </router-link>
     </div>
 
-    <div v-else class="form-container">
-      <form @submit.prevent="updateNode" class="node-form">
-        <div class="form-group">
-          <label for="codigo">Código del Nodo *</label>
-          <input
-            id="codigo"
-            v-model="form.codigo"
-            type="text"
-            placeholder="Ej: NODO-001"
-            required
-            class="form-input"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="tipo">Tipo de Nodo *</label>
-          <select
-            id="tipo"
-            v-model="form.tipo"
-            required
-            class="form-input"
-          >
-            <option value="">Selecciona un tipo</option>
-            <option value="Sensor de Temperatura">Sensor de Temperatura</option>
-            <option value="Sensor de Humedad">Sensor de Humedad</option>
-            <option value="Sensor de Presión">Sensor de Presión</option>
-            <option value="Actuador de Riego">Actuador de Riego</option>
-            <option value="Sensor de Calidad del Agua">Sensor de Calidad del Agua</option>
-            <option value="Controlador de Bomba">Controlador de Bomba</option>
-            <option value="Otro">Otro</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="fechaInstalacion">Fecha de Instalación *</label>
-          <input
-            id="fechaInstalacion"
-            v-model="form.fechaInstalacion"
-            type="date"
-            required
-            class="form-input"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="bateria">Nivel de Batería (%) *</label>
-          <div class="battery-input-container">
-            <input
-              id="bateria"
-              v-model.number="form.bateria"
-              type="range"
-              min="0"
-              max="100"
-              step="1"
-              class="battery-slider"
-            />
-            <span class="battery-value">{{ form.bateria }}%</span>
-          </div>
-          <div class="battery-visual">
-            <div class="battery-bar">
-              <div 
-                class="battery-fill" 
-                :style="{ width: form.bateria + '%' }"
-                :class="getBatteryClass(form.bateria)"
-              ></div>
+    <div v-else class="content">
+      <div class="form-container">
+        <form @submit.prevent="updateNode" class="node-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="codigo">Código del Nodo *</label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'tag']" /></span>
+                <input
+                  id="codigo"
+                  v-model="form.codigo"
+                  type="text"
+                  placeholder="Ej: NODO-001"
+                  required
+                  class="form-input"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="tipo">Tipo de Nodo *</label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'network-wired']" /></span>
+                <select
+                  id="tipo"
+                  v-model="form.tipo"
+                  required
+                  class="form-input"
+                >
+                  <option value="">Selecciona un tipo</option>
+                  <option value="Sensor de Temperatura">Sensor de Temperatura</option>
+                  <option value="Sensor de Humedad">Sensor de Humedad</option>
+                  <option value="Sensor de Presión">Sensor de Presión</option>
+                  <option value="Actuador de Riego">Actuador de Riego</option>
+                  <option value="Sensor de Calidad del Agua">Sensor de Calidad del Agua</option>
+                  <option value="Controlador de Bomba">Controlador de Bomba</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fechaInstalacion">Fecha de Instalación *</label>
+              <div class="input-icon-group">
+                <span class="input-icon"><font-awesome-icon :icon="['fas', 'calendar']" /></span>
+                <input
+                  id="fechaInstalacion"
+                  v-model="form.fechaInstalacion"
+                  type="date"
+                  required
+                  class="form-input"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="bateria">Nivel de Batería (%) *</label>
+              <div class="battery-input-container">
+                <input
+                  id="bateria"
+                  v-model.number="form.bateria"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  class="battery-slider"
+                />
+                <span class="battery-value">{{ form.bateria }}%</span>
+              </div>
+              <div class="battery-visual">
+                <div class="battery-bar">
+                  <div 
+                    class="battery-fill" 
+                    :style="{ width: form.bateria + '%' }"
+                    :class="getBatteryClass(form.bateria)"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <div class="form-actions">
-          <button type="button" @click="$router.push('/app/nodes')" class="btn-cancel">
-            Cancelar
-          </button>
-          <button type="submit" class="btn-submit" :disabled="isSubmitting">
-            <span v-if="isSubmitting">Actualizando...</span>
-            <span v-else>Actualizar Nodo</span>
-          </button>
-        </div>
-      </form>
+          <div class="form-actions">
+            <button type="button" @click="$router.push('/app/nodes')" class="btn btn-cancel">
+              <font-awesome-icon :icon="['fas', 'times']" /> Cancelar
+            </button>
+            <button type="submit" class="btn btn-submit" :disabled="isSubmitting">
+              <font-awesome-icon :icon="['fas', 'save']" />
+              <span v-if="isSubmitting">Actualizando...</span>
+              <span v-else>Actualizar Nodo</span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -168,53 +193,92 @@ onMounted(() => {
 
 <style scoped>
 .node-update {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 30px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
+}
+
+.institutional-video-banner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(20,40,60,0.55) 60%, rgba(0,0,0,0.35) 100%);
+  z-index: 1;
+}
+
+.banner-caption {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 2.5rem;
+  z-index: 2;
+}
+
+.banner-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.banner-caption p {
+  font-size: 1.15rem;
+  color: #e0e6f0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 25px;
-  margin-bottom: 40px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-.btn-back {
-  color: #4a90e2;
-  text-decoration: none;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 15px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  background: rgba(74, 144, 226, 0.1);
-}
-
-.btn-back:hover {
-  background: rgba(74, 144, 226, 0.2);
-  transform: translateX(-3px);
-  text-decoration: none;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }
 
 .header h1 {
-  color: #2c3e50;
-  margin: 0;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #225b8c;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .loading, .error {
@@ -256,56 +320,78 @@ onMounted(() => {
   color: #7f8c8d;
 }
 
+.content {
+  display: flex;
+  justify-content: center;
+}
+
 .form-container {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  box-shadow: 0 2px 8px rgba(34, 91, 140, 0.05);
 }
 
 .node-form {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.5rem;
 }
 
 .form-group label {
-  font-weight: 700;
-  color: #34495e;
+  font-weight: 600;
+  color: #225b8c;
   font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 5px;
+}
+
+.input-icon-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #66adf4;
+  font-size: 16px;
+  z-index: 1;
 }
 
 .form-input {
-  padding: 15px 20px;
-  border: 2px solid #e8f4fd;
-  border-radius: 12px;
-  font-size: 1.1em;
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #e0e7ef;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+  color: #222;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-  transform: translateY(-2px);
+  border-color: #66adf4;
+  box-shadow: 0 0 0 3px rgba(102, 173, 244, 0.1);
 }
 
 .form-input::placeholder {
-  color: #95a5a6;
-  font-style: italic;
+  color: #9ca3af;
 }
 
 .battery-input-container {
@@ -404,88 +490,88 @@ onMounted(() => {
 
 .form-actions {
   display: flex;
-  gap: 20px;
+  gap: 1rem;
   justify-content: flex-end;
-  margin-top: 30px;
-  padding-top: 30px;
-  border-top: 2px solid #e8f4fd;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e7ef;
 }
 
-.btn-cancel, .btn-submit {
-  padding: 15px 30px;
-  border-radius: 12px;
-  font-weight: 700;
+.btn {
+  padding: 12px 24px;
   border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   transition: all 0.3s ease;
-  font-size: 1.1em;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  min-width: 140px;
 }
 
 .btn-cancel {
-  background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
-  color: #7f8c8d;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 2px solid #d1d5db;
 }
 
 .btn-cancel:hover {
-  background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
 }
 
 .btn-submit {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
-.btn-submit:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
 }
 
-.btn-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #495057;
 }
 
 @media (max-width: 768px) {
-  .node-update {
-    padding: 20px;
-  }
-  
   .header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-    text-align: center;
-  }
-  
-  .header h1 {
-    font-size: 1.8rem;
-  }
-  
-  .form-container {
-    padding: 25px;
+    gap: 15px;
+    align-items: stretch;
   }
   
   .form-actions {
     flex-direction: column;
-    gap: 15px;
   }
   
-  .battery-input-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
+  .form-container {
+    padding: 1.5rem;
   }
   
-  .battery-value {
-    text-align: center;
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .banner-caption {
+    padding-left: 1.5rem;
+  }
+  
+  .banner-caption h2 {
+    font-size: 1.5rem;
+  }
+  
+  .banner-caption p {
+    font-size: 1rem;
   }
 }
 </style> 

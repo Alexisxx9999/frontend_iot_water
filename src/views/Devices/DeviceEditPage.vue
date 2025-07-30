@@ -1,7 +1,20 @@
 <template>
-  <div class="medidor-edit">
+  <div class="device-edit">
+    <!-- Banner de video institucional -->
+    <div class="institutional-video-banner">
+      <video class="banner-video" autoplay muted loop>
+        <source src="/videos/istockphoto-1727476237-640_adpp_is.mp4" type="video/mp4">
+      </video>
+      <div class="banner-overlay"></div>
+      <div class="banner-caption">
+        <h2>Gestión Inteligente del Agua</h2>
+        <p>Edita la información de tu dispositivo IoT</p>
+      </div>
+    </div>
+
+    <!-- Header -->
     <div class="header">
-      <h1><i class="fas fa-edit"></i> Editar Medidor</h1>
+      <h1><i class="fas fa-edit"></i> Editar Dispositivo</h1>
       <div class="header-actions">
         <router-link :to="`/app/devices/${medidorId}`" class="btn btn-info">
           <i class="fas fa-eye"></i> Ver Detalles
@@ -11,66 +24,128 @@
         </router-link>
       </div>
     </div>
-    <LoadingSpinner v-if="loading" message="Cargando medidor..." />
+
+    <LoadingSpinner v-if="loading" message="Cargando dispositivo..." />
+
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
-      <router-link to="/app/devices" class="btn btn-primary">
+      <router-link to="/app/devices" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Volver a la Lista
       </router-link>
     </div>
+
     <div v-else class="content">
       <div class="form-container">
-        <form @submit.prevent="actualizarMedidor" class="medidor-form">
-          <!-- Información básica -->
-          <div class="form-section">
-            <h3><i class="fas fa-info-circle"></i> Información Básica</h3>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="codigo">Código del Medidor *</label>
-                <input id="codigo" v-model="formData.codigo" type="text" required placeholder="Ej: MED001" :class="{ 'error': errors.codigo }">
-                <span v-if="errors.codigo" class="error-message">{{ errors.codigo }}</span>
+        <form @submit.prevent="actualizarMedidor" class="device-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="codigo">Código del Dispositivo *</label>
+              <div class="input-icon-group">
+                <font-awesome-icon :icon="['fas', 'barcode']" class="input-icon" />
+                <input 
+                  id="codigo" 
+                  v-model="formData.codigo" 
+                  type="text" 
+                  required 
+                  placeholder="Ej: MED001" 
+                  class="form-input"
+                  :class="{ 'error': errors.codigo }"
+                >
               </div>
-              <div class="form-group">
-                <label for="tipo">Tipo de Medidor *</label>
-                <select id="tipo" v-model="formData.tipo" required :class="{ 'error': errors.tipo }">
+              <span v-if="errors.codigo" class="error-message">{{ errors.codigo }}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="tipo">Tipo de Dispositivo *</label>
+              <div class="input-icon-group">
+                <font-awesome-icon :icon="['fas', 'cog']" class="input-icon" />
+                <select 
+                  id="tipo" 
+                  v-model="formData.tipo" 
+                  required 
+                  class="form-input"
+                  :class="{ 'error': errors.tipo }"
+                >
                   <option value="">Seleccionar tipo</option>
                   <option v-for="tipo in tiposMedidores" :key="tipo.value" :value="tipo.value">{{ tipo.label }}</option>
                 </select>
-                <span v-if="errors.tipo" class="error-message">{{ errors.tipo }}</span>
               </div>
+              <span v-if="errors.tipo" class="error-message">{{ errors.tipo }}</span>
             </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="estado">Estado *</label>
-                <select id="estado" v-model="formData.estado" required :class="{ 'error': errors.estado }">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="estado">Estado *</label>
+              <div class="input-icon-group">
+                <font-awesome-icon :icon="['fas', 'toggle-on']" class="input-icon" />
+                <select 
+                  id="estado" 
+                  v-model="formData.estado" 
+                  required 
+                  class="form-input"
+                  :class="{ 'error': errors.estado }"
+                >
                   <option value="">Seleccionar estado</option>
                   <option v-for="estado in estadosMedidores" :key="estado.value" :value="estado.value">{{ estado.label }}</option>
                 </select>
-                <span v-if="errors.estado" class="error-message">{{ errors.estado }}</span>
               </div>
-              <div class="form-group">
-                <label for="consumoActual">Consumo Actual (m³)</label>
-                <input id="consumoActual" v-model.number="formData.consumoActual" type="number" step="0.01" min="0" placeholder="0.00" :class="{ 'error': errors.consumoActual }">
-                <span v-if="errors.consumoActual" class="error-message">{{ errors.consumoActual }}</span>
+              <span v-if="errors.estado" class="error-message">{{ errors.estado }}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="consumoActual">Consumo Actual (m³)</label>
+              <div class="input-icon-group">
+                <font-awesome-icon :icon="['fas', 'tint']" class="input-icon" />
+                <input 
+                  id="consumoActual" 
+                  v-model.number="formData.consumoActual" 
+                  type="number" 
+                  step="0.01" 
+                  min="0" 
+                  placeholder="0.00" 
+                  class="form-input"
+                  :class="{ 'error': errors.consumoActual }"
+                >
               </div>
+              <span v-if="errors.consumoActual" class="error-message">{{ errors.consumoActual }}</span>
             </div>
           </div>
-          <!-- Información técnica -->
-          <div class="form-section">
-            <h3><i class="fas fa-cogs"></i> Información Técnica</h3>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="marca">Marca</label>
-                <input id="marca" v-model="formData.marca" type="text" placeholder="Ej: Siemens, ABB, etc." :class="{ 'error': errors.marca }">
-                <span v-if="errors.marca" class="error-message">{{ errors.marca }}</span>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="marca">Marca</label>
+              <div class="input-icon-group">
+                <font-awesome-icon :icon="['fas', 'tag']" class="input-icon" />
+                <input 
+                  id="marca" 
+                  v-model="formData.marca" 
+                  type="text" 
+                  placeholder="Ej: Siemens, ABB, etc." 
+                  class="form-input"
+                  :class="{ 'error': errors.marca }"
+                >
               </div>
-              <div class="form-group">
-                <label for="modelo">Modelo</label>
-                <input id="modelo" v-model="formData.modelo" type="text" placeholder="Ej: SITRANS F, AquaMaster, etc." :class="{ 'error': errors.modelo }">
-                <span v-if="errors.modelo" class="error-message">{{ errors.modelo }}</span>
+              <span v-if="errors.marca" class="error-message">{{ errors.marca }}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="modelo">Modelo</label>
+              <div class="input-icon-group">
+                <font-awesome-icon :icon="['fas', 'microchip']" class="input-icon" />
+                <input 
+                  id="modelo" 
+                  v-model="formData.modelo" 
+                  type="text" 
+                  placeholder="Ej: SITRANS F, AquaMaster, etc." 
+                  class="form-input"
+                  :class="{ 'error': errors.modelo }"
+                >
               </div>
+              <span v-if="errors.modelo" class="error-message">{{ errors.modelo }}</span>
             </div>
           </div>
+
           <!-- Información de estado -->
           <div v-if="formData.estado === 'mantenimiento' || formData.estado === 'inactivo'" class="form-section">
             <h3><i class="fas fa-exclamation-triangle"></i> Información de Estado</h3>
@@ -81,404 +156,579 @@
               </div>
             </div>
           </div>
+
           <div class="form-section">
             <h3><i class="fas fa-history"></i> Información de Auditoría</h3>
             <div class="audit-info">
-              <div class="audit-item"><span class="label">Creado:</span><span class="value">{{ formatDate(medidorOriginal.createdAt) }}</span></div>
-              <div class="audit-item"><span class="label">Última actualización:</span><span class="value">{{ formatDate(medidorOriginal.updatedAt) }}</span></div>
-              <div class="audit-item"><span class="label">Última lectura:</span><span class="value">{{ formatDate(medidorOriginal.fechaLectura) }}</span></div>
+              <div class="audit-item">
+                <span class="label">Creado:</span>
+                <span class="value">{{ formatDate(medidorOriginal.createdAt) }}</span>
+              </div>
+              <div class="audit-item">
+                <span class="label">Última actualización:</span>
+                <span class="value">{{ formatDate(medidorOriginal.updatedAt) }}</span>
+              </div>
+              <div class="audit-item">
+                <span class="label">Última lectura:</span>
+                <span class="value">{{ formatDate(medidorOriginal.fechaLectura) }}</span>
+              </div>
             </div>
           </div>
+
           <div class="form-actions">
-            <button type="button" @click="restaurarFormulario" class="btn btn-secondary">
+            <button type="button" @click="restaurarFormulario" class="btn btn-cancel">
               <i class="fas fa-undo"></i> Restaurar
             </button>
-            <button type="submit" class="btn btn-primary" :disabled="loading || !hasChanges">
+            <button type="submit" class="btn btn-submit" :disabled="loading || !hasChanges">
               <i class="fas fa-save"></i> {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
           </div>
         </form>
       </div>
-      <div class="preview-container">
-        <h3><i class="fas fa-eye"></i> Vista Previa</h3>
-        <div class="preview-card">
-          <div class="preview-header">
-            <h4>{{ formData.codigo || 'CÓDIGO' }}</h4>
-            <span v-if="formData.estado" :class="['status-badge', getEstadoClass(formData.estado)]">
-              {{ getEstadoText(formData.estado) }}
-            </span>
-          </div>
-          <div class="preview-info">
-            <div class="preview-item"><span class="label">Tipo:</span><span class="value">{{ getTipoText(formData.tipo) || 'No especificado' }}</span></div>
-            <div class="preview-item"><span class="label">Consumo:</span><span class="value">{{ formData.consumoActual || 0 }} m³</span></div>
-            <div class="preview-item"><span class="label">Marca:</span><span class="value">{{ formData.marca || 'No especificada' }}</span></div>
-            <div class="preview-item"><span class="label">Modelo:</span><span class="value">{{ formData.modelo || 'No especificado' }}</span></div>
-          </div>
-          <div v-if="formData.estado === 'mantenimiento' || formData.estado === 'inactivo'" class="preview-message">
-            <i class="fas fa-info-circle"></i>
-            {{ getMensajeMantenimiento(formData.estado) }}
-          </div>
-          <div v-if="hasChanges" class="changes-detected">
-            <i class="fas fa-edit"></i>
-            <span>Se han detectado cambios en el formulario</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import medidorService from '../../services/medidorService'
-import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
-const route = useRoute()
-const router = useRouter()
-const medidorId = route.params.id
-const loading = ref(false)
-const error = ref(null)
-const errors = ref({})
-const medidorOriginal = ref({})
-const formData = ref({ codigo: '', tipo: '', consumoActual: 0, estado: 'activo', marca: '', modelo: '' })
-const tiposMedidores = medidorService.getTiposMedidores()
-const estadosMedidores = medidorService.getEstadosMedidores()
-onMounted(async () => { await loadMedidor() })
-const loadMedidor = async () => {
-  try {
-    loading.value = true
-    const medidor = await medidorService.getMedidorById(medidorId)
-    medidorOriginal.value = { ...medidor }
-    formData.value = { codigo: medidor.codigo, tipo: medidor.tipo, consumoActual: medidor.consumoActual, estado: medidor.estado, marca: medidor.marca, modelo: medidor.modelo }
-  } catch (err) {
-    error.value = 'Error al cargar el medidor: ' + err.message
-  } finally {
-    loading.value = false
-  }
-}
-const hasChanges = computed(() => formData.value.codigo !== medidorOriginal.value.codigo || formData.value.tipo !== medidorOriginal.value.tipo || formData.value.consumoActual !== medidorOriginal.value.consumoActual || formData.value.estado !== medidorOriginal.value.estado || formData.value.marca !== medidorOriginal.value.marca || formData.value.modelo !== medidorOriginal.value.modelo)
-const validarFormulario = () => {
-  errors.value = {}
-  if (!formData.value.codigo.trim()) errors.value.codigo = 'El código es requerido'
-  else if (formData.value.codigo.length < 3) errors.value.codigo = 'El código debe tener al menos 3 caracteres'
-  if (!formData.value.tipo) errors.value.tipo = 'El tipo es requerido'
-  if (!formData.value.estado) errors.value.estado = 'El estado es requerido'
-  if (formData.value.consumoActual < 0) errors.value.consumoActual = 'El consumo no puede ser negativo'
-  return Object.keys(errors.value).length === 0
-}
-const actualizarMedidor = async () => {
-  if (!validarFormulario()) return
-  try {
-    loading.value = true
-    await medidorService.updateMedidor(medidorId, formData.value)
-    medidorOriginal.value = { ...medidorOriginal.value, ...formData.value }
-    router.push(`/app/devices/${medidorId}`)
-  } catch (err) {
-    if (err.response?.data?.errors) errors.value = { ...errors.value, ...err.response.data.errors }
-  } finally {
-    loading.value = false
-  }
-}
-const restaurarFormulario = () => {
-  formData.value = { codigo: medidorOriginal.value.codigo, tipo: medidorOriginal.value.tipo, consumoActual: medidorOriginal.value.consumoActual, estado: medidorOriginal.value.estado, marca: medidorOriginal.value.marca, modelo: medidorOriginal.value.modelo }
-  errors.value = {}
-}
-const getTipoText = tipo => tiposMedidores.find(t => t.value === tipo)?.label || tipo
-const getEstadoText = estado => estadosMedidores.find(e => e.value === estado)?.label || estado
-const getEstadoClass = estado => estado === 'activo' ? 'estado-activo' : estado === 'mantenimiento' ? 'estado-mantenimiento' : estado === 'inactivo' ? 'estado-inactivo' : 'estado-default'
-const getEstadoTitle = estado => estado === 'mantenimiento' ? 'Medidor en Mantenimiento' : estado === 'inactivo' ? 'Medidor Inactivo' : ''
-const getEstadoDescription = estado => estado === 'mantenimiento' ? 'Este medidor estará en mantenimiento programado. Las lecturas pueden no estar disponibles durante este período.' : estado === 'inactivo' ? 'Este medidor está fuera de servicio y requiere revisión técnica antes de poder registrar lecturas.' : ''
-const getMensajeMantenimiento = estado => getEstadoDescription(estado)
-const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-</script>
-<style scoped>
-@use '@/assets/styles/main.scss' as *;
 
-.medidor-edit {
+<script>
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import medidorService from '@/services/medidorService'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+
+export default {
+  name: 'DeviceEditPage',
+  components: {
+    LoadingSpinner
+  },
+  setup() {
+    const route = useRoute()
+    const router = useRouter()
+    const medidorId = route.params.id
+    const loading = ref(false)
+    const error = ref(null)
+    const medidorOriginal = ref({})
+    const tiposMedidores = medidorService.getTiposMedidores()
+    const estadosMedidores = medidorService.getEstadosMedidores()
+
+    const formData = reactive({
+      codigo: '',
+      tipo: '',
+      estado: '',
+      consumoActual: 0,
+      marca: '',
+      modelo: ''
+    })
+
+    const errors = reactive({
+      codigo: '',
+      tipo: '',
+      estado: '',
+      consumoActual: '',
+      marca: '',
+      modelo: ''
+    })
+
+    const hasChanges = computed(() => {
+      return formData.codigo !== medidorOriginal.value.codigo ||
+             formData.tipo !== medidorOriginal.value.tipo ||
+             formData.estado !== medidorOriginal.value.estado ||
+             formData.consumoActual !== medidorOriginal.value.consumoActual ||
+             formData.marca !== medidorOriginal.value.marca ||
+             formData.modelo !== medidorOriginal.value.modelo
+    })
+
+    const cargarMedidor = async () => {
+      loading.value = true
+      try {
+        const medidor = await medidorService.getMedidorById(medidorId)
+        medidorOriginal.value = { ...medidor }
+        Object.assign(formData, medidor)
+      } catch (err) {
+        error.value = 'Error al cargar el dispositivo: ' + err.message
+      } finally {
+        loading.value = false
+      }
+    }
+
+    const validarFormulario = () => {
+      let isValid = true
+      
+      // Validar código
+      if (!formData.codigo.trim()) {
+        errors.codigo = 'El código es obligatorio'
+        isValid = false
+      } else if (formData.codigo.length < 3) {
+        errors.codigo = 'El código debe tener al menos 3 caracteres'
+        isValid = false
+      } else {
+        errors.codigo = ''
+      }
+
+      // Validar tipo
+      if (!formData.tipo) {
+        errors.tipo = 'El tipo es obligatorio'
+        isValid = false
+      } else {
+        errors.tipo = ''
+      }
+
+      // Validar estado
+      if (!formData.estado) {
+        errors.estado = 'El estado es obligatorio'
+        isValid = false
+      } else {
+        errors.estado = ''
+      }
+
+      // Validar consumo actual
+      if (formData.consumoActual < 0) {
+        errors.consumoActual = 'El consumo no puede ser negativo'
+        isValid = false
+      } else {
+        errors.consumoActual = ''
+      }
+
+      return isValid
+    }
+
+    const actualizarMedidor = async () => {
+      if (!validarFormulario()) {
+        return
+      }
+
+      loading.value = true
+      try {
+        await medidorService.updateMedidor(medidorId, formData)
+        router.push('/app/devices')
+      } catch (err) {
+        error.value = 'Error al actualizar el dispositivo: ' + err.message
+      } finally {
+        loading.value = false
+      }
+    }
+
+    const restaurarFormulario = () => {
+      Object.assign(formData, medidorOriginal.value)
+    }
+
+    const getAlertClass = (estado) => {
+      switch (estado) {
+        case 'mantenimiento':
+          return 'alert-warning'
+        case 'inactivo':
+          return 'alert-danger'
+        default:
+          return ''
+      }
+    }
+
+    const getEstadoTitle = (estado) => {
+      switch (estado) {
+        case 'mantenimiento':
+          return 'Dispositivo en Mantenimiento'
+        case 'inactivo':
+          return 'Dispositivo Inactivo'
+        default:
+          return ''
+      }
+    }
+
+    const getEstadoDescription = (estado) => {
+      switch (estado) {
+        case 'mantenimiento':
+          return 'Este dispositivo está programado para mantenimiento. Se recomienda revisar su estado antes de activarlo.'
+        case 'inactivo':
+          return 'Este dispositivo está desactivado. No realizará lecturas hasta que sea activado.'
+        default:
+          return ''
+      }
+    }
+
+    const formatDate = (dateString) => {
+      if (!dateString) return 'No disponible'
+      return new Date(dateString).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    }
+
+    onMounted(() => {
+      cargarMedidor()
+    })
+
+    return {
+      medidorId,
+      loading,
+      error,
+      medidorOriginal,
+      formData,
+      errors,
+      hasChanges,
+      tiposMedidores,
+      estadosMedidores,
+      actualizarMedidor,
+      restaurarFormulario,
+      getAlertClass,
+      getEstadoTitle,
+      getEstadoDescription,
+      formatDate
+    }
+  }
+}
+</script>
+
+<style scoped>
+.device-edit {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1400px;
+  min-width: 320px;
+  width: 100%;
+}
+
+.institutional-video-banner {
+  width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background: #f4f8fb; /* fondo claro y sobrio */
-  font-family: 'Montserrat', sans-serif;
+  margin: 0 auto 2.5rem auto;
+  position: relative;
+  min-height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 18px;
+  z-index: 0;
+  display: block;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(34, 91, 140, 0.8) 0%, rgba(52, 152, 219, 0.6) 100%);
+  z-index: 1;
+}
+
+.banner-caption {
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+}
+
+.banner-caption h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.banner-caption p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }
 
 .header h1 {
-  color: var(--primary-color);
-  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #23272f;
   display: flex;
   align-items: center;
-  gap: 15px;
-  font-size: 2rem;
-  font-weight: var(--font-weight-bold, 700);
-  font-family: 'Montserrat', sans-serif;
+  gap: 0.75rem;
+}
+
+.header h1 i {
+  color: #3498db;
 }
 
 .header-actions {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
+}
+
+.header .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-info {
+  background: #17a2b8;
+}
+
+.btn-info:hover {
+  background: #138496;
+}
+
+.btn-secondary {
+  background: #6c757d;
+}
+
+.btn-secondary:hover {
+  background: #495057;
 }
 
 .content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 30px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
 }
 
-/* Formulario */
 .form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.device-form {
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-
-.medidor-form {
-  padding: 30px;
-}
-
-.form-section {
-  margin-bottom: 30px;
-}
-
-.form-section h3 {
-  color: #2c3e50;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e9ecef;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #2c3e50;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #23272f;
+  font-size: 0.95rem;
 }
 
-.form-group input,
-.form-group select {
-  padding: 12px;
-  border: 2px solid #e9ecef;
+.input-icon-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #6c757d;
+  z-index: 2;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 2px solid #e1e8ed;
   border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.2s;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #fff;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-input:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
-.form-group input.error,
-.form-group select.error {
-  border-color: #dc3545;
+.form-input::placeholder {
+  color: #adb5bd;
+}
+
+.form-input.error {
+  border-color: #e74c3c;
 }
 
 .error-message {
-  color: #dc3545;
-  font-size: 14px;
-  margin-top: 5px;
+  display: block;
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
 }
 
-/* Alertas */
-.alert {
-  padding: 15px;
+.form-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
   border-radius: 8px;
-  margin-bottom: 20px;
+  border-left: 4px solid #3498db;
+}
+
+.form-section h3 {
+  color: #23272f;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
 }
 
 .alert-warning {
-  background-color: #fff3cd;
-  color: #856404;
+  background: #fff3cd;
   border: 1px solid #ffeaa7;
+  color: #856404;
 }
 
 .alert-danger {
-  background-color: #f8d7da;
-  color: #721c24;
+  background: #f8d7da;
   border: 1px solid #f5c6cb;
+  color: #721c24;
 }
 
 .alert-content h4 {
-  margin: 0 0 10px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
 }
 
 .alert-content p {
   margin: 0;
-  line-height: 1.5;
+  font-size: 0.9rem;
 }
 
-/* Información de auditoría */
 .audit-info {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
+  display: grid;
+  gap: 0.75rem;
 }
 
 .audit-item {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  padding: 5px 0;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e1e8ed;
 }
 
 .audit-item:last-child {
-  margin-bottom: 0;
+  border-bottom: none;
 }
 
 .audit-item .label {
-  color: #666;
-  font-weight: 500;
+  font-weight: 600;
+  color: #23272f;
 }
 
 .audit-item .value {
-  color: #2c3e50;
-  font-weight: 600;
+  color: #6c757d;
 }
 
-/* Botones de acción */
 .form-actions {
   display: flex;
-  gap: 15px;
+  gap: 1rem;
   justify-content: flex-end;
-  padding-top: 20px;
-  border-top: 1px solid #e9ecef;
+  padding-top: 2rem;
+  border-top: 1px solid #e1e8ed;
+  margin-top: 2rem;
 }
 
-/* Vista previa */
-.preview-container {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  padding: 20px;
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-}
-
-.preview-container h3 {
-  color: #2c3e50;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.preview-card {
-  border: 2px solid #e9ecef;
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
   border-radius: 8px;
-  padding: 20px;
-}
-
-.preview-header {
-  display: flex;
-  justify-content: space-between;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.preview-header h4 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 18px;
-}
-
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.estado-activo {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.estado-mantenimiento {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.estado-inactivo {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.preview-info {
-  margin-bottom: 15px;
-}
-
-.preview-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  padding: 5px 0;
-}
-
-.preview-item .label {
-  color: #666;
+  gap: 0.5rem;
   font-weight: 500;
 }
 
-.preview-item .value {
-  color: #2c3e50;
-  font-weight: 600;
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.preview-message {
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  color: #856404;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 15px;
+.btn-cancel {
+  background: #6c757d;
+  color: white;
 }
 
-.changes-detected {
-  background: #e3f2fd;
-  color: #1976d2;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid #bbdefb;
+.btn-cancel:hover {
+  background: #495057;
 }
 
-/* Responsive */
+.btn-submit {
+  background: #3498db;
+  color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #e74c3c;
+}
+
+.error-message p {
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
-  .content {
-    grid-template-columns: 1fr;
+  .device-edit {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  
+  .banner-caption h2 {
+    font-size: 2rem;
+  }
+  
+  .banner-caption p {
+    font-size: 1rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
   }
   
   .form-row {
@@ -489,18 +739,8 @@ const formatDate = date => !date ? 'No disponible' : new Date(date).toLocaleDate
     flex-direction: column;
   }
   
-  .header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
-  }
-  
-  .header-actions {
-    flex-direction: column;
-  }
-  
-  .preview-container {
-    position: static;
+  .btn {
+    justify-content: center;
   }
 }
 </style> 
