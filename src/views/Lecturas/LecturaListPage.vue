@@ -67,8 +67,8 @@ const tipoLecturaLabel = (tipo) => {
 </script>
 <style scoped>
 .lectura-list-page {
-  max-width: 900px;
-  margin: 40px auto;
+  max-width: 1200px;
+  margin: 40px 15px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 16px 0 rgba(0,0,0,0.07);

@@ -16,7 +16,7 @@
       <router-link to="/app/roles" class="btn btn-secondary">
         <font-awesome-icon :icon="['fas', 'arrow-left']" /> Volver
       </router-link>
-    </div>
+      </div>
     <LoadingSpinner v-if="loading" message="Cargando datos del rol..." />
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
@@ -25,11 +25,11 @@
       <div class="form-container">
         <form @submit.prevent="handleSubmit" class="role-form">
           <div class="form-row">
-            <div class="form-group">
+      <div class="form-group">
               <label for="nombreRol" class="form-label">
                 <font-awesome-icon :icon="['fas', 'user-tag']" /> Nombre del Rol *
               </label>
-              <div class="input-icon-group">
+        <div class="input-icon-group">
                 <span class="input-icon"><font-awesome-icon :icon="['fas', 'tag']" /></span>
                 <input 
                   id="nombreRol" 
@@ -39,28 +39,28 @@
                   placeholder="Ej: Administrador, Usuario, Supervisor" 
                   required 
                 />
-              </div>
-            </div>
+        </div>
+      </div>
             
-            <div class="form-group">
+      <div class="form-group">
               <label for="estadoRol" class="form-label">
                 <font-awesome-icon :icon="['fas', 'toggle-on']" /> Estado *
               </label>
-              <div class="input-icon-group">
+        <div class="input-icon-group">
                 <span class="input-icon"><font-awesome-icon :icon="['fas', 'power-off']" /></span>
                 <select id="estadoRol" v-model="form.estadoRol" class="form-input" required>
                   <option value="Activo">Activo</option>
                   <option value="Inactivo">Inactivo</option>
                 </select>
               </div>
-            </div>
-          </div>
+        </div>
+      </div>
           
-          <div class="form-group">
+      <div class="form-group">
             <label for="descripcionRol" class="form-label">
               <font-awesome-icon :icon="['fas', 'align-left']" /> Descripción *
             </label>
-            <div class="input-icon-group">
+        <div class="input-icon-group">
               <span class="input-icon"><font-awesome-icon :icon="['fas', 'comment']" /></span>
               <textarea 
                 id="descripcionRol" 
@@ -70,8 +70,8 @@
                 rows="3"
                 required
               ></textarea>
-            </div>
-          </div>
+        </div>
+      </div>
           
           <div class="form-group">
             <label for="permisos" class="form-label">
@@ -92,15 +92,15 @@
             </small>
           </div>
           
-          <div class="form-actions">
+      <div class="form-actions">
             <button type="button" @click="goBack" class="btn btn-cancel">
               <font-awesome-icon :icon="['fas', 'times']" /> Cancelar
-            </button>
+        </button>
             <button type="submit" class="btn btn-submit">
               <font-awesome-icon :icon="['fas', 'save']" /> Guardar Cambios
-            </button>
-          </div>
-        </form>
+        </button>
+      </div>
+    </form>
       </div>
     </div>
   </div>
@@ -119,7 +119,7 @@ export default {
   },
   setup() {
     const route = useRoute()
-    const router = useRouter()
+const router = useRouter()
     const form = ref(null)
     const loading = ref(true)
     const error = ref(null)
@@ -143,10 +143,10 @@ export default {
         error.value = 'Error al cargar el rol: ' + err.message
       } finally {
         loading.value = false
-      }
+  }
     }
 
-    const handleSubmit = async () => {
+const handleSubmit = async () => {
       try {
         const updatedRole = {
           nombreRol: form.value.nombreRol,
@@ -155,7 +155,7 @@ export default {
           estadoRol: form.value.estadoRol
         }
         await rolesService.updateRole(route.params.id, updatedRole)
-        router.push('/app/roles')
+  router.push('/app/roles')
       } catch (error) {
         console.error('Error al actualizar rol:', error)
       }

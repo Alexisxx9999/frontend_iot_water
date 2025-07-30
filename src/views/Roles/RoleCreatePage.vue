@@ -19,13 +19,13 @@
     </div>
     <div class="content">
       <div class="form-container">
-        <form @submit.prevent="handleSubmit" class="role-form">
+    <form @submit.prevent="handleSubmit" class="role-form">
           <div class="form-row">
-            <div class="form-group">
+      <div class="form-group">
               <label for="nombreRol" class="form-label">
                 <font-awesome-icon :icon="['fas', 'user-tag']" /> Nombre del Rol *
               </label>
-              <div class="input-icon-group">
+        <div class="input-icon-group">
                 <span class="input-icon"><font-awesome-icon :icon="['fas', 'tag']" /></span>
                 <input 
                   id="nombreRol" 
@@ -35,28 +35,28 @@
                   placeholder="Ej: Administrador, Usuario, Supervisor" 
                   required 
                 />
-              </div>
-            </div>
+        </div>
+      </div>
             
-            <div class="form-group">
+      <div class="form-group">
               <label for="estadoRol" class="form-label">
                 <font-awesome-icon :icon="['fas', 'toggle-on']" /> Estado *
               </label>
-              <div class="input-icon-group">
+        <div class="input-icon-group">
                 <span class="input-icon"><font-awesome-icon :icon="['fas', 'power-off']" /></span>
                 <select id="estadoRol" v-model="form.estadoRol" class="form-input" required>
                   <option value="Activo">Activo</option>
                   <option value="Inactivo">Inactivo</option>
                 </select>
               </div>
-            </div>
-          </div>
+        </div>
+      </div>
           
-          <div class="form-group">
+      <div class="form-group">
             <label for="descripcionRol" class="form-label">
               <font-awesome-icon :icon="['fas', 'align-left']" /> Descripción *
             </label>
-            <div class="input-icon-group">
+        <div class="input-icon-group">
               <span class="input-icon"><font-awesome-icon :icon="['fas', 'comment']" /></span>
               <textarea 
                 id="descripcionRol" 
@@ -66,8 +66,8 @@
                 rows="3"
                 required
               ></textarea>
-            </div>
-          </div>
+        </div>
+      </div>
           
           <div class="form-group">
             <label for="permisos" class="form-label">
@@ -88,15 +88,15 @@
             </small>
           </div>
           
-          <div class="form-actions">
+      <div class="form-actions">
             <button type="button" @click="goBack" class="btn btn-cancel">
               <font-awesome-icon :icon="['fas', 'times']" /> Cancelar
-            </button>
+        </button>
             <button type="submit" class="btn btn-submit">
               <font-awesome-icon :icon="['fas', 'save']" /> Crear Rol
-            </button>
-          </div>
-        </form>
+        </button>
+      </div>
+    </form>
       </div>
     </div>
   </div>
@@ -110,20 +110,20 @@ import { useRouter } from 'vue-router'
 export default {
   name: 'RoleCreatePage',
   setup() {
-    const router = useRouter()
-    const form = ref({
-      nombreRol: '',
-      descripcionRol: '',
+const router = useRouter()
+const form = ref({
+  nombreRol: '',
+  descripcionRol: '',
       permisos: '',
-      estadoRol: 'Activo'
-    })
+  estadoRol: 'Activo'
+})
 
     const goBack = () => {
       router.push('/app/roles')
     }
 
-    const handleSubmit = async () => {
-      try {
+const handleSubmit = async () => {
+  try {
         const newRole = {
           nombreRol: form.value.nombreRol,
           descripcionRol: form.value.descripcionRol,
@@ -131,8 +131,8 @@ export default {
           estadoRol: form.value.estadoRol
         }
         await rolesService.createRole(newRole)
-        router.push('/app/roles')
-      } catch (error) {
+    router.push('/app/roles')
+  } catch (error) {
         console.error('Error al crear rol:', error)
       }
     }
@@ -373,7 +373,7 @@ textarea.form-input {
   font-size: 1.15rem;
   color: #e0e6f0;
   text-shadow: 0 2px 8px rgba(0,0,0,0.18);
-}
+  }
 
 @media (max-width: 768px) {
   .header {

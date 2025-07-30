@@ -3,7 +3,8 @@ import { useRouter } from 'vue-router';
 
 // Configuración del menú lateral
 export const sidebarMenuItems = [
-  // Eliminado: CRM
+
+  // Eliminado: CRM}
   {
     id: 'dashboard',
     title: 'Dashboard',
@@ -21,9 +22,8 @@ export const sidebarMenuItems = [
   // Eliminados: map, complaints, incidents
   // Aquí reemplazo 'Personal' por 'Nodos'
   {
-    id: 'nodes',
     title: 'Nodos',
-    icon: 'network',
+    icon: 'mdi-access-point-network', // Cambia el icono si usas otro set
     route: '/app/nodes',
     badge: null
   },
@@ -41,7 +41,13 @@ export const sidebarMenuItems = [
     route: '/app/personnel',
     badge: null
   },
-
+  {
+    id: 'homecrud',
+    title: 'Quienes Somos',
+    icon: 'reports',
+    route: '/app/home',
+    badge: null
+  },
   // Eliminado: notifications
   {
     id: 'gateways',
@@ -62,13 +68,6 @@ export const sidebarMenuItems = [
     title: 'Sectores',
     icon: 'map',
     route: '/app/sectors',
-    badge: null
-  },
-  {
-    id: 'homecrud',
-    title: 'Quienes Somos',
-    icon: 'reports',
-    route: '/app/home',
     badge: null
   }
 ];

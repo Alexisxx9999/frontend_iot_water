@@ -69,7 +69,7 @@
                   {{ role.estadoRol || role.status || 'Activo' }}
                 </span>
               </td>
-              <td class="actions-cell">
+              <td class="actions-cell"> 
                 <div class="action-buttons">
                   <router-link :to="`/app/roles/${role.id}/edit`" class="btn btn-warning btn-sm" title="Editar rol">
                     <font-awesome-icon :icon="['fas', 'edit']" />

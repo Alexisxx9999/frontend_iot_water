@@ -69,11 +69,9 @@
             </td>
             <td class="actions-cell">
               <div class="action-buttons custom-action-buttons">
-                <router-link :to="`/app/gateways/${gateway.id}`" class="action-btn view" title="Ver">
-                  <i class="fas fa-eye"></i>
-                </router-link>
+              
                 <router-link :to="`/app/gateways/${gateway.id}/edit`" class="action-btn edit" title="Editar">
-                  <i class="fas fa-pen"></i>
+                  <font-awesome-icon :icon="['fas', 'edit']" />
                 </router-link>
                 <button @click="() => { gatewayToDelete = gateway; showDeleteModal = true }" class="action-btn delete" title="Eliminar">
                   <i class="fas fa-trash"></i>
@@ -95,7 +93,9 @@
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h3>¿Eliminar gateway?</h3>
-          <button @click="showDeleteModal = false" class="btn-close"><i class="fas fa-times"></i></button>
+          <button @click="showDeleteModal = false" class="btn-close">
+            <font-awesome-icon :icon="['fas', 'times']"/>
+          </button>
         </div>
         <div class="modal-body">
           <p>¿Estás seguro de que deseas eliminar este gateway?</p>
