@@ -5,6 +5,13 @@ import { useRouter } from 'vue-router';
 export const sidebarMenuItems = [
   // Eliminado: CRM
   {
+    id: 'dashboard',
+    title: 'Dashboard',
+    icon: 'dashboard',
+    route: '/app/dashboard',
+    badge: null
+  },
+  {
     id: 'devices',
     title: 'Dispositivos',
     icon: 'devices',
@@ -33,13 +40,7 @@ export const sidebarMenuItems = [
     route: '/app/personnel',
     badge: null
   },
-  {
-    id: 'homecrud',
-    title: 'Quienes Somos',
-    icon: 'reports',
-    route: '/app/home',
-    badge: null
-  },
+
   // Eliminado: notifications
   {
     id: 'gateways',
@@ -60,6 +61,13 @@ export const sidebarMenuItems = [
     title: 'Sectores',
     icon: 'map',
     route: '/app/sectors',
+    badge: null
+  },
+  {
+    id: 'homecrud',
+    title: 'Quienes Somos',
+    icon: 'reports',
+    route: '/app/home',
     badge: null
   }
 ];

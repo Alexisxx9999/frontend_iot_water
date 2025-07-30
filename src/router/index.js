@@ -65,6 +65,7 @@ const routes = [
       // Map
       // { path: 'map', component: MapPage },
       // Nodos
+      { path: 'dashboard', component: () => import('@/views/Dashboard/DashboardPage.vue') },
       { path: 'nodes', component: NodeListPage },
       { path: 'nodes/create', component: NodeCreatePage },
       { path: 'nodes/update/:id', component: NodeUpdatePage },
