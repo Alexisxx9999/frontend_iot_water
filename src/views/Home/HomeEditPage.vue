@@ -1,138 +1,94 @@
 <template>
-  <div class="home-edit">
-    <!-- Banner de video institucional -->
-    <div class="institutional-video-banner">
-      <video class="banner-video" autoplay muted loop>
-        <source src="/videos/istockphoto-1438537439-640_adpp_is.mp4" type="video/mp4">
-      </video>
-      <div class="banner-overlay"></div>
-      <div class="banner-caption">
-        <h2>Gestión Inteligente del Agua</h2>
-        <p>Edita la información de tu empresa con tecnología IoT</p>
+  <div class="home-edit-page">
+    <div class="page-header">
+      <div class="header-content">
+        <router-link to="/app/home" class="back-link">
+          <i class="fas fa-arrow-left"></i> Volver al listado
+        </router-link>
+        <h1>Editar Registro</h1>
+        <p>Modifica la información del registro seleccionado</p>
       </div>
     </div>
 
-    <!-- Header -->
-    <div class="header">
-      <h1><i class="fas fa-edit"></i> Editar Registro</h1>
-      <router-link to="/app/home" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Volver al listado
-      </router-link>
-    </div>
-
     <div v-if="loading" class="loading-container">
-      <LoadingSpinner message="Cargando información del registro..." />
+      <div class="spinner"></div>
+      <p>Cargando información del registro...</p>
     </div>
 
     <div v-else-if="!item" class="error-container">
       <i class="fas fa-exclamation-triangle error-icon"></i>
       <h3>Registro no encontrado</h3>
       <p>El registro que intentas editar no existe o ha sido eliminado.</p>
-      <router-link to="/app/home" class="btn btn-secondary">
+      <router-link to="/app/home" class="btn btn-primary">
         <i class="fas fa-arrow-left"></i> Volver al listado
       </router-link>
     </div>
 
-    <div v-else class="content">
-      <div class="form-container">
-        <form @submit.prevent="handleSubmit" class="home-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="nombre">Nombre de la Empresa *</label>
-              <div class="input-icon-group">
-                <font-awesome-icon :icon="['fas', 'building']" class="input-icon" />
-                <input
-                  id="nombre"
-                  v-model="form.nombre"
-                  type="text"
-                  class="form-input"
-                  :class="{ 'error': errors.nombre }"
-                  placeholder="Ingresa el nombre de la empresa"
-                  @blur="validateField('nombre')"
-                />
-              </div>
-              <span v-if="errors.nombre" class="error-message">
-                {{ errors.nombre }}
-              </span>
-            </div>
-
-            <div class="form-group">
-              <label for="email">Correo Electrónico *</label>
-              <div class="input-icon-group">
-                <font-awesome-icon :icon="['fas', 'envelope']" class="input-icon" />
-                <input
-                  id="email"
-                  v-model="form.email"
-                  type="email"
-                  class="form-input"
-                  :class="{ 'error': errors.email }"
-                  placeholder="ejemplo@empresa.com"
-                  @blur="validateField('email')"
-                />
-              </div>
-              <span v-if="errors.email" class="error-message">
-                {{ errors.email }}
-              </span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="celular">Número de Celular *</label>
-              <div class="input-icon-group">
-                <font-awesome-icon :icon="['fas', 'phone']" class="input-icon" />
-                <input
-                  id="celular"
-                  v-model="form.celular"
-                  type="tel"
-                  class="form-input"
-                  :class="{ 'error': errors.celular }"
-                  placeholder="0999999999"
-                  maxlength="10"
-                  @blur="validateField('celular')"
-                />
-              </div>
-              <span v-if="errors.celular" class="error-message">
-                {{ errors.celular }}
-              </span>
-            </div>
-
-            <div class="form-group">
-              <label for="estado">Estado *</label>
-              <div class="input-icon-group">
-                <font-awesome-icon :icon="['fas', 'toggle-on']" class="input-icon" />
-                <select
-                  id="estado"
-                  v-model="form.estado"
-                  class="form-input"
-                  :class="{ 'error': errors.estado }"
-                  @blur="validateField('estado')"
-                >
-                  <option value="">Selecciona un estado</option>
-                  <option value="active">Activo</option>
-                  <option value="inactive">Inactivo</option>
-                </select>
-              </div>
-              <span v-if="errors.estado" class="error-message">
-                {{ errors.estado }}
-              </span>
-            </div>
+    <div v-else class="form-container">
+      <form @submit.prevent="handleSubmit" class="edit-form">
+        <div class="form-section">
+          <h3>Información Básica</h3>
+          
+          <div class="form-group">
+            <label for="nombre">Nombre de la Empresa *</label>
+            <input
+              id="nombre"
+              v-model="form.nombre"
+              type="text"
+              :class="['form-input', { 'error': errors.nombre }]"
+              placeholder="Ingresa el nombre de la empresa"
+              @blur="validateField('nombre')"
+            />
+            <span v-if="errors.nombre" class="error-message">
+              {{ errors.nombre }}
+            </span>
           </div>
 
           <div class="form-group">
+            <label for="email">Correo Electrónico *</label>
+            <input
+              id="email"
+              v-model="form.email"
+              type="email"
+              :class="['form-input', { 'error': errors.email }]"
+              placeholder="ejemplo@empresa.com"
+              @blur="validateField('email')"
+            />
+            <span v-if="errors.email" class="error-message">
+              {{ errors.email }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="celular">Número de Celular *</label>
+            <input
+              id="celular"
+              v-model="form.celular"
+              type="tel"
+              :class="['form-input', { 'error': errors.celular }]"
+              placeholder="0999999999"
+              maxlength="10"
+              @blur="validateField('celular')"
+            />
+            <span v-if="errors.celular" class="error-message">
+              {{ errors.celular }}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Misión y Visión</h3>
+          
+          <div class="form-group">
             <label for="mision">Misión *</label>
-            <div class="input-icon-group">
-              <font-awesome-icon :icon="['fas', 'bullseye']" class="input-icon" />
-              <textarea
-                id="mision"
-                v-model="form.mision"
-                class="form-input"
-                :class="{ 'error': errors.mision }"
-                placeholder="Describe la misión de la empresa"
-                rows="4"
-                @blur="validateField('mision')"
-              ></textarea>
-            </div>
+            <textarea
+              id="mision"
+              v-model="form.mision"
+              :class="['form-textarea', { 'error': errors.mision }]"
+              placeholder="Describe la misión de la empresa"
+              rows="4"
+              @blur="validateField('mision')"
+            ></textarea>
             <span v-if="errors.mision" class="error-message">
               {{ errors.mision }}
             </span>
@@ -140,39 +96,105 @@
 
           <div class="form-group">
             <label for="vision">Visión *</label>
-            <div class="input-icon-group">
-              <font-awesome-icon :icon="['fas', 'eye']" class="input-icon" />
-              <textarea
-                id="vision"
-                v-model="form.vision"
-                class="form-input"
-                :class="{ 'error': errors.vision }"
-                placeholder="Describe la visión de la empresa"
-                rows="4"
-                @blur="validateField('vision')"
-              ></textarea>
-            </div>
+            <textarea
+              id="vision"
+              v-model="form.vision"
+              :class="['form-textarea', { 'error': errors.vision }]"
+              placeholder="Describe la visión de la empresa"
+              rows="4"
+              @blur="validateField('vision')"
+            ></textarea>
             <span v-if="errors.vision" class="error-message">
               {{ errors.vision }}
             </span>
           </div>
+        </div>
 
-          <div class="form-actions">
-            <router-link to="/app/home" class="btn btn-cancel">
-              <i class="fas fa-times"></i> Cancelar
-            </router-link>
-            
-            <button 
-              type="submit" 
-              class="btn btn-submit"
-              :disabled="saving || !isFormValid || !hasChanges"
+        <div class="form-section">
+          <h3>Configuración</h3>
+          
+          <div class="form-group">
+            <label for="estado">Estado *</label>
+            <select
+              id="estado"
+              v-model="form.estado"
+              :class="['form-select', { 'error': errors.estado }]"
+              @blur="validateField('estado')"
             >
-              <i v-if="saving" class="fas fa-spinner fa-spin"></i>
-              <i v-else class="fas fa-save"></i>
-              {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
-            </button>
+              <option value="">Selecciona un estado</option>
+              <option value="active">Activo</option>
+              <option value="inactive">Inactivo</option>
+            </select>
+            <span v-if="errors.estado" class="error-message">
+              {{ errors.estado }}
+            </span>
           </div>
-        </form>
+        </div>
+
+        <div class="form-actions">
+          <router-link to="/app/home" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancelar
+          </router-link>
+          
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            :disabled="saving || !isFormValid || !hasChanges"
+          >
+            <i v-if="saving" class="fas fa-spinner fa-spin"></i>
+            <i v-else class="fas fa-save"></i>
+            {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </form>
+
+      <!-- Vista previa en tiempo real -->
+      <div class="preview-section">
+        <h3>Vista Previa</h3>
+        <div class="preview-card">
+          <div class="preview-header">
+            <h4>{{ form.nombre || 'Nombre de la Empresa' }}</h4>
+            <span :class="['status-badge', form.estado]">
+              {{ form.estado === 'active' ? 'Activo' : form.estado === 'inactive' ? 'Inactivo' : 'Sin estado' }}
+            </span>
+          </div>
+          
+          <div class="preview-content">
+            <div class="preview-item">
+              <strong>Email:</strong>
+              <span>{{ form.email || 'No especificado' }}</span>
+            </div>
+            
+            <div class="preview-item">
+              <strong>Celular:</strong>
+              <span>{{ form.celular || 'No especificado' }}</span>
+            </div>
+            
+            <div class="preview-item">
+              <strong>Misión:</strong>
+              <p>{{ form.mision || 'No especificada' }}</p>
+            </div>
+            
+            <div class="preview-item">
+              <strong>Visión:</strong>
+              <p>{{ form.vision || 'No especificada' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información del registro -->
+        <div class="record-info">
+          <h4>Información del Registro</h4>
+          <div class="info-item">
+            <strong>ID:</strong> {{ item.id }}
+          </div>
+          <div class="info-item">
+            <strong>Creado:</strong> {{ formatDate(item.createdAt) }}
+          </div>
+          <div class="info-item">
+            <strong>Última actualización:</strong> {{ formatDate(item.updatedAt) }}
+          </div>
+        </div>
       </div>
     </div>
 
@@ -188,13 +210,9 @@
 import { ref, computed, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useHomeStore } from '@/stores/home'
-import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 
 export default {
   name: 'HomeEditPage',
-  components: {
-    LoadingSpinner
-  },
   setup() {
     const route = useRoute()
     const router = useRouter()
@@ -425,240 +443,64 @@ export default {
 </script>
 
 <style scoped>
-.home-edit {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(34, 91, 140, 0.10);
+.home-edit-page {
   padding: 2rem;
-  margin: 2rem auto;
-  max-width: 1400px;
-  min-width: 320px;
-  width: 100%;
-}
-
-.institutional-video-banner {
-  width: 100%;
   max-width: 1200px;
-  margin: 0 auto 2.5rem auto;
-  position: relative;
-  min-height: 220px;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(34, 91, 140, 0.10);
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.banner-video {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  border-radius: 18px;
-  z-index: 0;
-  display: block;
-}
-
-.banner-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(34, 91, 140, 0.8) 0%, rgba(52, 152, 219, 0.6) 100%);
-  z-index: 1;
-}
-
-.banner-caption {
-  position: absolute;
-  z-index: 2;
-  text-align: center;
-  color: white;
-  padding: 2rem;
-}
-
-.banner-caption h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.banner-caption p {
-  font-size: 1.2rem;
-  opacity: 0.9;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-}
-
-.header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #23272f;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.header h1 i {
-  color: #3498db;
-}
-
-.header .btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #6c757d;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.header .btn:hover {
-  background: #495057;
-  transform: translateY(-1px);
-}
-
-.content {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 2rem;
-}
-
-.form-container {
-  max-width: 800px;
   margin: 0 auto;
 }
 
-.home-form {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.page-header {
+  margin-bottom: 2rem;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+.header-content {
+  text-align: center;
 }
 
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #23272f;
-  font-size: 0.95rem;
-}
-
-.input-icon-group {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 12px;
-  color: #6c757d;
-  z-index: 2;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-  border: 2px solid #e1e8ed;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-.form-input::placeholder {
-  color: #adb5bd;
-}
-
-.form-input.error {
-  border-color: #e74c3c;
-}
-
-.error-message {
-  display: block;
-  color: #e74c3c;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  padding-top: 2rem;
-  border-top: 1px solid #e1e8ed;
-  margin-top: 2rem;
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
+.back-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  color: #3498db;
+  text-decoration: none;
   font-weight: 500;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease;
 }
 
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.back-link:hover {
+  color: #2980b9;
 }
 
-.btn-cancel {
-  background: #6c757d;
-  color: white;
+.page-header h1 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
 }
 
-.btn-cancel:hover {
-  background: #495057;
-}
-
-.btn-submit {
-  background: #3498db;
-  color: white;
-}
-
-.btn-submit:hover:not(:disabled) {
-  background: #2980b9;
+.page-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
 }
 
 .loading-container {
   text-align: center;
   padding: 4rem 2rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .error-container {
@@ -682,6 +524,231 @@ export default {
   margin-bottom: 2rem;
 }
 
+.form-container {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.edit-form {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e1e8ed;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.form-input.error,
+.form-textarea.error,
+.form-select.error {
+  border-color: #e74c3c;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.error-message {
+  display: block;
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 2rem;
+  border-top: 1px solid #e1e8ed;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #7f8c8d;
+}
+
+/* Vista previa */
+.preview-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  position: sticky;
+  top: 2rem;
+}
+
+.preview-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.preview-card {
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.preview-header {
+  background: #f8f9fa;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e1e8ed;
+}
+
+.preview-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.inactive {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.preview-content {
+  padding: 1rem;
+}
+
+.preview-item {
+  margin-bottom: 1rem;
+}
+
+.preview-item:last-child {
+  margin-bottom: 0;
+}
+
+.preview-item strong {
+  display: block;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.preview-item span,
+.preview-item p {
+  color: #7f8c8d;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Información del registro */
+.record-info {
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f8f9fa;
+}
+
+.record-info h4 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.info-item {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-item strong {
+  color: #2c3e50;
+}
+
+/* Mensajes */
 .message {
   position: fixed;
   top: 2rem;
@@ -716,28 +783,24 @@ export default {
   }
 }
 
-@media (max-width: 768px) {
-  .home-edit {
-    padding: 1rem;
-    margin: 1rem;
-  }
-  
-  .banner-caption h2 {
-    font-size: 2rem;
-  }
-  
-  .banner-caption p {
-    font-size: 1rem;
-  }
-  
-  .header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .form-row {
+/* Responsive */
+@media (max-width: 1024px) {
+  .form-container {
     grid-template-columns: 1fr;
+  }
+  
+  .preview-section {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-edit-page {
+    padding: 1rem;
+  }
+  
+  .edit-form {
+    padding: 1.5rem;
   }
   
   .form-actions {
